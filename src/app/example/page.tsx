@@ -8,11 +8,11 @@ export default async function Page() {
 
   const {data: status_bitacora} = await supabase.from('status_bitacora').select("*")
 
-  console.log(status_bitacora)  
-
   return (
     <ul>
-      
+      {status_bitacora?.map((status_bitacora) => (
+        <li key={status_bitacora.id}>{status_bitacora.name}</li>
+      ))}
     </ul>
   )
 }
