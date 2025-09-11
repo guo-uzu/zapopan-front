@@ -1,23 +1,12 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@radix-ui/react-separator"
-import { columns, Payment } from "./columns"
+import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import Form from "./form"
-
-async function getData(): Promise<Payment[]> {
-  return [
-    {
-      id: "728ed52f",
-      amount: 100,
-      status: "pending",
-      email: "m@example.com",
-    },
-  ]
-}
+import { data }  from "@/hooks/data"
 
 export default async function DemoPage() {
-  const data = await getData()
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -29,23 +18,6 @@ export default async function DemoPage() {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            {
-              /*
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            */
-            }
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">

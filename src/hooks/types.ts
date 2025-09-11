@@ -1,0 +1,17 @@
+export type Inputs = {
+    name: string,
+    account: string,
+    chanel: string,
+    username: string,
+    link: string,
+    date: string,
+    category: string,
+    description: string,
+    area_responsable: string,
+    colonia: string,
+    priority: string,
+    status: string,
+    direction: string,
+    folio: string,
+    observations: string,
+  }

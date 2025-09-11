@@ -1,27 +1,67 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { Inputs } from "@/hooks/types"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-}
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Inputs>[] = [
+  {
+    accessorKey: "name",
+    header: "Nombre",
+  },
+  {
+    accessorKey: "account",
+    header: "Cuenta",
+  },
+  {
+    accessorKey: "chanel",
+    header: "Canal",
+  },
+  {
+    accessorKey: "username",
+    header: "Nombre de usuario",
+  },
+  {
+    accessorKey: "link",
+    header: "Enlace a perfil/publicación",
+  },
+  {
+    accessorKey: "date",
+    header: "Fecha de la solicitud",
+  },
+  {
+    accessorKey: "category",
+    header: "Categoría",
+  },
+  {
+    accessorKey: "description",
+    header: "Descripción",
+  },
+  {
+    accessorKey: "area_responsable",
+    header: "Área responsable",
+  },
+  {
+    accessorKey: "colonia",
+    header: "Colonia",
+  },
+  {
+    accessorKey: "priority",
+    header: "Prioridad",
+  },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "Estatus",
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "direction",
+    header: "Dirección",
   },
   {
-    accessorKey: "amount",
-    header: "Amount",
+    accessorKey: "folio",
+    header: "Folio",
+  },
+  {
+    accessorKey: "observations",
+    header: "Observaciones y comentarios",
   },
 ]
