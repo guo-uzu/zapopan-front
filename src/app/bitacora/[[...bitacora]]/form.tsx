@@ -4,9 +4,9 @@ import { Label } from "@/components/ui/label"
 import { Input } from '@/components/ui/input'
 import { Combobox } from './combobox'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { Inputs } from '@/hooks/types'
 import { data } from '@/hooks/data'
 
@@ -225,7 +225,7 @@ const estatus: DataCombox[] = [
 
 export default function Form() {
 
-  const { register, handleSubmit } = useForm<Inputs>();
+  const { register, handleSubmit, control } = useForm<Inputs>();
   const saveData: SubmitHandler<Inputs> = (dataForm) => {
     data.push(dataForm)
     console.log(data)
@@ -245,11 +245,17 @@ export default function Form() {
             </div>
             <div className="grid gap-3">
               <Label htmlFor='account'>Cuenta</Label>
-              <Combobox data={cuentas} {...register("account")} />
+              <Controller
+                name="account"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <Combobox data={cuentas} onChange={onChange} />
+                )}
+              />
             </div>
             <div className="grid gap-3">
               <Label htmlFor='chanel'>Canal</Label>
-              <Combobox data={canal} {...register("chanel")} />
+              <Combobox data={canal} />
             </div>
             <div className="grid gap-3">
               <Label htmlFor='username'>Nombre de usuario</Label>
@@ -265,7 +271,7 @@ export default function Form() {
             </div>
             <div className="grid gap-3">
               <Label htmlFor='category'>Categoría</Label>
-              <Combobox data={categoria} {...register("category")}/>
+              <Combobox data={categoria} {...register("category")} />
             </div>
             <div className="grid gap-3">
               <Label htmlFor='description'>Descripción</Label>
@@ -273,19 +279,19 @@ export default function Form() {
             </div>
             <div className="grid gap-3">
               <Label htmlFor='area_responsable'>Área responsable</Label>
-              <Combobox data={area} {...register("area_responsable")}/>
+              <Combobox data={area} {...register("area_responsable")} />
             </div>
             <div className="grid gap-3">
               <Label htmlFor='colonia'>Colonia</Label>
-              <Input {...register("colonia")} id='colonia' type='text' name='colonia'  />
+              <Input {...register("colonia")} id='colonia' type='text' name='colonia' />
             </div>
             <div className="grid gap-3">
               <Label>Prioridad</Label>
-              <Combobox data={prioridad} {...register("priority")}/>
+              <Combobox data={prioridad} {...register("priority")} />
             </div>
             <div className="grid gap-3">
               <Label>Estatus</Label>
-              <Combobox data={estatus} {...register("status")}/>
+              <Combobox data={estatus} {...register("status")} />
             </div>
             <div className="grid gap-3">
               <Label>Dirección</Label>

@@ -16,7 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-export function Combobox({data}: {data: {value: string, label: string}[]}) {
+export function Combobox({ data }: { data: { value: string, label: string }[] }, onChange) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
 
@@ -29,9 +29,11 @@ export function Combobox({data}: {data: {value: string, label: string}[]}) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? data.find((element) => element.value === value)?.label
-            : "Selecciona una cuenta"}
+          {
+            value
+              ? data.find((element) => element.value === value)?.label
+              : "Selecciona una cuenta"
+          }
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -39,18 +41,20 @@ export function Combobox({data}: {data: {value: string, label: string}[]}) {
         <Command>
           <CommandList>
             <CommandGroup>
-              {data.map((element) => (
-                <CommandItem
-                  key={element.value}
-                  value={element.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
-                    setOpen(false)
-                  }}
-                >
-                  {element.label}
-                </CommandItem>
-              ))}
+              {
+                data.map((element) => (
+                  <CommandItem
+                    key={element.value}
+                    value={element.value}
+                    onSelect={(currentValue) => {
+                      setValue(currentValue === value ? "" : currentValue)
+                      onChange = { onChange }
+                      setOpen(false)
+                    }}
+                  >
+                    {element.label}
+                  </CommandItem>
+                ))}
             </CommandGroup>
           </CommandList>
         </Command>
