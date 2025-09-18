@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react"
 
@@ -10,13 +8,19 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-export function Combobox({ data }: { data: { value: string, label: string }[] }, onChange) {
+type ComboboxProps = {
+  data: { value: string; label: string }[],
+  onChange: (v: string) => void
+}
+
+export function Combobox({ data, onChange }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
 
@@ -48,7 +52,7 @@ export function Combobox({ data }: { data: { value: string, label: string }[] },
                     value={element.value}
                     onSelect={(currentValue) => {
                       setValue(currentValue === value ? "" : currentValue)
-                      onChange = { onChange }
+                      onChange(element.value)
                       setOpen(false)
                     }}
                   >
