@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { Inputs } from '@/hooks/types'
-import { sendData } from '@/utils/sendData'
+import { sendDataSupabase } from '@/utils/sendData'
 
 interface DataCombox {
   value: string,
@@ -224,11 +224,11 @@ const estatus: DataCombox[] = [
 ]
 
 export default function Form() {
-  const { register, handleSubmit, control } = useForm<Inputs>()
+  const { register, handleSubmit, control, reset } = useForm<Inputs>()
 
   const saveData: SubmitHandler<Inputs> = async (dataForm) => {
-    console.log(dataForm)
-    sendData(dataForm)
+    const response = await sendDataSupabase(dataForm)
+    if (response) reset()
   }
 
   return (

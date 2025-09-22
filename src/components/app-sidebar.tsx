@@ -5,6 +5,7 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  Cat,
   Command,
   Frame,
   GalleryVerticalEnd,
@@ -24,6 +25,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { timeLog } from "console"
+import { title } from "process"
 
 // This is sample data.
 const data = {
@@ -55,7 +58,7 @@ const data = {
       title: "Bitácora",
       url: "/bitacora",
       icon: Bot,
-    },
+    }
   ],
 }
 
