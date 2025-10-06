@@ -15,11 +15,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useEffect } from "react"
+import { realtimeBitacora } from "@/utils/realtime-bitacora"
+import { useUser } from "@clerk/nextjs"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
+
+import { createClient } from "@supabase/supabase-js"
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUSHABLE_KEY || ""
 
 export function DataTable<TData, TValue>({
   columns,
@@ -43,9 +50,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 )
               })}

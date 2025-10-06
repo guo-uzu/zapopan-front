@@ -6,7 +6,6 @@ import { DataTable } from "./data-table"
 import Form from "./form"
 import { data } from "@/hooks/data"
 
-
 export default async function DemoPage() {
   return (
     <SidebarProvider>
