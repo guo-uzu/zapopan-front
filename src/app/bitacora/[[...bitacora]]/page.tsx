@@ -1,10 +1,14 @@
+import { columns } from "./columns"
+import Form from "./form"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@radix-ui/react-separator"
-import { columns } from "./columns"
 import { DataTable } from "./data-table"
-import Form from "./form"
-import { data } from "@/hooks/data"
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup
+} from "@/components/ui/resizable"
 
 export default async function DemoPage() {
   return (
@@ -21,10 +25,15 @@ export default async function DemoPage() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <DataTable columns={columns} data={data} />
-            <Form />
-          </div>
+          <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel>
+              <DataTable columns={columns} />
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel>
+              <Form />
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
       </SidebarInset>
     </SidebarProvider>

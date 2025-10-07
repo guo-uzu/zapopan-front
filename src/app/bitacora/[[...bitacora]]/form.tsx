@@ -243,29 +243,31 @@ export default function Form() {
               <Label htmlFor='name'>Nombre</Label>
               <Input {...register("name")} id='name' type='text' name='name' />
             </div>
-            <div className="grid gap-3">
-              <Label htmlFor='account'>Cuenta</Label>
-              <Controller
-                name="account"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <Combobox
-                    data={cuentas}
-                    onChange={onChange} />
-                )}
-              />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor='chanel'>Canal</Label>
-              <Controller
-                name="chanel"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <Combobox
-                    data={canal}
-                    onChange={onChange} />
-                )}
-              />
+            <div className='grid grid-cols-2'>
+              <div className="grid gap-3">
+                <Label htmlFor='account'>Cuenta</Label>
+                <Controller
+                  name="account"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Combobox
+                      data={cuentas}
+                      onChange={onChange} />
+                  )}
+                />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor='chanel'>Canal</Label>
+                <Controller
+                  name="chanel"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Combobox
+                      data={canal}
+                      onChange={onChange} />
+                  )}
+                />
+              </div>
             </div>
             <div className="grid gap-3">
               <Label htmlFor='username'>Nombre de usuario</Label>
@@ -275,62 +277,62 @@ export default function Form() {
               <Label htmlFor='link'>Enlace a perfil/publicación</Label>
               <Input {...register("link")} id='link' type='text' name='link' />
             </div>
-            <div className="grid gap-3">
-              <Label htmlFor='date'>Fecha de la solicitud</Label>
-              <Input {...register("date")} id='date' type='date' name='date' />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor='category'>Categoría</Label>
-              <Controller
-                name="category"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <Combobox
-                    data={categoria}
-                    onChange={onChange} />
-                )}
-              />
+            <div className='grid grid-cols-2'>
+              <div className="grid gap-3">
+                <Label htmlFor='category'>Categoría</Label>
+                <Controller
+                  name="category"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Combobox
+                      data={categoria}
+                      onChange={onChange} />
+                  )}
+                />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor='area_responsable'>Área responsable</Label>
+                <Controller
+                  name="area_responsable"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Combobox
+                      data={area}
+                      onChange={onChange} />
+                  )} />
+              </div>
             </div>
             <div className="grid gap-3">
               <Label htmlFor='description'>Descripción</Label>
               <Textarea {...register("description")} id='description' name='description' placeholder='Escribe la descripción aquí...' />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor='area_responsable'>Área responsable</Label>
-              <Controller
-                name="area_responsable"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <Combobox
-                    data={area}
-                    onChange={onChange} />
-                )} />
-            </div>
-            <div className="grid gap-3">
               <Label htmlFor='colonia'>Colonia</Label>
               <Input {...register("colonia")} id='colonia' type='text' name='colonia' />
             </div>
-            <div className="grid gap-3">
-              <Label htmlFor='priority'>Prioridad</Label>
-              <Controller
-                name="priority"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <Combobox
-                    data={prioridad}
-                    onChange={onChange} />
-                )} />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor='status'>Estatus</Label>
-              <Controller
-                name="status"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <Combobox
-                    data={estatus}
-                    onChange={onChange} />
-                )} />
+            <div className='grid grid-cols-2'>
+              <div className="grid gap-3">
+                <Label htmlFor='priority'>Prioridad</Label>
+                <Controller
+                  name="priority"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Combobox
+                      data={prioridad}
+                      onChange={onChange} />
+                  )} />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor='status'>Estatus</Label>
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Combobox
+                      data={estatus}
+                      onChange={onChange} />
+                  )} />
+              </div>
             </div>
             <div className="grid gap-3">
               <Label htmlFor='direction'>Dirección</Label>

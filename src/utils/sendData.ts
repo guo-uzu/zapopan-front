@@ -1,14 +1,12 @@
 "use server"
-import { createClient } from "@supabase/supabase-js";
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUSHABLE_KEY || ""
 import { auth } from "@clerk/nextjs/server";
+import { createClient } from "@/utils/supabase/client"
 import { Inputs } from "@/hooks/types";
 
 export const sendDataSupabase = async (formData: Inputs) => {
   const { userId } = await auth()
   if (!userId) throw new Error("User not founded")
-  const supabase = createClient(supabaseUrl, supabaseKey)
+  const supabase = createClient()
   const payload = {
     user_id: userId,
     account_id: mustMap(accountMap, formData.account, 'account'),
@@ -24,9 +22,9 @@ export const sendDataSupabase = async (formData: Inputs) => {
     name: formData.name,
     observations: formData.observations || null,
     created_at: new Date().toISOString(),
-    username: formData.username
+    username: formData.username,
+    folio: formData.folio || null
   }
-
   const { error } = await supabase.from("bitacora").insert(payload)
 
   if (error) {

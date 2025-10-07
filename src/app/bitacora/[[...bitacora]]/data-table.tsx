@@ -1,12 +1,13 @@
 "use client"
-
+import { useEffect, useState } from "react"
+import { useAuth } from "@clerk/nextjs"
+import { createClient } from "@/utils/supabase/client"
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-
 import {
   Table,
   TableBody,
@@ -15,28 +16,52 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useEffect } from "react"
-import { realtimeBitacora } from "@/utils/realtime-bitacora"
-import { useUser } from "@clerk/nextjs"
+import { fetchData } from "@/hooks/fetch-data"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
-  data: TData[]
 }
-
-import { createClient } from "@supabase/supabase-js"
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUSHABLE_KEY || ""
 
 export function DataTable<TData, TValue>({
   columns,
-  data,
 }: DataTableProps<TData, TValue>) {
+
+  const { userId, isLoaded } = useAuth()
+  const supabase = createClient()
+  const [dataFetch, setDataFetch] = useState<TData[]>([])
   const table = useReactTable({
-    data,
+    data: dataFetch,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
+
+  useEffect(() => {
+    handleFetchData()
+    console.log(dataFetch)
+  }, [])
+
+  useEffect(() => {
+    if (!isLoaded || !userId) return
+    const subscription = supabase
+      .channel("changes")
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "bitacora"
+      }, () => {
+        handleFetchData()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(subscription)
+    }
+  }, [isLoaded, userId])
+
+  const handleFetchData = async () => {
+    const { data } = await fetchData()
+    if (data) setDataFetch(data as TData[])
+  }
 
   return (
     <div className="overflow-hidden rounded-md border col-span-2">
@@ -67,7 +92,7 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  < TableCell key={cell.id} >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -76,12 +101,12 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                Cargando datos...
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
-    </div>
+    </div >
   )
 }

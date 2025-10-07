@@ -11,5 +11,6 @@ export type Inputs = {
   observations: string,
   priority: "baja" | "media" | "alta",
   status: "pendiente" | "en_proceso" | "resuelto",
-  username: string
+  username: string,
+  folio: string
 }

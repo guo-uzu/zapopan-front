@@ -9,11 +9,11 @@ export const columns: ColumnDef<Inputs>[] = [
     header: "Nombre",
   },
   {
-    accessorKey: "account",
+    accessorKey: "account_bitacora.name",
     header: "Cuenta",
   },
   {
-    accessorKey: "chanel",
+    accessorKey: "channel_bitacora.name",
     header: "Canal",
   },
   {
@@ -25,11 +25,11 @@ export const columns: ColumnDef<Inputs>[] = [
     header: "Enlace a perfil/publicación",
   },
   {
-    accessorKey: "date",
+    accessorKey: "created_at",
     header: "Fecha de la solicitud",
   },
   {
-    accessorKey: "category",
+    accessorKey: "category_bitacora.name",
     header: "Categoría",
   },
   {
@@ -37,7 +37,7 @@ export const columns: ColumnDef<Inputs>[] = [
     header: "Descripción",
   },
   {
-    accessorKey: "area_responsable",
+    accessorKey: "responsable_area_bitacora.name",
     header: "Área responsable",
   },
   {
@@ -45,11 +45,11 @@ export const columns: ColumnDef<Inputs>[] = [
     header: "Colonia",
   },
   {
-    accessorKey: "priority",
+    accessorKey: "priority_bitacora.name",
     header: "Prioridad",
   },
   {
-    accessorKey: "status",
+    accessorKey: "status_bitacora.name",
     header: "Estatus",
   },
   {
