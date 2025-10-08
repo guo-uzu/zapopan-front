@@ -3,12 +3,15 @@ import React from 'react'
 import { Label } from "@/components/ui/label"
 import { Input } from '@/components/ui/input'
 import { Combobox } from './combobox'
+import { SelectItem, SelectContent, Select, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { Inputs } from '@/hooks/types'
+import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { sendDataSupabase } from '@/utils/sendData'
+import { channel } from 'diagnostics_channel'
+import { stat } from 'fs'
 
 interface DataCombox {
   value: string,
@@ -227,8 +230,9 @@ export default function Form() {
   const { register, handleSubmit, control, reset } = useForm<Inputs>()
 
   const saveData: SubmitHandler<Inputs> = async (dataForm) => {
-    const response = await sendDataSupabase(dataForm)
-    if (response) reset()
+    // const response = await sendDataSupabase(dataForm)
+    // if (response) reset()
+    console.log(dataForm)
   }
 
   return (
@@ -249,22 +253,44 @@ export default function Form() {
                 <Controller
                   name="account"
                   control={control}
-                  render={({ field: { onChange } }) => (
-                    <Combobox
-                      data={cuentas}
-                      onChange={onChange} />
+                  render={({ field: { onChange, value } }) => (
+                    <Select onValueChange={onChange} value={value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una opcion" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          cuentas.map((option) => (
+                            <SelectItem value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))
+                        }
+                      </SelectContent>
+                    </Select>
                   )}
                 />
               </div>
               <div className="grid gap-3">
-                <Label htmlFor='chanel'>Canal</Label>
+                <Label htmlFor='channel'>Canal</Label>
                 <Controller
-                  name="chanel"
+                  name="channel"
                   control={control}
-                  render={({ field: { onChange } }) => (
-                    <Combobox
-                      data={canal}
-                      onChange={onChange} />
+                  render={({ field: { onChange, value } }) => (
+                    <Select onValueChange={onChange} value={value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una opcion" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          canal.map((option) => (
+                            <SelectItem value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))
+                        }
+                      </SelectContent>
+                    </Select>
                   )}
                 />
               </div>
@@ -283,10 +309,21 @@ export default function Form() {
                 <Controller
                   name="category"
                   control={control}
-                  render={({ field: { onChange } }) => (
-                    <Combobox
-                      data={categoria}
-                      onChange={onChange} />
+                  render={({ field: { onChange, value } }) => (
+                    <Select onValueChange={onChange} value={value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una opcion" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          categoria.map((option) => (
+                            <SelectItem value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))
+                        }
+                      </SelectContent>
+                    </Select>
                   )}
                 />
               </div>
@@ -295,10 +332,21 @@ export default function Form() {
                 <Controller
                   name="area_responsable"
                   control={control}
-                  render={({ field: { onChange } }) => (
-                    <Combobox
-                      data={area}
-                      onChange={onChange} />
+                  render={({ field: { onChange, value } }) => (
+                    <Select onValueChange={onChange} value={value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una opcion" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          area.map((option) => (
+                            <SelectItem value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))
+                        }
+                      </SelectContent>
+                    </Select>
                   )} />
               </div>
             </div>
@@ -316,10 +364,21 @@ export default function Form() {
                 <Controller
                   name="priority"
                   control={control}
-                  render={({ field: { onChange } }) => (
-                    <Combobox
-                      data={prioridad}
-                      onChange={onChange} />
+                  render={({ field: { onChange, value } }) => (
+                    <Select onValueChange={onChange} value={value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una opcion" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          area.map((option) => (
+                            <SelectItem value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))
+                        }
+                      </SelectContent>
+                    </Select>
                   )} />
               </div>
               <div className="grid gap-3">
@@ -327,10 +386,21 @@ export default function Form() {
                 <Controller
                   name="status"
                   control={control}
-                  render={({ field: { onChange } }) => (
-                    <Combobox
-                      data={estatus}
-                      onChange={onChange} />
+                  render={({ field: { onChange, value } }) => (
+                    <Select onValueChange={onChange} value={value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una opcion" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          estatus.map((option) => (
+                            <SelectItem value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))
+                        }
+                      </SelectContent>
+                    </Select>
                   )} />
               </div>
             </div>

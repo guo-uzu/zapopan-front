@@ -24,16 +24,9 @@ export default async function DemoPage() {
             />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel>
-              <DataTable columns={columns} />
-            </ResizablePanel>
-            <ResizableHandle withHandle />
-            <ResizablePanel>
-              <Form />
-            </ResizablePanel>
-          </ResizablePanelGroup>
+        <div className="flex flex-row flex-1 gap-4 p-4">
+          <DataTable columns={columns} />
+          <Form />
         </div>
       </SidebarInset>
     </SidebarProvider>
