@@ -12,7 +12,7 @@ export const sendDataSupabase = async (formData: Inputs) => {
     account_id: mustMap(accountMap, formData.account, 'account'),
     area_id: mustMap(areaMap, formData.area_responsable, 'area_responsable'),
     category_id: mustMap(categoryMap, formData.category, 'category'),
-    chanel_id: mustMap(chanelMap, formData.chanel, 'chanel'),
+    chanel_id: mustMap(chanelMap, formData.channel, 'channel'),
     priority_id: mustMap(priorityMap, formData.priority, 'priority'),
     status_id: mustMap(statusMap, formData.status, 'status'),
     colonia: formData.colonia || null,
@@ -93,7 +93,7 @@ const categoryMap: Record<Inputs['category'], number> = {
   otros: 13,
 };
 
-const chanelMap: Record<Inputs['chanel'], number> = {
+const chanelMap: Record<Inputs['channel'], number> = {
   coment: 0,
   inbox: 1,
 };

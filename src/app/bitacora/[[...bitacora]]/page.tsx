@@ -4,17 +4,12 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@radix-ui/react-separator"
 import { DataTable } from "./data-table"
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup
-} from "@/components/ui/resizable"
 
 export default async function DemoPage() {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="">
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="flex flex-col overflow-hidden">
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
@@ -24,9 +19,8 @@ export default async function DemoPage() {
             />
           </div>
         </header>
-        <div className="flex flex-row flex-1 gap-4 p-4">
+        <div className="px-4">
           <DataTable columns={columns} />
-          <Form />
         </div>
       </SidebarInset>
     </SidebarProvider>

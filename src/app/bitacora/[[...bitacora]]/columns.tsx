@@ -9,12 +9,24 @@ export const columns: ColumnDef<Inputs>[] = [
     header: "Nombre",
   },
   {
-    accessorKey: "account_bitacora.name",
+    accessorFn: (row) => row.account_bitacora?.name,
+    id: "account name",
     header: "Cuenta",
+    cell: ({ row }) => {
+      if (row.getValue("account name") === "jjf") {
+        return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("account name")}</div>
+      } else {
+        return <div className="px-4 rounded-md  font-bold capitalize text-center border-2 bg-orange-500">{row.getValue("account name")}</div>
+      }
+    }
   },
   {
-    accessorKey: "channel_bitacora.name",
+    accessorFn: (row) => row.channel_bitacora.name,
+    id: "canal",
     header: "Canal",
+    cell: ({ row }) => {
+      return <div className="px-4 rounded-md capitalize border-2 border-purple-400 text-center">{row.getValue("canal")}</div>
+    }
   },
   {
     accessorKey: "username",
