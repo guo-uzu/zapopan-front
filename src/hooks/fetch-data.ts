@@ -8,7 +8,7 @@ export const fetchData = async () => {
   const response = await supabase
     .from("bitacora")
     .select(`
-      name,
+      users_clerk:user_id(id,first_name, last_name, status, img_url),
       account_bitacora:account_id(name),
       created_at,
       category_bitacora:category_id(name),

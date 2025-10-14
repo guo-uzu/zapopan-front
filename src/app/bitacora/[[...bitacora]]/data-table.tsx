@@ -63,6 +63,9 @@ export function DataTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: true,
     state: {
       columnVisibility,
       columnFilters,
@@ -104,9 +107,9 @@ export function DataTable<TData, TValue>({
           <div className="flex items-center py-4">
             <Input
               placeholder="Filtro de nombre"
-              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              value={(table.getColumn("link")?.getFilterValue() as string) ?? ""}
               onChange={(event) =>
-                table.getColumn("name")?.setFilterValue(event.target.value)
+                table.getColumn("link")?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
             />

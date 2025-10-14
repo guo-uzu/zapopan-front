@@ -243,10 +243,7 @@ export default function Form() {
       <CardContent>
         <form onSubmit={handleSubmit(saveData)}>
           <div className='flex flex-col gap-6'>
-            <div className="grid gap-3">
-              <Label htmlFor='name'>Nombre</Label>
-              <Input {...register("name")} id='name' type='text' name='name' />
-            </div>
+
             <div className='grid grid-cols-2'>
               <div className="grid gap-3">
                 <Label htmlFor='account'>Cuenta</Label>
