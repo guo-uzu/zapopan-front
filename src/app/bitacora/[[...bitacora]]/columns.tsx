@@ -110,6 +110,67 @@ export const columns: ColumnDef<Inputs>[] = [
   {
     accessorKey: "responsable_area_bitacora.name",
     header: "Área responsable",
+    cell: ({ getValue }) => {
+      switch (getValue()) {
+        case "Infraestructura de comercio":
+          return <p className={`${pillCSS} bg-blue-400`}>{getValue()}</p>
+        case "Servicios municipales":
+          return <p className={`${pillCSS} bg-emerald-400`}>{getValue()}</p>
+        case "Gestión integral":
+          return <p className={`${pillCSS} bg-sky-400`}>{getValue()}</p>
+        case "Secretaría del ayuntamiento":
+          return <p className={`${pillCSS} bg-red-400`}>{getValue()}</p>
+        case "Desarrollo económico":
+          return <p className={`${pillCSS} bg-orange-400`}>{getValue()}</p>
+        case "Construcción comunidad":
+          return <p className={`${pillCSS} bg-purple-400`}>{getValue()}</p>
+        case "DIF":
+          return <p className={`${pillCSS} bg-yellow-400`}>{getValue()}</p>
+        case "Tesorería":
+          return <p className={`${pillCSS} bg-amber-400`}>{getValue()}</p>
+        case "CFE":
+          return <p className={`${pillCSS} bg-gray-400`}>{getValue()}</p>
+        case "SIAPA":
+          return <p className={`${pillCSS} bg-rose-400`}>{getValue()}</p>
+        case "SIOP":
+          return <p className={`${pillCSS} bg-cyan-400`}>{getValue()}</p>
+        case "Otras coordinaciones":
+          return <p className={`${pillCSS} bg-fuchsia-400`}>{getValue()}</p>
+        case "Otras dependencias estatales":
+          return <p className={`${pillCSS} bg-indigo-400`}>{getValue()}</p>
+        case "Presidencia":
+          return <p className={`${pillCSS} bg-rose-600`}>{getValue()}</p>
+        case "Guadalajara":
+          return <p className={`${pillCSS} bg-blue-600`}>{getValue()}</p>
+        case "Inspección y vigilancia":
+          return <p className={`${pillCSS} bg-sky-600`}>{getValue()}</p>
+        case "PCyB":
+          return <p className={`${pillCSS} bg-yellow-600`}>{getValue()}</p>
+        case "Cercanía ciudadana":
+          return <p className={`${pillCSS} bg-red-600`}>{getValue()}</p>
+        case "Salud Zapopan":
+          return <p className={`${pillCSS} bg-green-600`}>{getValue()}</p>
+        case "Comisaría":
+          return <p className={`${pillCSS} bg-sky-600`}>{getValue()}</p>
+        case "COMUDE":
+          return <p className={`${pillCSS} bg-amber-600`}>{getValue()}</p>
+        case "CAEC (Boletos Charros)":
+          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+        case "Sindicatura":
+          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+        case "Administración e Innovación Gubernamental":
+          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+        case "AMIM":
+          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+        case "Cursos en el Parque de las niñas y  niños":
+          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+        case "Romería":
+          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+        case "Contraloría ciudadana":
+          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+      }
+
+    }
   },
   {
     accessorKey: "colonia",
@@ -118,10 +179,30 @@ export const columns: ColumnDef<Inputs>[] = [
   {
     accessorKey: "priority_bitacora.name",
     header: "Prioridad",
+    cell: ({ getValue }) => {
+      switch (getValue()) {
+        case "Alta":
+          return <p className={`${pillCSS} bg-red-300`}>{getValue()}</p>
+        case "Media":
+          return <p className={`${pillCSS} bg-yellow-300`}>{getValue()}</p>
+        case "Baja":
+          return <p className={`${pillCSS} bg-green-300`}>{getValue()}</p>
+      }
+    }
   },
   {
     accessorKey: "status_bitacora.name",
     header: "Estatus",
+    cell: ({ getValue }) => {
+      switch (getValue()) {
+        case "Resuelto":
+          return <p className={`${pillCSS} bg-green-500`}>{getValue()}</p>
+        case "Pendiente":
+          return <p className={`${pillCSS} bg-yellow-500`}>{getValue()}</p>
+        case "En proceso":
+          return <p className={`${pillCSS} bg-red-500`}>{getValue()}</p>
+      }
+    }
   },
   {
     accessorKey: "direction",

@@ -1,11 +1,12 @@
+"use client"
 import { columns } from "./columns"
-import Form from "./form"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@radix-ui/react-separator"
 import { DataTable } from "./data-table"
 
 export default async function DemoPage() {
+
   return (
     <SidebarProvider className="">
       <AppSidebar />
