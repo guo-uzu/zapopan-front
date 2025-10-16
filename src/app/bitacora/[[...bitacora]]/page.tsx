@@ -1,4 +1,3 @@
-"use client"
 import { columns } from "./columns"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"

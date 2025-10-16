@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({
   const supabase = createClient()
   const [dataFetch, setDataFetch] = useState<TData[]>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [globalFilter, setGlobalFilter] = useState<any>([])
   const [open, setOpen] = useState(false)
 
 
@@ -67,15 +67,18 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: "includesString",
+    columnResizeMode: 'onChange',
     debugTable: true,
     debugHeaders: true,
     debugColumns: true,
     state: {
       columnVisibility,
-      columnFilters,
-    }
+      globalFilter
+    },
+    onGlobalFilterChange: setGlobalFilter,
+
   })
   // handler Command Form
   useEffect(() => {
@@ -126,11 +129,8 @@ export function DataTable<TData, TValue>({
           <div className="flex flex-row justify-between">
             <div className="flex items-center py-4">
               <Input
-                placeholder="Filtro de nombre"
-                value={(table.getColumn("link")?.getFilterValue() as string) ?? ""}
-                onChange={(event) =>
-                  table.getColumn("link")?.setFilterValue(event.target.value)
-                }
+                placeholder="Busca en la bitácora"
+                onChange={e => table.setGlobalFilter(String(e.target.value))}
                 className="max-w-sm"
               />
             </div>
@@ -193,19 +193,39 @@ export function DataTable<TData, TValue>({
           {
             // Table component
           }
-          <Table>
+          <Table className="table-fixed" style={{ width: table.getCenterTotalSize() }}>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id} className="text-md">
+                      <TableHead
+                        key={header.id}
+                        className="group/head relative h-10 select-none last:[&>.cursor-col-resize]:opacity-0 text-md"
+                        {...{
+                          colSpan: header.colSpan,
+                          style: {
+                            width: header.getSize()
+                          }
+                        }}
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
+                        {header.column.getCanResize() && (
+                          <div
+                            {...{
+                              onDoubleClick: () => header.column.resetSize(),
+                              onMouseDown: header.getResizeHandler(),
+                              onTouchStart: header.getResizeHandler(),
+                              className:
+                                'group-last/head:hidden absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:translate-x-px'
+                            }}
+                          />
+                        )}
                       </TableHead>
                     )
                   })}
@@ -220,7 +240,7 @@ export function DataTable<TData, TValue>({
                     data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      < TableCell key={cell.id} className="text-md" >
+                      < TableCell key={cell.id} className="text-md whitespace-normal break-all" style={{ width: cell.column.getSize() }} >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -228,7 +248,7 @@ export function DataTable<TData, TValue>({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="">
+                  <TableCell colSpan={columns.length} className="text-center" >
                     Cargando datos...
                   </TableCell>
                 </TableRow>
@@ -258,8 +278,8 @@ export function DataTable<TData, TValue>({
           </div>
         </CardContent>
       </Card>
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent>
+      <Sheet open={open} onOpenChange={setOpen} >
+        <SheetContent side="right" className="overflow-y-scroll overflow-x-hidden max-w-[40rem]!">
           <Form />
         </SheetContent>
       </Sheet>

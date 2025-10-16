@@ -12,7 +12,10 @@ export const columns: ColumnDef<Inputs>[] = [
     header: "Nombre",
     cell: ({ row }) => {
       return <p>{row.getValue("user name")}</p>
-    }
+    },
+    size: 200,
+    minSize: 150,
+    maxSize: 300
   },
   {
     accessorFn: (row) => row.account_bitacora?.name,
@@ -24,7 +27,10 @@ export const columns: ColumnDef<Inputs>[] = [
       } else {
         return <div className="px-4 rounded-md font-bold capitalize text-white text-center bg-orange-500">{row.getValue("account name")}</div>
       }
-    }
+    },
+    size: 150,
+    minSize: 150,
+    maxSize: 150
   },
   {
     accessorFn: (row) => row.channel_bitacora.name,
@@ -36,21 +42,29 @@ export const columns: ColumnDef<Inputs>[] = [
       } else {
         return <div className="px-4 rounded-md capitalize text-white bg-indigo-500 font-bold text-center">{getValue()}</div>
       }
-    }
+    },
+    size: 160,
+    minSize: 160,
+    maxSize: 160
   },
   {
     accessorKey: "username",
     header: "Nombre de usuario",
     cell: ({ row }) => {
       return <div className="">{row.getValue("username")}</div>
-    }
+    },
+    size: 200,
+    minSize: 150,
+    maxSize: 300
   },
   {
     accessorKey: "link",
     header: "Enlace a perfil/publicación",
     cell: ({ row }) => {
       return <div className="">{row.getValue("link")}</div>
-    }
+    },
+    size: 300,
+    minSize: 300,
   },
   {
     accessorKey: "created_at",
@@ -60,7 +74,10 @@ export const columns: ColumnDef<Inputs>[] = [
       const day = ("0" + rawDate.getDate()).slice(-2)
       const month = ("0" + (rawDate.getMonth() + 1)).slice(-2)
       return <div className="text-center">{day} / {month} / {rawDate.getFullYear()}</div>
-    }
+    },
+    size: 160,
+    minSize: 160,
+    maxSize: 160
   },
   {
     accessorKey: "category_bitacora.name",
@@ -98,14 +115,20 @@ export const columns: ColumnDef<Inputs>[] = [
         default:
           return <div className={`${pillCSS} bg-violet-500`}>{getValue()}</div>
       }
-    }
+    },
+    size: 200,
+    minSize: 200,
+    maxSize: 200
   },
   {
     accessorKey: "description",
     header: "Descripción",
     cell: ({ row }) => {
       return <div className="">{row.getValue("description")}</div>
-    }
+    },
+    size: 450,
+    minSize: 450,
+    maxSize: 450
   },
   {
     accessorKey: "responsable_area_bitacora.name",
@@ -169,12 +192,17 @@ export const columns: ColumnDef<Inputs>[] = [
         case "Contraloría ciudadana":
           return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
       }
-
-    }
+    },
+    size: 200,
+    minSize: 200,
+    maxSize: 200
   },
   {
     accessorKey: "colonia",
     header: "Colonia",
+    size: 200,
+    minSize: 160,
+    maxSize: 300
   },
   {
     accessorKey: "priority_bitacora.name",
@@ -188,7 +216,10 @@ export const columns: ColumnDef<Inputs>[] = [
         case "Baja":
           return <p className={`${pillCSS} bg-green-300`}>{getValue()}</p>
       }
-    }
+    },
+    size: 120,
+    minSize: 120,
+    maxSize: 120
   },
   {
     accessorKey: "status_bitacora.name",
@@ -202,18 +233,30 @@ export const columns: ColumnDef<Inputs>[] = [
         case "En proceso":
           return <p className={`${pillCSS} bg-red-500`}>{getValue()}</p>
       }
-    }
+    },
+    size: 130,
+    minSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: "direction",
     header: "Dirección",
+    size: 200,
+    minSize: 160,
+    maxSize: 300
   },
   {
     accessorKey: "folio",
     header: "Folio",
+    size: 150,
+    minSize: 150,
+    maxSize: 150
   },
   {
     accessorKey: "observations",
     header: "Observaciones y comentarios",
+    size: 450,
+    minSize: 450,
+    maxSize: 450
   },
 ]

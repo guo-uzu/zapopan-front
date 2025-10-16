@@ -230,8 +230,8 @@ export default function Form() {
   const { register, handleSubmit, control, reset } = useForm<Inputs>()
 
   const saveData: SubmitHandler<Inputs> = async (dataForm) => {
-    // const response = await sendDataSupabase(dataForm)
-    // if (response) reset()
+    const response = await sendDataSupabase(dataForm)
+    if (response) reset()
     console.log(dataForm)
   }
 
@@ -240,10 +240,13 @@ export default function Form() {
       <CardHeader>
         <CardTitle className="text-center">Formulario de bitácora</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="border-0">
         <form onSubmit={handleSubmit(saveData)}>
           <div className='flex flex-col gap-6'>
-
+            <div className="grid gap-3">
+              <Label htmlFor='username'>Nombre de usuario</Label>
+              <Input {...register("username")} id='username' type='text' name='username' />
+            </div>
             <div className='grid grid-cols-2'>
               <div className="grid gap-3">
                 <Label htmlFor='account'>Cuenta</Label>
@@ -291,10 +294,6 @@ export default function Form() {
                   )}
                 />
               </div>
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor='username'>Nombre de usuario</Label>
-              <Input {...register("username")} id='username' type='text' name='username' />
             </div>
             <div className="grid gap-3">
               <Label htmlFor='link'>Enlace a perfil/publicación</Label>
@@ -368,7 +367,7 @@ export default function Form() {
                       </SelectTrigger>
                       <SelectContent>
                         {
-                          area.map((option) => (
+                          prioridad.map((option) => (
                             <SelectItem value={option.value}>
                               {option.label}
                             </SelectItem>
