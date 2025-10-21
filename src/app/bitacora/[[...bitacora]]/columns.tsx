@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Inputs } from "@/hooks/types"
+import { Pencil, PencilRuler, Trash } from "lucide-react"
 
 const pillCSS = "px-4 rounded-md font-bold text-white text-center"
 
@@ -259,4 +260,23 @@ export const columns: ColumnDef<Inputs>[] = [
     minSize: 450,
     maxSize: 450
   },
+  {
+    accessorKey: "functions",
+    header: "Edita/Elimina",
+    maxSize: 450,
+    cell: ({ row }) => {
+      return (
+        <div className="w-full">
+          <div className="w-full flex items-center justify-center gap-4">
+            <button className="p-1 cursor-pointer bg-red-500 rounded-md">
+              <Trash className="text-white" />
+            </button>
+            <button className="p-1 cursor-pointer bg-green-500 rounded-md">
+              <Pencil className="text-white" />
+            </button>
+          </div>
+        </div>
+      )
+    }
+  }
 ]
