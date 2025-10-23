@@ -2,7 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Inputs } from "@/hooks/types"
-import { Pencil, PencilRuler, Trash } from "lucide-react"
+import { Pencil, Trash } from "lucide-react"
+import { AlertDialog } from "@radix-ui/react-alert-dialog"
+import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { deleteRowBitacora } from "@/hooks/deleteRow"
+import { toast } from "sonner"
 
 const pillCSS = "px-4 rounded-md font-bold text-white text-center"
 
@@ -265,11 +269,35 @@ export const columns: ColumnDef<Inputs>[] = [
     header: "Edita/Elimina",
     maxSize: 450,
     cell: ({ row }) => {
+      const deleteRowBitacoraHandler = async (id: string) => {
+        toast.promise(deleteRowBitacora(id), {
+          loading: "Eliminando registro...",
+          success: "Registro eliminado correctamente.",
+          error: "Error eliminado este registro, intente nuevamente más tarde.",
+          position: "top-center"
+        })
+      }
       return (
         <div className="w-full">
           <div className="w-full flex items-center justify-center gap-4">
             <button className="p-1 cursor-pointer bg-red-500 rounded-md">
-              <Trash className="text-white" />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Trash className="text-white" />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>¿Estás completamente seguro?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Estás eliminado un registro de la bitácora. Esta acción no se puede deshacer.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => deleteRowBitacoraHandler(row.original.id)}>Continuar</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </button>
             <button className="p-1 cursor-pointer bg-green-500 rounded-md">
               <Pencil className="text-white" />

@@ -8,6 +8,7 @@ export const fetchData = async () => {
   const response = await supabase
     .from("bitacora")
     .select(`
+      id,
       users_clerk:user_id(id,first_name, last_name, status, img_url),
       account_bitacora:account_id(name),
       created_at,
@@ -24,7 +25,7 @@ export const fetchData = async () => {
       colonia,
       channel_bitacora:channel_id(name)
     `)
+    .eq("available", true)
     .order("created_at", { ascending: false })
-  console.log("Si llego aca", response)
   return response
 }
