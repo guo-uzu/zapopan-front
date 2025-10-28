@@ -27,5 +27,6 @@ export const fetchData = async () => {
     `)
     .eq("available", true)
     .order("created_at", { ascending: false })
+  console.log(response)
   return response
 }

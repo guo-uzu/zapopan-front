@@ -1,5 +1,33 @@
 "use client"
 
+import type { DateRange as RDPDateRange } from "react-day-picker";
+
+const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+
+// Robust parser (handles ISO strings, timestamps, Date, or nulls)
+const toTimestamp = (v: unknown): number | null => {
+  if (v == null) return null;
+  if (v instanceof Date) return isNaN(v.getTime()) ? null : v.getTime();
+  if (typeof v === "number") return isNaN(v) ? null : v;                 // already ms
+  const d = new Date(String(v));                                         // string -> Date
+  return isNaN(d.getTime()) ? null : d.getTime();
+};
+
+const dateRangeFilterFn: import('@tanstack/react-table').FilterFn<any> =
+  (row, columnId, range?: RDPDateRange | null) => {
+    if (!range || (!range.from && !range.to)) return true;
+
+    const ts = row.getValue<number | null>(columnId);
+    if (ts == null) return false;
+
+    const min = range.from ? startOfDay(range.from).getTime() : -Infinity;
+    const max = range.to ? endOfDay(range.to).getTime() : +Infinity;
+
+    return ts >= min && ts <= max; // inclusive
+  };
+
+
 import { ColumnDef } from "@tanstack/react-table"
 import { Inputs } from "@/hooks/types"
 import { Pencil, Trash } from "lucide-react"
@@ -23,7 +51,7 @@ export const columns: ColumnDef<Inputs>[] = [
     maxSize: 300
   },
   {
-    accessorFn: (row) => row.account_bitacora?.name,
+    accessorFn: (row) => row.account_bitacora?.name ?? "",
     id: "account name",
     header: "Cuenta",
     cell: ({ row }) => {
@@ -35,11 +63,13 @@ export const columns: ColumnDef<Inputs>[] = [
     },
     size: 150,
     minSize: 150,
-    maxSize: 150
+    maxSize: 150,
+    enableColumnFilter: true,
+    filterFn: "includesString"
   },
   {
     accessorFn: (row) => row.channel_bitacora.name,
-    id: "canal",
+    id: "channel",
     header: "Canal",
     cell: ({ getValue }) => {
       if (getValue() === "Comentarios") {
@@ -73,6 +103,8 @@ export const columns: ColumnDef<Inputs>[] = [
   },
   {
     accessorKey: "created_at",
+    accessorFn: (row) => toTimestamp(row.created_at),
+    filterFn: dateRangeFilterFn,
     header: "Fecha de la solicitud",
     cell: ({ row }) => {
       const rawDate = new Date(row.getValue("created_at"))
@@ -86,6 +118,7 @@ export const columns: ColumnDef<Inputs>[] = [
   },
   {
     accessorKey: "category_bitacora.name",
+    id: "category",
     header: "Categoría",
     cell: ({ getValue }) => {
       switch (getValue()) {
@@ -137,6 +170,7 @@ export const columns: ColumnDef<Inputs>[] = [
   },
   {
     accessorKey: "responsable_area_bitacora.name",
+    id: "area",
     header: "Área responsable",
     cell: ({ getValue }) => {
       switch (getValue()) {
@@ -211,6 +245,7 @@ export const columns: ColumnDef<Inputs>[] = [
   },
   {
     accessorKey: "priority_bitacora.name",
+    id: "priority",
     header: "Prioridad",
     cell: ({ getValue }) => {
       switch (getValue()) {
@@ -228,6 +263,7 @@ export const columns: ColumnDef<Inputs>[] = [
   },
   {
     accessorKey: "status_bitacora.name",
+    id: "status",
     header: "Estatus",
     cell: ({ getValue }) => {
       switch (getValue()) {

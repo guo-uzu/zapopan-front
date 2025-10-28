@@ -1,0 +1,71 @@
+export const ColumnsBitacoraOpts = {
+    account: [
+        { id: "jjf", value: "JJF" },
+        { id: "zapopan", value: "Zapopan" },
+    ],
+
+    area_responsable: [
+        { id: "infraestructura_comercio", value: "Infraestructura de comercio" },
+        { id: "servicios_municipales", value: "Servicios municipales" },
+        { id: "gestion_integral", value: "Gestión integral" },
+        { id: "secretaria_ayuntamiento", value: "Secretaría del ayuntamiento" },
+        { id: "desarrollo_economico", value: "Desarrollo económico" },
+        { id: "construccion_comunidad", value: "Construcción comunidad" },
+        { id: "dif", value: "DIF" },
+        { id: "tesoreria", value: "Tesorería" },
+        { id: "cfe", value: "CFE" },
+        { id: "siapa", value: "SIAPA" },
+        { id: "siop", value: "SIOP" },
+        { id: "otras_coordinaciones", value: "Otras coordinaciones" },
+        { id: "otras_dependencias_estatales", value: "Otras dependencias estatales" },
+        { id: "presidencia", value: "Presidencia" },
+        { id: "guadalajara", value: "Guadalajara" },
+        { id: "inspeccion_vigilancia", value: "Inspección y vigilancia" },
+        { id: "pcyb", value: "PCyB" },
+        { id: "cercania_ciudadana", value: "Cercanía ciudadana" },
+        { id: "salud_zapopan", value: "Salud Zapopan" },
+        { id: "comisaria", value: "Comisaría" },
+        { id: "comude", value: "COMUDE" },
+        { id: "caec", value: "CAEC (Boletos Charros)" },
+        { id: "sindicatura", value: "Sindicatura" },
+        { id: "administracion_inovacion_gubernamental", value: "Administración e Innovación Gubernamental" },
+        { id: "amim", value: "AMIM" },
+        { id: "cursos_parque_ninas_ninos", value: "Cursos en el Parque de las niñas y  niños" },
+        { id: "romeria", value: "Romería" },
+        { id: "contraloria_ciudadana", value: "Contraloría ciudadana" },
+    ],
+
+    category: [
+        { id: "solicitud_informacion", value: "Solicitud de información" },
+        { id: "canalizacion_dependencia", value: "Canalización a dependencia" },
+        { id: "solicitudes_nuevas", value: "Solicitudes nuevas" },
+        { id: "reportes_servicios", value: "Reportes de servicios" },
+        { id: "reporte_obras", value: "Reportes de obra" },
+        { id: "reporte_externos", value: "Reportes externos" },
+        { id: "solicitudes_especiales", value: "Solicitudes especiales" },
+        { id: "reporte_inspeccion_vigilancia", value: "Reporte de inspección y vigilancia" },
+        { id: "reportes_denuncias", value: "Reportes y denuncias" },
+        { id: "solicitud_empleo", value: "Solicitud de empleo" },
+        { id: "coyuntura", value: "Coyuntura" },
+        { id: "participacion_curso", value: "Participación en curso" },
+        { id: "solicitud_obra", value: "Solicitud de obra" },
+        { id: "otros", value: "Otros" },
+    ],
+
+    channel: [
+        { id: "comentario", value: "Comentario" },
+        { id: "inbox", value: "Inbox" },
+    ],
+
+    priority: [
+        { id: "baja", value: "Baja" },
+        { id: "media", value: "Media" },
+        { id: "alta", value: "Alta" },
+    ],
+
+    status: [
+        { id: "pendiente", value: "Pendiente" },
+        { id: "en_proceso", value: "En Proceso" },
+        { id: "resuelto", value: "Resuelto" },
+    ],
+};
