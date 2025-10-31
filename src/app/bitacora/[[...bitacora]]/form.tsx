@@ -10,7 +10,7 @@ import { Inputs } from '@/hooks/types'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { sendDataSupabase } from '@/hooks/sendData'
 import { toast } from 'sonner'
-
+0
 interface DataCombox {
   value: string,
   label: string
@@ -224,6 +224,13 @@ const estatus: DataCombox[] = [
   { value: "resuelto", label: "Resuelto" }
 ]
 
+const social_network: DataCombox[] = [
+  { value: "facebook", label: "Facebook" },
+  { value: "x", label: "X" },
+  { value: "instagram", label: "Instagram" },
+  { value: "tiktok", label: "Tik Tok" }
+]
+
 export default function Form() {
   const { register, handleSubmit, control, reset } = useForm<Inputs>()
 
@@ -358,7 +365,29 @@ export default function Form() {
               <Label htmlFor='colonia'>Colonia</Label>
               <Input {...register("colonia")} id='colonia' type='text' name='colonia' />
             </div>
-            <div className='grid grid-cols-2'>
+            <div className='grid grid-cols-3 gap-3'>
+              <div className="grid gap-3">
+                <Label htmlFor='social_network'>Red Social</Label>
+                <Controller
+                  name="social_network"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <Select onValueChange={onChange} value={value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una opción" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          social_network.map((option) => (
+                            <SelectItem value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))
+                        }
+                      </SelectContent>
+                    </Select>
+                  )} />
+              </div>
               <div className="grid gap-3">
                 <Label htmlFor='priority'>Prioridad</Label>
                 <Controller

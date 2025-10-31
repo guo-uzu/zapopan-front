@@ -22,7 +22,9 @@ export const sendDataSupabase = async (formData: Inputs) => {
     observations: formData.observations || null,
     created_at: new Date().toISOString(),
     username: formData.username,
-    folio: formData.folio || null
+    folio: formData.folio || null,
+    social_network_id: mustMap(socialNetworkMap, formData.social_network, 'social_network'),
+
   }
   const { error } = await supabase.from("bitacora").insert(payload)
 
@@ -42,6 +44,13 @@ function mustMap<T extends string>(map: Record<T, number>, key: T, field: string
 const accountMap: Record<Inputs['account'], number> = {
   zapopan: 0,
   jjf: 1,
+};
+
+const socialNetworkMap: Record<Inputs['social_network'], number> = {
+  facebook: 1,
+  x: 2,
+  instagram: 3,
+  tiktok: 4
 };
 
 const areaMap: Record<Inputs['area_responsable'], number> = {

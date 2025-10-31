@@ -57,7 +57,7 @@ import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns"
 import { type DateRange } from "react-day-picker"
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarDays, InfoIcon, Settings2 } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 export function DataTable<TData, TValue>({
   columns,
@@ -158,59 +158,6 @@ export function DataTable<TData, TValue>({
               // filters
             }
             <div className="flex flex-row gap-2">
-              <div className="flex items-center py-4">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant='outline' size='icon'>
-                      <InfoIcon />
-                      <span className='sr-only'>About Shadcn Studio</span>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className='w-80'>
-                    <div className='grid gap-4'>
-                      <div className='space-y-1.5 text-center'>
-                        <div className='text-lg font-semibold'>About Shadcn Studio</div>
-                        <p className='text-muted-foreground text-sm'>
-                          Welcome to Shadcn Studio — your toolkit for building sleek, customizable UI components with ease!
-                        </p>
-                      </div>
-                      <Button size='sm' asChild>
-                        <a
-                          href='https://shadcnstudio.com/docs/getting-started/introduction'
-                          target='_blank'
-                          rel='noopener noreferrer'
-                        >
-                          Learn More
-                        </a>
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button size="icon" variant="outline">
-                      <CalendarDays />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className='w-80' data-side="right">
-                    <Calendar
-                      mode="range"
-                      defaultMonth={dateRange?.from}
-                      selected={dateRange}
-                      onSelect={(range) => {
-                        setDateRange(range);
-                        const col = table.getColumn("created_at");
-                        if (!col) return;
-                        // Store the DateRange object in the column filter
-                        if (!range || (!range.from && !range.to)) col.setFilterValue(undefined);
-                        else col.setFilterValue(range);
-                      }}
-                      numberOfMonths={2}
-                      className="rounded-lg border shadow-sm bg-red-500"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
               <div className="flex items-center py-4">
                 <Input
                   placeholder="Busca en la bitácora"
@@ -326,6 +273,32 @@ export function DataTable<TData, TValue>({
                     }
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="flex items-center py-4">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant='outline' size='icon'>
+                      <CalendarDays />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-full'>
+                    <Calendar
+                      mode="range"
+                      defaultMonth={dateRange?.from}
+                      selected={dateRange}
+                      onSelect={(range) => {
+                        setDateRange(range);
+                        const col = table.getColumn("created_at");
+                        if (!col) return;
+                        // Store the DateRange object in the column filter
+                        if (!range || (!range.from && !range.to)) col.setFilterValue(undefined);
+                        else col.setFilterValue(range);
+                      }}
+                      numberOfMonths={2}
+                      className="rounded-lg border shadow-sm"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           </div>

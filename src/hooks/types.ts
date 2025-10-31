@@ -12,5 +12,6 @@ export type Inputs = {
   priority: "baja" | "media" | "alta",
   status: "pendiente" | "en_proceso" | "resuelto",
   username: string,
-  folio: string
+  folio: string,
+  social_network: "instagram" | "x" | "facebook" | "tiktok"
 }

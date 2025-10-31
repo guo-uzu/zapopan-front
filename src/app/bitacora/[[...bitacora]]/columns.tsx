@@ -51,6 +51,29 @@ export const columns: ColumnDef<Inputs>[] = [
     maxSize: 300
   },
   {
+    accessorFn: (row) => row.social_network?.name ?? "",
+    id: "redes sociales",
+    header: "Redes Sociales",
+    cell: ({ row }) => {
+      console.log(row)
+      switch (row.getValue("social_network")) {
+        case "facebook":
+          return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("social_network")}</div>
+        case "x":
+          return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("social_network")}</div>
+        case "instagram":
+          return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("social_network")}</div>
+        case "tiktok":
+          return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("social_network")}</div>
+      }
+    },
+    size: 150,
+    minSize: 150,
+    maxSize: 150,
+    enableColumnFilter: true,
+    filterFn: "includesString"
+  },
+  {
     accessorFn: (row) => row.account_bitacora?.name ?? "",
     id: "account name",
     header: "Cuenta",

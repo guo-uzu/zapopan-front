@@ -23,7 +23,8 @@ export const fetchData = async () => {
       username,
       responsable_area_bitacora:area_id(name),
       colonia,
-      channel_bitacora:channel_id(name)
+      channel_bitacora:channel_id(name),
+      social_network_bitacora:social_network(name)
     `)
     .eq("available", true)
     .order("created_at", { ascending: false })
