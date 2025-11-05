@@ -1,6 +1,18 @@
 "use client"
 
 import type { DateRange as RDPDateRange } from "react-day-picker";
+import { ColumnDef } from "@tanstack/react-table"
+import { Inputs } from "@/hooks/types"
+import { Pencil, Trash } from "lucide-react"
+import { AlertDialog } from "@radix-ui/react-alert-dialog"
+import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { deleteRowBitacora } from "@/hooks/deleteRow"
+import { toast } from "sonner"
+import { Badge } from "@/components/ui/badge";
+import { FaFacebookSquare } from "react-icons/fa";
+import { FaSquareXTwitter, FaSquareInstagram } from "react-icons/fa6";
+import { AiFillTikTok } from "react-icons/ai";
+
 
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
 const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
@@ -28,13 +40,6 @@ const dateRangeFilterFn: import('@tanstack/react-table').FilterFn<any> =
   };
 
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Inputs } from "@/hooks/types"
-import { Pencil, Trash } from "lucide-react"
-import { AlertDialog } from "@radix-ui/react-alert-dialog"
-import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { deleteRowBitacora } from "@/hooks/deleteRow"
-import { toast } from "sonner"
 
 const pillCSS = "px-4 rounded-md font-bold text-white text-center"
 
@@ -51,20 +56,39 @@ export const columns: ColumnDef<Inputs>[] = [
     maxSize: 300
   },
   {
-    accessorFn: (row) => row.social_network?.name ?? "",
+    accessorFn: (row) => row.social_network_bitacora?.name ?? "",
     id: "redes sociales",
     header: "Redes Sociales",
-    cell: ({ row }) => {
-      console.log(row)
-      switch (row.getValue("social_network")) {
+    cell: ({ getValue }) => {
+      console.log(getValue())
+      switch (getValue()) {
         case "facebook":
-          return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("social_network")}</div>
+          return (
+            <Badge className='capitalize rounded-full border-none bg-blue-600/10 text-blue-600 focus-visible:ring-amber-600/20 focus-visible:outline-none'>
+              <FaFacebookSquare />
+              {getValue()}
+            </Badge>)
         case "x":
-          return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("social_network")}</div>
+          return (
+            <Badge className='capitalize rounded-full border-none bg-black/10 text-black focus-visible:ring-amber-600/20 focus-visible:outline-none text-uppercase'>
+              <FaSquareXTwitter />
+              {getValue()}
+            </Badge>)
         case "instagram":
-          return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("social_network")}</div>
+          return (
+            <Badge className='capitalize border-transparent bg-gradient-to-r from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] [background-size:105%] bg-center text-white'>
+              <FaSquareInstagram />
+              {getValue()}
+            </Badge>)
         case "tiktok":
-          return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("social_network")}</div>
+          return (
+            <div className="w-full mx-auto">
+              <Badge className='capitalize rounded-full border-none shadow-xl bg-black/10 text-black  focus-visible:outline-none'>
+                <AiFillTikTok />
+                {getValue()}
+              </Badge>
+            </div>
+          )
       }
     },
     size: 150,

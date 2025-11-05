@@ -301,60 +301,60 @@ export function DataTable<TData, TValue>({
                 </Popover>
               </div>
             </div>
-          </div>
-          {
-            // Container right corner card 
-          }
-          <div className="flex flex-row items-center gap-4">
             {
-              // Command trigger draw (form)
+              // Container right corner card 
             }
-            <div>
-              <p className="text-muted-foreground text-sm">
-                Formulario {" "}
-                <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
-                  <span className="text-xs">⌘</span>J
-                </kbd>
-              </p>
-            </div>
-            {
-              // Visibility component
-            }
-            <div className="flex items-center py-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="ml-auto hidden h-8 lg:flex"
-                  >
-                    <Settings2 />
-                    Vistas
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-full">
-                  <DropdownMenuLabel>Oculta/Muestra columnas</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {table
-                    .getAllColumns()
-                    .filter(
-                      (column) =>
-                        typeof column.accessorFn !== "undefined" && column.getCanHide()
-                    )
-                    .map((column) => {
-                      return (
-                        <DropdownMenuCheckboxItem
-                          key={column.id}
-                          className="capitalize"
-                          checked={column.getIsVisible()}
-                          onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                        >
-                          {column.id}
-                        </DropdownMenuCheckboxItem>
+            <div className="flex flex-row items-center gap-4">
+              {
+                // Command trigger draw (form)
+              }
+              <div>
+                <p className="text-muted-foreground text-sm">
+                  Formulario {" "}
+                  <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+                    <span className="text-xs">⌘</span>J
+                  </kbd>
+                </p>
+              </div>
+              {
+                // Visibility component
+              }
+              <div className="flex items-center py-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="ml-auto hidden h-8 lg:flex"
+                    >
+                      <Settings2 />
+                      Vistas
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-full">
+                    <DropdownMenuLabel>Oculta/Muestra columnas</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {table
+                      .getAllColumns()
+                      .filter(
+                        (column) =>
+                          typeof column.accessorFn !== "undefined" && column.getCanHide()
                       )
-                    })}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      .map((column) => {
+                        return (
+                          <DropdownMenuCheckboxItem
+                            key={column.id}
+                            className="capitalize"
+                            checked={column.getIsVisible()}
+                            onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                          >
+                            {column.id}
+                          </DropdownMenuCheckboxItem>
+                        )
+                      })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </div>
           {
@@ -407,7 +407,7 @@ export function DataTable<TData, TValue>({
                     data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      < TableCell key={cell.id} className="text-md whitespace-normal break-all" style={{ width: cell.column.getSize() }}>
+                      < TableCell key={cell.id} className="text-md whitespace-normal" style={{ width: cell.column.getSize() }}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}

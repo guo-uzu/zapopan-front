@@ -1,6 +1,7 @@
 "use server"
 import { createClient } from "@/utils/supabase/client"
 import { auth } from "@clerk/nextjs/server";
+
 export const fetchData = async () => {
   const { userId } = await auth()
   if (!userId) throw new Error("User not founded")
@@ -24,10 +25,21 @@ export const fetchData = async () => {
       responsable_area_bitacora:area_id(name),
       colonia,
       channel_bitacora:channel_id(name),
-      social_network_bitacora:social_network(name)
+      social_network_bitacora:social_network_id(name)
     `)
     .eq("available", true)
     .order("created_at", { ascending: false })
   console.log(response)
   return response
+}
+
+export const getDataChartsGeneral = async () => {
+  const supabase = createClient()
+  const { userId } = await auth()
+  if (!userId) throw new Error("User not founded")
+  const { data } = await supabase
+    .from('bitacora_counts_by_day')          // or _v2
+    .select('day_date, day_label, count')    // if using the two-column version
+    .order('day_date', { ascending: true });
+  return data
 }
