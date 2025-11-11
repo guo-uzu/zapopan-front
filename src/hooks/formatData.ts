@@ -1,0 +1,1 @@
+export const formatData = (text: string) => text.toLowerCase().split(" ").join("_")

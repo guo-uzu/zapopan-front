@@ -29,7 +29,7 @@ const cuentas: DataCombox[] = [
 
 const canal: DataCombox[] = [
   {
-    value: "coment",
+    value: "comentarios",
     label: "Comentarios",
   },
   {
@@ -40,175 +40,175 @@ const canal: DataCombox[] = [
 
 const categoria: DataCombox[] = [
   {
-    value: "solicitud_informacion",
-    label: "Solicitud de información",
+    "value": "solicitud_de_información",
+    "label": "Solicitud de información"
   },
   {
-    value: "canalizacion_dependencia",
-    label: "Canalización a dependencia",
+    "value": "canalización_a_dependencia",
+    "label": "Canalización a dependencia"
   },
   {
-    value: "solicitudes_nuevas",
-    label: "Solicitudes nuevas",
+    "value": "solicitudes_nuevas",
+    "label": "Solicitudes nuevas"
   },
   {
-    value: "reportes_servicios",
-    label: "Reportes de servicios",
+    "value": "reportes_de_servicios",
+    "label": "Reportes de servicios"
   },
   {
-    value: "reporte_obras",
-    label: "Reportes de obras",
+    "value": "reportes_de_obras",
+    "label": "Reportes de obras"
   },
   {
-    value: "reporte_externos",
-    label: "Reportes externos",
+    "value": "reportes_externos",
+    "label": "Reportes externos"
   },
   {
-    value: "solicitudes_especiales",
-    label: "Solicitudes especiales",
+    "value": "solicitudes_especiales",
+    "label": "Solicitudes especiales"
   },
   {
-    value: "reporte_inspeccion_vigilancia",
-    label: "Reporte de inspección y vigilancia",
+    "value": "reporte_de_inspección_y_vigilancia",
+    "label": "Reporte de inspección y vigilancia"
   },
   {
-    value: "reportes_denuncias",
-    label: "Reportes y denuncias",
+    "value": "reportes_y_denuncias",
+    "label": "Reportes y denuncias"
   },
   {
-    value: "solicitud_empleo",
-    label: "Solicitud de empleo",
+    "value": "solicitud_de_empleo",
+    "label": "Solicitud de empleo"
   },
   {
-    value: "coyuntura",
-    label: "Coyuntura",
+    "value": "coyuntura",
+    "label": "Coyuntura"
   },
   {
-    value: "participacion_curso",
-    label: "Participación en curso",
+    "value": "participación_en_curso",
+    "label": "Participación en curso"
   },
   {
-    value: "solicitud_obra",
-    label: "Solicitud de obra",
+    "value": "solicitud_de_obra",
+    "label": "Solicitud de obra"
   },
   {
-    value: "otros",
-    label: "Otros",
-  },
+    "value": "otros",
+    "label": "Otros"
+  }
 ]
 
 const area: DataCombox[] = [
   {
-    value: "infraestructura_comercio",
-    label: "Infraestructura de comercio",
+    "value": "infraestructura_de_comercio",
+    "label": "Infraestructura de comercio"
   },
   {
-    value: "servicios_municipales",
-    label: "Servicios municipales",
+    "value": "servicios_municipales",
+    "label": "Servicios municipales"
   },
   {
-    value: "gestion_integral",
-    label: "Gestión integral",
+    "value": "gestión_integral",
+    "label": "Gestión integral"
   },
   {
-    value: "secretaria_ayuntamiento",
-    label: "Secretaría del ayuntamiento",
+    "value": "secretaría_del_ayuntamiento",
+    "label": "Secretaría del ayuntamiento"
   },
   {
-    value: "desarrollo_economico",
-    label: "Desarrollo económico",
+    "value": "desarrollo_económico",
+    "label": "Desarrollo económico"
   },
   {
-    value: "construccion_comunidad",
-    label: "Construcción comunidad",
+    "value": "construcción_comunidad",
+    "label": "Construcción comunidad"
   },
   {
-    value: "dif",
-    label: "DIF",
+    "value": "dif",
+    "label": "DIF"
   },
   {
-    value: "tesoreria",
-    label: "Tesorería",
+    "value": "tesorería",
+    "label": "Tesorería"
   },
   {
-    value: "cfe",
-    label: "CFE",
+    "value": "cfe",
+    "label": "CFE"
   },
   {
-    value: "siapa",
-    label: "SIAPA",
+    "value": "siapa",
+    "label": "SIAPA"
   },
   {
-    value: "siop",
-    label: "SIOP",
+    "value": "siop",
+    "label": "SIOP"
   },
   {
-    value: "otras_coordinaciones",
-    label: "Otras coordinaciones",
+    "value": "otras_coordinaciones",
+    "label": "Otras coordinaciones"
   },
   {
-    value: "otras_dependencias_estatales",
-    label: "Otras dependencias estatales",
+    "value": "otras_dependencias_estatales",
+    "label": "Otras dependencias estatales"
   },
   {
-    value: "presidencia",
-    label: "Presidencia",
+    "value": "presidencia",
+    "label": "Presidencia"
   },
   {
-    value: "guadalajara",
-    label: "Guadalajara",
+    "value": "guadalajara",
+    "label": "Guadalajara"
   },
   {
-    value: "inspeccion_vigilancia",
-    label: "Inspección y vigilancia",
+    "value": "inspección_y_vigilancia",
+    "label": "Inspección y vigilancia"
   },
   {
-    value: "pcyb",
-    label: "PCyB",
+    "value": "pcyb",
+    "label": "PCyB"
   },
   {
-    value: "cercania_ciudadana",
-    label: "Cercanía ciudadana",
+    "value": "cercanía_ciudadana",
+    "label": "Cercanía ciudadana"
   },
   {
-    value: "salud_zapopan",
-    label: "Salud Zapopan",
+    "value": "salud_zapopan",
+    "label": "Salud Zapopan"
   },
   {
-    value: "comisaria",
-    label: "Comisaría",
+    "value": "comisaría",
+    "label": "Comisaría"
   },
   {
-    value: "comude",
-    label: "COMUDE",
+    "value": "comude",
+    "label": "COMUDE"
   },
   {
-    value: "caec",
-    label: "CAEC (Boletos Charros)",
+    "value": "caec_(boletos_charros)",
+    "label": "CAEC (Boletos Charros)"
   },
   {
-    value: "sindicatura",
-    label: "Sindicatura",
+    "value": "sindicatura",
+    "label": "Sindicatura"
   },
   {
-    value: "administracion_inovacion_gubernamental",
-    label: "Administración e Innovación Gubernamental",
+    "value": "administración_e_innovación_gubernamental",
+    "label": "Administración e Innovación Gubernamental"
   },
   {
-    value: "amim",
-    label: "AMIM",
+    "value": "amim",
+    "label": "AMIM"
   },
   {
-    value: "cursos_parque_ninas_ninos",
-    label: "Cursos en el Parque de las niñas y  niños",
+    "value": "cursos_en_el_parque_de_las_niñas_y_niños",
+    "label": "Cursos en el Parque de las niñas y  niños"
   },
   {
-    value: "romeria",
-    label: "Romería",
+    "value": "romería",
+    "label": "Romería"
   },
   {
-    value: "contraloria_ciudadana",
-    label: "Contraloría ciudadana",
+    "value": "contraloría_ciudadana",
+    "label": "Contraloría ciudadana"
   }
 ]
 
@@ -231,7 +231,7 @@ const social_network: DataCombox[] = [
   { value: "tiktok", label: "Tik Tok" }
 ]
 
-export default function Form({defaultData}) {
+export default function Form({ defaultData }) {
   const { register, handleSubmit, control, reset } = useForm<Inputs>({
     defaultValues: defaultData
   })

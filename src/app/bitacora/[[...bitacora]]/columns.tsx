@@ -3,7 +3,7 @@
 import type { DateRange as RDPDateRange } from "react-day-picker";
 import { ColumnDef } from "@tanstack/react-table"
 import { Inputs } from "@/hooks/types"
-import { Pencil, Trash } from "lucide-react"
+import { Building, CircleUser, Inbox, ListRestart, MessageCircle, Pencil, Shield, SignalLow, SignalMedium, Siren, SquareCheckBig, SquareX, Trash, TriangleAlert } from "lucide-react"
 import { AlertDialog } from "@radix-ui/react-alert-dialog"
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { deleteRowBitacora } from "@/hooks/deleteRow"
@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { FaFacebookSquare } from "react-icons/fa";
 import { FaSquareXTwitter, FaSquareInstagram } from "react-icons/fa6";
 import { AiFillTikTok } from "react-icons/ai";
+import { formatData } from "@/hooks/formatData";
 
 
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
@@ -60,40 +61,39 @@ export const columns: ColumnDef<Inputs>[] = [
     id: "redes sociales",
     header: "Redes Sociales",
     cell: ({ getValue }) => {
-      console.log(getValue())
       switch (getValue()) {
         case "facebook":
           return (
             <div className="w-full flex items-center justify-center">
-            <Badge className='capitalize rounded-full border-none bg-blue-600/10 text-blue-600 focus-visible:ring-amber-600/20 focus-visible:outline-none'>
-              <FaFacebookSquare />
-              {getValue()}
-            </Badge>
+              <Badge className='capitalize w-full rounded-full border-none bg-blue-600/10 text-blue-600 focus-visible:ring-amber-600/20 focus-visible:outline-none'>
+                <FaFacebookSquare />
+                {getValue()}
+              </Badge>
             </div>
-            )
+          )
         case "x":
           return (
             <div className="w-full flex items-center justify-center">
-            <Badge className='capitalize rounded-full border-none bg-black/10 text-black focus-visible:ring-amber-600/20 focus-visible:outline-none text-uppercase'>
-              <FaSquareXTwitter/>
-              {getValue()}
-            </Badge>
+              <Badge className='capitalize w-full rounded-full border-none bg-black/10 text-black focus-visible:ring-amber-600/20 focus-visible:outline-none text-uppercase'>
+                <FaSquareXTwitter />
+                {getValue()}
+              </Badge>
             </div>
-            )
+          )
         case "instagram":
           return (
             <div className="w-full flex items-center justify-center">
-            <Badge className='capitalize border-transparent bg-gradient-to-r from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] [background-size:105%] bg-center text-white'>
-              <FaSquareInstagram />
-              {getValue()}
-            </Badge>
+              <Badge className='capitalize w-full border-transparent bg-[#ee2a7b]/10 text-[#ee2a7b]  bg-center '>
+                <FaSquareInstagram />
+                {getValue()}
+              </Badge>
             </div>
-            )
+          )
 
         case "tiktok":
           return (
             <div className="w-full flex items-center justify-center">
-              <Badge className='capitalize rounded-full border-none shadow-xl bg-black/10 text-black  focus-visible:outline-none'>
+              <Badge className='capitalize w-full rounded-full border-none shadow-xl bg-black/10 text-black  focus-visible:outline-none'>
                 <AiFillTikTok />
                 {getValue()}
               </Badge>
@@ -111,11 +111,25 @@ export const columns: ColumnDef<Inputs>[] = [
     accessorFn: (row) => row.account_bitacora?.name ?? "",
     id: "account name",
     header: "Cuenta",
-    cell: ({ row }) => {
-      if (row.getValue("account name") === "jjf") {
-        return <div className="px-4 rounded-md font-bold uppercase text-white bg-purple-400 text-center">{row.getValue("account name")}</div>
+    cell: ({ getValue }) => {
+      if (getValue() === "jjf") {
+        return (
+          <div className="w-full flex items-center justify-center">
+            <Badge className='w-full rounded-full border-none shadow-xl uppercase bg-purple-400/10 text-purple-400  focus-visible:outline-none'>
+              <CircleUser />
+              {getValue()}
+            </Badge>
+          </div>
+        )
       } else {
-        return <div className="px-4 rounded-md font-bold capitalize text-white text-center bg-orange-500">{row.getValue("account name")}</div>
+        return (
+          <div className="w-full flex items-center justify-center">
+            <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-orange-500/10 text-orange-500  focus-visible:outline-none'>
+              <Shield />
+              {getValue()}
+            </Badge>
+          </div>
+        )
       }
     },
     size: 150,
@@ -130,9 +144,23 @@ export const columns: ColumnDef<Inputs>[] = [
     header: "Canal",
     cell: ({ getValue }) => {
       if (getValue() === "Comentarios") {
-        return <div className="px-4 rounded-md capitalize bg-yellow-500 font-bold text-white text-center">{getValue()}</div>
+        return (
+          <div className="w-full flex items-center justify-center">
+            <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-yellow-500/10 text-yellow-500  focus-visible:outline-none'>
+              <MessageCircle />
+              {getValue()}
+            </Badge>
+          </div>
+        )
       } else {
-        return <div className="px-4 rounded-md capitalize text-white bg-indigo-500 font-bold text-center">{getValue()}</div>
+        return (
+          <div className="w-full flex items-center justify-center">
+            <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-indigo-500/10 text-indigo-500  focus-visible:outline-none'>
+              <Inbox />
+              {getValue()}
+            </Badge>
+          </div>
+        )
       }
     },
     size: 160,
@@ -180,35 +208,140 @@ export const columns: ColumnDef<Inputs>[] = [
     cell: ({ getValue }) => {
       switch (getValue()) {
         case "Solicitud de información":
-          return <div className={`${pillCSS} bg-violet-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-violet-500/10 text-violet-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Canalización a dependencia":
-          return <div className={`${pillCSS} bg-teal-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-teal-500/10 text-teal-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Solicitudes nuevas":
-          return <div className={`${pillCSS} bg-sky-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-sky-500/10 text-sky-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Reportes de servicios":
-          return <div className={`${pillCSS} bg-green-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-green-500/10 text-green-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Reportes de obras":
-          return <div className={`${pillCSS} bg-yellow-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-yellow-500/10 text-yellow-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Reportes externos":
-          return <div className={`${pillCSS} bg-orange-400`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-orange-400/10 text-orange-400 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Solicitudes especiales":
-          return <div className={`${pillCSS} bg-cyan-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-cyan-500/10 text-cyan-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Reporte de inspección y vigilancia":
-          return <div className={`${pillCSS} bg-gray-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-gray-500/10 text-gray-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Reportes y denuncias":
-          return <div className={`${pillCSS} bg-green-400`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-green-400/10 text-green-400 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Solicitud de empleo":
-          return <div className={`${pillCSS} bg-blue-800`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-blue-800/10 text-blue-800 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Coyuntura":
-          return <div className={`${pillCSS} bg-violet-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-violet-500/10 text-violet-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Participación en curso":
-          return <div className={`${pillCSS} bg-emerald-700`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-emerald-700/10 text-emerald-700 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Solicitud de obra":
-          return <div className={`${pillCSS} bg-fuchsia-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-fuchsia-500/10 text-fuchsia-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Otros":
-          return <div className={`${pillCSS} bg-red-400`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-red-400/10 text-red-400 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         default:
-          return <div className={`${pillCSS} bg-violet-500`}>{getValue()}</div>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-violet-500/10 text-violet-500 focus-visible:outline-none'>
+                <Siren />
+                {getValue()}
+              </Badge>
+            </div>
+          )
       }
     },
     size: 200,
@@ -232,61 +365,257 @@ export const columns: ColumnDef<Inputs>[] = [
     cell: ({ getValue }) => {
       switch (getValue()) {
         case "Infraestructura de comercio":
-          return <p className={`${pillCSS} bg-blue-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-400/10 text-blue-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Servicios municipales":
-          return <p className={`${pillCSS} bg-emerald-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-emerald-400/10 text-emerald-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Gestión integral":
-          return <p className={`${pillCSS} bg-sky-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-sky-400/10 text-sky-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Secretaría del ayuntamiento":
-          return <p className={`${pillCSS} bg-red-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-red-400/10 text-red-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Desarrollo económico":
-          return <p className={`${pillCSS} bg-orange-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-orange-400/10 text-orange-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Construcción comunidad":
-          return <p className={`${pillCSS} bg-purple-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-purple-400/10 text-purple-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "DIF":
-          return <p className={`${pillCSS} bg-yellow-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-yellow-400/10 text-yellow-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Tesorería":
-          return <p className={`${pillCSS} bg-amber-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-amber-400/10 text-amber-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "CFE":
-          return <p className={`${pillCSS} bg-gray-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-gray-400/10 text-gray-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "SIAPA":
-          return <p className={`${pillCSS} bg-rose-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-rose-400/10 text-rose-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "SIOP":
-          return <p className={`${pillCSS} bg-cyan-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-cyan-400/10 text-cyan-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Otras coordinaciones":
-          return <p className={`${pillCSS} bg-fuchsia-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-fuchsia-400/10 text-fuchsia-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Otras dependencias estatales":
-          return <p className={`${pillCSS} bg-indigo-400`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-indigo-400/10 text-indigo-400 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Presidencia":
-          return <p className={`${pillCSS} bg-rose-600`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-rose-600/10 text-rose-600 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Guadalajara":
-          return <p className={`${pillCSS} bg-blue-600`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-600/10 text-blue-600 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Inspección y vigilancia":
-          return <p className={`${pillCSS} bg-sky-600`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-sky-600/10 text-sky-600 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "PCyB":
-          return <p className={`${pillCSS} bg-yellow-600`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-yellow-600/10 text-yellow-600 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Cercanía ciudadana":
-          return <p className={`${pillCSS} bg-red-600`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-red-600/10 text-red-600 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Salud Zapopan":
-          return <p className={`${pillCSS} bg-green-600`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-green-600/10 text-green-600 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Comisaría":
-          return <p className={`${pillCSS} bg-sky-600`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-sky-600/10 text-sky-600 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "COMUDE":
-          return <p className={`${pillCSS} bg-amber-600`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-amber-600/10 text-amber-600 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "CAEC (Boletos Charros)":
-          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Sindicatura":
-          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Administración e Innovación Gubernamental":
-          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "AMIM":
-          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
-        case "Cursos en el Parque de las niñas y  niños":
-          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
+        case "Cursos en el Parque de las niñas y  niños":
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/1F0 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Romería":
-          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Contraloría ciudadana":
-          return <p className={`${pillCSS} bg-blue-700`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue()}
+              </Badge>
+            </div>
+          )
       }
     },
     size: 200,
@@ -307,11 +636,32 @@ export const columns: ColumnDef<Inputs>[] = [
     cell: ({ getValue }) => {
       switch (getValue()) {
         case "Alta":
-          return <p className={`${pillCSS} bg-red-300`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-red-500/10 text-red-500  focus-visible:outline-none'>
+                <SignalMedium />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Media":
-          return <p className={`${pillCSS} bg-yellow-300`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-yellow-500/10 text-yellow-500  focus-visible:outline-none'>
+                <SignalMedium />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Baja":
-          return <p className={`${pillCSS} bg-green-300`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-green-500/10 text-green-500  focus-visible:outline-none'>
+                <SignalLow />
+                {getValue()}
+              </Badge>
+            </div>
+          )
       }
     },
     size: 120,
@@ -325,11 +675,32 @@ export const columns: ColumnDef<Inputs>[] = [
     cell: ({ getValue }) => {
       switch (getValue()) {
         case "Resuelto":
-          return <p className={`${pillCSS} bg-green-500`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-green-500/10 text-green-500  focus-visible:outline-none'>
+                <SquareCheckBig />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "Pendiente":
-          return <p className={`${pillCSS} bg-yellow-500`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-yellow-500/10 text-yellow-500  focus-visible:outline-none'>
+                <TriangleAlert />
+                {getValue()}
+              </Badge>
+            </div>
+          )
         case "En proceso":
-          return <p className={`${pillCSS} bg-red-500`}>{getValue()}</p>
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-red-500/10 text-red-500  focus-visible:outline-none'>
+                <ListRestart />
+                {getValue()}
+              </Badge>
+            </div>
+          )
       }
     },
     size: 130,
@@ -373,21 +744,18 @@ export const columns: ColumnDef<Inputs>[] = [
       const handleClick = () => {
         console.log(row.original)
         const data = row.original
-        if(data.channel_bitacora === "Comentarios") {
-          row.original.channel_bitacora.name = "coments"
-        }
         table.options.meta.setDefaultData({
           username: data.username,
           account: data.account_bitacora.name,
-          channel: data.channel_bitacora.name,
+          channel: formatData(data.channel_bitacora.name),
           link: data.link,
-          category: data.category,
-          area_responsable: data.responsable_area_bitacora.name,
+          category: formatData(data.category_bitacora.name),
+          area_responsable: formatData(data.responsable_area_bitacora.name),
           description: data.description,
           colonia: data.description,
-          social_network: data.social_network_bitacora.name,
-          priority: data.priority_bitacora.name,
-          status: data.status_bitacora.name,
+          social_network: formatData(data.social_network_bitacora.name),
+          priority: formatData(data.priority_bitacora.name),
+          status: formatData(data.status_bitacora.name),
           direction: data.direction,
           folio: data.folio,
           observations: data.observations,
@@ -397,6 +765,9 @@ export const columns: ColumnDef<Inputs>[] = [
       return (
         <div className="w-full">
           <div className="w-full flex items-center justify-center gap-4">
+            <button onClick={handleClick} className="p-1 cursor-pointer bg-green-500 rounded-md">
+              <Pencil className="text-white" />
+            </button>
             <button className="p-1 cursor-pointer bg-red-500 rounded-md">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -415,9 +786,6 @@ export const columns: ColumnDef<Inputs>[] = [
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-            </button>
-            <button onClick={handleClick} className="p-1 cursor-pointer bg-green-500 rounded-md">
-              <Pencil className="text-white" />
             </button>
           </div>
         </div>
