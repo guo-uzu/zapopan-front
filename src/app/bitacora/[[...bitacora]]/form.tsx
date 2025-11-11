@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Label } from "@/components/ui/label"
 import { Input } from '@/components/ui/input'
 import { SelectItem, SelectContent, Select, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -231,8 +231,10 @@ const social_network: DataCombox[] = [
   { value: "tiktok", label: "Tik Tok" }
 ]
 
-export default function Form() {
-  const { register, handleSubmit, control, reset } = useForm<Inputs>()
+export default function Form({defaultData}) {
+  const { register, handleSubmit, control, reset } = useForm<Inputs>({
+    defaultValues: defaultData
+  })
 
   const saveData: SubmitHandler<Inputs> = async (dataForm) => {
     toast.promise(sendDataSupabase(dataForm), {

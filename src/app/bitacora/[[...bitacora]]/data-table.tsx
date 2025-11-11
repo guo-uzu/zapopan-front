@@ -62,7 +62,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
-
+  
   const { userId, isLoaded } = useAuth()
   const supabase = createClient()
   const [dataFetch, setDataFetch] = useState<TData[]>([])
@@ -70,6 +70,11 @@ export function DataTable<TData, TValue>({
   const [globalFilter, setGlobalFilter] = useState<any>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFilterState>([])
   const [open, setOpen] = useState(false)
+  const [defaultData, setDefaultData] = useState({})
+
+  const handleOpenForm = () => {
+     setOpen(true)
+  }
 
   const table = useReactTable({
     data: dataFetch,
@@ -83,15 +88,18 @@ export function DataTable<TData, TValue>({
     debugTable: true,
     debugHeaders: true,
     debugColumns: true,
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     state: {
       columnVisibility,
       globalFilter,
       columnFilters
     },
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnFiltersChange: setColumnFilters
+    meta: {
+      handleOpenForm,
+      setDefaultData
+    }
   })
-  console.log(table.getState().columnFilters)
   // handler Command Form
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -103,7 +111,6 @@ export function DataTable<TData, TValue>({
     document.addEventListener("keydown", down)
     return () => document.removeEventListener("keydown", down)
   }, [])
-
 
   // Fetch data
   useEffect(() => {
@@ -445,9 +452,14 @@ export function DataTable<TData, TValue>({
           </div>
         </CardContent>
       </Card >
-      <Sheet open={open} onOpenChange={setOpen} >
+      <Sheet open={open} onOpenChange={
+        (isOpen) => {
+          setOpen(isOpen)
+          if(!isOpen) setEditRowData(null)
+        }
+      } >
         <SheetContent side="right" className="overflow-y-scroll overflow-x-hidden max-w-[40rem]!">
-          <Form />
+          <Form defaultData={defaultData}/>
         </SheetContent>
       </Sheet>
     </>

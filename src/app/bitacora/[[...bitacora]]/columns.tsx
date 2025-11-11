@@ -64,25 +64,35 @@ export const columns: ColumnDef<Inputs>[] = [
       switch (getValue()) {
         case "facebook":
           return (
+            <div className="w-full flex items-center justify-center">
             <Badge className='capitalize rounded-full border-none bg-blue-600/10 text-blue-600 focus-visible:ring-amber-600/20 focus-visible:outline-none'>
               <FaFacebookSquare />
               {getValue()}
-            </Badge>)
+            </Badge>
+            </div>
+            )
         case "x":
           return (
+            <div className="w-full flex items-center justify-center">
             <Badge className='capitalize rounded-full border-none bg-black/10 text-black focus-visible:ring-amber-600/20 focus-visible:outline-none text-uppercase'>
-              <FaSquareXTwitter />
+              <FaSquareXTwitter/>
               {getValue()}
-            </Badge>)
+            </Badge>
+            </div>
+            )
         case "instagram":
           return (
+            <div className="w-full flex items-center justify-center">
             <Badge className='capitalize border-transparent bg-gradient-to-r from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] [background-size:105%] bg-center text-white'>
               <FaSquareInstagram />
               {getValue()}
-            </Badge>)
+            </Badge>
+            </div>
+            )
+
         case "tiktok":
           return (
-            <div className="w-full mx-auto">
+            <div className="w-full flex items-center justify-center">
               <Badge className='capitalize rounded-full border-none shadow-xl bg-black/10 text-black  focus-visible:outline-none'>
                 <AiFillTikTok />
                 {getValue()}
@@ -351,7 +361,7 @@ export const columns: ColumnDef<Inputs>[] = [
     accessorKey: "functions",
     header: "Edita/Elimina",
     maxSize: 450,
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const deleteRowBitacoraHandler = async (id: string) => {
         toast.promise(deleteRowBitacora(id), {
           loading: "Eliminando registro...",
@@ -359,6 +369,30 @@ export const columns: ColumnDef<Inputs>[] = [
           error: "Error eliminado este registro, intente nuevamente más tarde.",
           position: "top-center"
         })
+      }
+      const handleClick = () => {
+        console.log(row.original)
+        const data = row.original
+        if(data.channel_bitacora === "Comentarios") {
+          row.original.channel_bitacora.name = "coments"
+        }
+        table.options.meta.setDefaultData({
+          username: data.username,
+          account: data.account_bitacora.name,
+          channel: data.channel_bitacora.name,
+          link: data.link,
+          category: data.category,
+          area_responsable: data.responsable_area_bitacora.name,
+          description: data.description,
+          colonia: data.description,
+          social_network: data.social_network_bitacora.name,
+          priority: data.priority_bitacora.name,
+          status: data.status_bitacora.name,
+          direction: data.direction,
+          folio: data.folio,
+          observations: data.observations,
+        })
+        table.options.meta.handleOpenForm()
       }
       return (
         <div className="w-full">
@@ -382,7 +416,7 @@ export const columns: ColumnDef<Inputs>[] = [
                 </AlertDialogContent>
               </AlertDialog>
             </button>
-            <button className="p-1 cursor-pointer bg-green-500 rounded-md">
+            <button onClick={handleClick} className="p-1 cursor-pointer bg-green-500 rounded-md">
               <Pencil className="text-white" />
             </button>
           </div>
