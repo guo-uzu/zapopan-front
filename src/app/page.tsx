@@ -10,13 +10,11 @@ import { Separator } from "@/components/ui/separator"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
-import { useUser } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import { getDataChartsGeneral } from "@/hooks/fetch-data"
 
 export default function Home() {
   const [generalChartData, setGeneralChartData] = useState<any>([])
-  const { user } = useUser();
   const supabase = createClient()
   const handleFetchData = async () => {
     const data = await getDataChartsGeneral()
@@ -63,7 +61,7 @@ export default function Home() {
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="bg-muted/50 aspect-video rounded-xl">
               <span className="">Bienvenid@, </span>
-              {user?.firstName} {" "} {user?.lastName}
+                
             </div>
             <div className="bg-muted/50 aspect-video rounded-xl">
               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">

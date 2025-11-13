@@ -1,38 +1,55 @@
-
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { type NextRequest, NextResponse } from "next/server";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { type NextRequest, NextResponse } from 'next/server'
 
 export const createClient = (request: NextRequest) => {
   // Create an unmodified response
-  let supabaseResponse = NextResponse.next({
+  let response = NextResponse.next({
     request: {
       headers: request.headers,
     },
-  });
+  })
 
   const supabase = createServerClient(
-    supabaseUrl!,
-    supabaseKey!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
+        get(name: string) {
+          return request.cookies.get(name)?.value
         },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
+        set(name: string, value: string, options: CookieOptions) {
+          // If the cookie is set, update the request cookies
+          request.cookies.set({
+            name,
+            value,
+            ...options,
           })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
+          // And update the response cookies
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+        },
+        remove(name: string, options: CookieOptions) {
+          // If the cookie is removed, update the request cookies
+          request.cookies.delete({
+            name,
+            ...options,
+          })
+          // And update the response cookies
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
         },
       },
-    },
-  );
+    }
+  )
 
-  return supabaseResponse
-};
+  // We return both the client and the response.
+  // The client will be used to check auth status.
+  // The response will be returned from the main middleware.
+  return { supabase, response }
+}
