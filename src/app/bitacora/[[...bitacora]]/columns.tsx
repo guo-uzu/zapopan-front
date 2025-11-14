@@ -42,15 +42,13 @@ const dateRangeFilterFn: import('@tanstack/react-table').FilterFn<any> =
 
 
 
-const pillCSS = "px-4 rounded-md font-bold text-white text-center"
-
 export const columns: ColumnDef<Inputs>[] = [
   {
-    accessorFn: (row) => `${row.users_clerk?.first_name} ${row.users_clerk?.last_name}`,
+    accessorFn: (row) => `${row.users.full_name}`,
     id: "user name",
     header: "Nombre",
-    cell: ({ row }) => {
-      return <p>{row.getValue("user name")}</p>
+    cell: ({ getValue }) => {
+      return <p>{getValue()}</p>
     },
     size: 200,
     minSize: 150,
@@ -791,5 +789,6 @@ export const columns: ColumnDef<Inputs>[] = [
         </div>
       )
     }
-  }
+  },
+
 ]

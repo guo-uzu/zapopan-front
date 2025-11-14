@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
 
   // 4. Define all routes that are "public" (accessible to logged-out users)
   //    According to your request, this is '/sign-in' and '/bitacora'.
-  const publicRoutes = ['/sign-in', '/bitacora', '/auth/callback']
+  const publicRoutes = ['/sign-in', '/auth/callback']
 
   // 5. Check if the current route is in our public list
   const isPublicRoute = publicRoutes.some((route) =>

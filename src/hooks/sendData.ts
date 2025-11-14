@@ -1,14 +1,14 @@
 "use server"
-import { auth } from "@clerk/nextjs/server";
-import { createClient } from "@/utils/supabase/client"
+import { createClient } from "@/utils/supabase/server"
 import { Inputs } from "@/hooks/types";
 
 export const sendDataSupabase = async (formData: Inputs) => {
-  const { userId } = await auth()
-  if (!userId) throw new Error("User not founded")
   const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error("User not founded")
+
   const payload = {
-    user_id: userId,
+    user_id: user.id,
     account_id: mustMap(accountMap, formData.account, 'account'),
     area_id: mustMap(areaMap, formData.area_responsable, 'area_responsable'),
     category_id: mustMap(categoryMap, formData.category, 'category'),

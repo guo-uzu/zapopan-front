@@ -1,6 +1,5 @@
 "use client"
 import { useEffect, useState } from "react"
-import { useAuth } from "@clerk/nextjs"
 import { createClient } from "@/utils/supabase/client"
 import Form from "./form"
 
@@ -62,9 +61,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
-  
-  const { userId, isLoaded } = useAuth()
+
   const supabase = createClient()
+  const [displayName, setDisplayName] = useState(null)
   const [dataFetch, setDataFetch] = useState<TData[]>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState<any>([])
@@ -73,7 +72,7 @@ export function DataTable<TData, TValue>({
   const [defaultData, setDefaultData] = useState({})
 
   const handleOpenForm = () => {
-     setOpen(true)
+    setOpen(true)
   }
 
   const table = useReactTable({
@@ -122,9 +121,48 @@ export function DataTable<TData, TValue>({
     if (data) setDataFetch(data as TData[])
   }
 
+  useEffect(() => {
+    // Create an async function inside the effect
+    const fetchUserData = async () => {
+      try {
+        // --- STEP 1: Get the Auth User ---
+        // This gets the user's session from the browser's cookies
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+        if (authError) throw authError
+        if (!user) return // User is not logged in
+
+        // We have the user! Now, let's get their profile.
+        // --- STEP 2: Get the Profile Data ---
+        // We use the user.id to find the matching row in our 'profiles' table
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('full_name, department') // Get the columns you need
+          .eq('id', user.id) // Find the row where 'id' matches the auth user's id
+          .single() // We expect only one row, so .single() is perfect
+
+        if (profileError) throw profileError
+
+        // --- STEP 3: Set the Data ---
+        if (profile && profile.full_name) {
+          // If they have a profile AND a name, use that
+          setDisplayName(profile.full_name)
+        } else {
+          // Otherwise, just fall back to their email
+          setDisplayName(user.email)
+        }
+
+      } catch (error) {
+        console.error('Error fetching user data:', error.message)
+      }
+    }
+
+    // Call the function
+    fetchUserData()
+  }, [supabase])
+
   // Realtime updates
   useEffect(() => {
-    if (!isLoaded || !userId) return
     const subscription = supabase
       .channel("changes")
       .on("postgres_changes", {
@@ -139,7 +177,7 @@ export function DataTable<TData, TValue>({
     return () => {
       supabase.removeChannel(subscription)
     }
-  }, [isLoaded, userId])
+  }, [])
 
   const getValueFilter = (filterName: string) => (table.getState().columnFilters.find(f => f.id === filterName)?.value as string) ?? ""
   const onChangeFilter = (filterName: string, value: string) => {
@@ -455,11 +493,11 @@ export function DataTable<TData, TValue>({
       <Sheet open={open} onOpenChange={
         (isOpen) => {
           setOpen(isOpen)
-          if(!isOpen) setEditRowData(null)
+          if (!isOpen) setEditRowData(null)
         }
       } >
         <SheetContent side="right" className="overflow-y-scroll overflow-x-hidden max-w-[40rem]!">
-          <Form defaultData={defaultData}/>
+          <Form defaultData={defaultData} />
         </SheetContent>
       </Sheet>
     </>
