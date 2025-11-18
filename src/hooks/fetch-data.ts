@@ -1,10 +1,10 @@
 import { createClient } from "@/utils/supabase/client"
 
-export const fetchData = async () => {
+export const fetchData = async (id?: string | null) => {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
-  const response = await supabase
+  let query = supabase
     .from("bitacora")
     .select(`
       id,
@@ -27,7 +27,14 @@ export const fetchData = async () => {
       social_network_bitacora:social_network_id(name)
     `)
     .eq("available", true)
-    .order("created_at", { ascending: false })
+
+  if (id) {
+    query = query.eq("id", id)
+  }
+
+  const response = await query.order("created_at", { ascending: false })
+  console.log(id)
+  console.log(response)
   return response
 }
 

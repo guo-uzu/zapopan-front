@@ -3,15 +3,9 @@
 import * as React from "react"
 import {
   AudioWaveform,
-  BookOpen,
   Bot,
-  Cat,
   Command,
-  Frame,
   GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
   SquareTerminal,
 } from "lucide-react"
 
@@ -23,12 +17,9 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
+  SidebarRail
 } from "@/components/ui/sidebar"
-import { timeLog } from "console"
-import { title } from "process"
 
-// This is sample data.
 const data = {
   teams: [
     {

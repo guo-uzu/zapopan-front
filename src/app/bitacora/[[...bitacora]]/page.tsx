@@ -1,10 +1,15 @@
+"use client"
 import { columns } from "./columns"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@radix-ui/react-separator"
 import { DataTable } from "./data-table"
+import { useSearchParams } from "next/navigation"
+import { useEffect } from "react"
 
-export default async function DemoPage() {
+export default function Bitacora() {
+  const searchParams = useSearchParams()
+  const search = searchParams.get("id")
 
   return (
     <SidebarProvider className="">
@@ -20,7 +25,7 @@ export default async function DemoPage() {
           </div>
         </header>
         <div className="px-4">
-          <DataTable columns={columns} />
+          <DataTable columns={columns} idFilter={search} />
         </div>
       </SidebarInset>
     </SidebarProvider>

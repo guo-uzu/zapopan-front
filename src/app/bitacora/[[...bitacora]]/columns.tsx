@@ -3,16 +3,17 @@
 import type { DateRange as RDPDateRange } from "react-day-picker";
 import { ColumnDef } from "@tanstack/react-table"
 import { Inputs } from "@/hooks/types"
-import { Building, Circle, CircleDashed, CircleUser, Inbox, ListRestart, MessageCircle, Pencil, Shield, SignalLow, SignalMedium, Siren, SquareCheckBig, SquareX, Trash, TriangleAlert } from "lucide-react"
+import { Building, CircleUser, Inbox, ListRestart, MessageCircle, Pencil, Shield, SignalLow, SignalMedium, Siren, SquareCheckBig, Trash, TriangleAlert } from "lucide-react"
 import { AlertDialog } from "@radix-ui/react-alert-dialog"
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { deleteRowBitacora } from "@/hooks/deleteRow"
-import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge";
 import { FaFacebookSquare } from "react-icons/fa";
 import { FaSquareXTwitter, FaSquareInstagram } from "react-icons/fa6";
 import { AiFillTikTok } from "react-icons/ai";
 import { formatData } from "@/hooks/formatData";
+import { toast } from 'sonner'
+import Share from "@/components/columns/share-btn";
 
 
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
@@ -759,7 +760,7 @@ export const columns: ColumnDef<Inputs>[] = [
           observations: data.observations,
         })
         table.options.meta.handleToEdit(),
-        table.options.meta.handleOpenForm()
+          table.options.meta.handleOpenForm()
       }
       return (
         <div className="w-full">
@@ -795,29 +796,9 @@ export const columns: ColumnDef<Inputs>[] = [
     accessorKey: "shared",
     id: "makeItPublic",
     header: "Público",
-    cell: ({ getValue }) => {
-      if (!getValue()) {
-        return (
-          <div className="w-full flex items-center justify-center">
-            <Badge className='cursor-pointer w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-black/10 text-black focus-visible:outline-none'>
-              <CircleDashed className="min-w-[20px]" />
-              Privado
-            </Badge>
-          </div>
-        )
-      }
-      return (
-        <div className="w-full flex items-center justify-center">
-          <Badge className='cursor-pointer w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-green-700/10 text-green-700 focus-visible:outline-none'>
-            <Circle className="min-w-[20px]" />
-            Compartido
-          </Badge>
-        </div>
-      )
-    },
+    cell: ({ row }) => <Share id={row.original.id} />,
     size: 130,
     minSize: 130,
     maxSize: 130
   },
-
 ]

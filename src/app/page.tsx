@@ -14,16 +14,19 @@ import { useEffect, useState } from "react"
 import { getDataChartsGeneral } from "@/hooks/fetch-data"
 
 export default function Home() {
+
   const [generalChartData, setGeneralChartData] = useState<any>([])
+  const [userName, setUserName] = useState<string>("")
+
   const supabase = createClient()
   const handleFetchData = async () => {
     const data = await getDataChartsGeneral()
     if (data) setGeneralChartData(data)
   }
-
   useEffect(() => {
     handleFetchData()
-  }, [])
+
+  }, [supabase])
 
   const chartData = [
     { month: "January", desktop: 186, mobile: 80 },
@@ -61,7 +64,7 @@ export default function Home() {
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="bg-muted/50 aspect-video rounded-xl">
               <span className="">Bienvenid@, </span>
-                
+
             </div>
             <div className="bg-muted/50 aspect-video rounded-xl">
               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">

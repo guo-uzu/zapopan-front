@@ -39,6 +39,7 @@ import { Button } from "@/components/ui/button"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
+  idFilter?: string | null
 }
 import {
   Sheet,
@@ -60,10 +61,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 export function DataTable<TData, TValue>({
   columns,
-}: DataTableProps<TData, TValue>) {
-
+  idFilter
+}: DataTableProps<TData, TValue>,) {
   const supabase = createClient()
-  const [displayName, setDisplayName] = useState(null)
   const [dataFetch, setDataFetch] = useState<TData[]>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState<any>([])
@@ -119,52 +119,12 @@ export function DataTable<TData, TValue>({
   // Fetch data
   useEffect(() => {
     handleFetchData()
-  }, [])
+  }, [idFilter])
 
   const handleFetchData = async () => {
-    const { data } = await fetchData()
+    const { data } = await fetchData(idFilter)
     if (data) setDataFetch(data as TData[])
   }
-
-  useEffect(() => {
-    // Create an async function inside the effect
-    const fetchUserData = async () => {
-      try {
-        // --- STEP 1: Get the Auth User ---
-        // This gets the user's session from the browser's cookies
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-        if (authError) throw authError
-        if (!user) return // User is not logged in
-
-        // We have the user! Now, let's get their profile.
-        // --- STEP 2: Get the Profile Data ---
-        // We use the user.id to find the matching row in our 'profiles' table
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('full_name, department') // Get the columns you need
-          .eq('id', user.id) // Find the row where 'id' matches the auth user's id
-          .single() // We expect only one row, so .single() is perfect
-
-        if (profileError) throw profileError
-
-        // --- STEP 3: Set the Data ---
-        if (profile && profile.full_name) {
-          // If they have a profile AND a name, use that
-          setDisplayName(profile.full_name)
-        } else {
-          // Otherwise, just fall back to their email
-          setDisplayName(user.email)
-        }
-
-      } catch (error) {
-        console.error('Error fetching user data:', error.message)
-      }
-    }
-
-    // Call the function
-    fetchUserData()
-  }, [supabase])
 
   // Realtime updates
   useEffect(() => {
@@ -227,7 +187,7 @@ export function DataTable<TData, TValue>({
                     <SelectItem value="all">Todos</SelectItem>
                     {
                       ColumnsBitacoraOpts.account.map((e) => (
-                        <SelectItem value={e.value}>{e.value}</SelectItem>
+                        <SelectItem key={e.id} value={e.value}>{e.value}</SelectItem>
                       ))
                     }
                   </SelectContent>
@@ -246,7 +206,7 @@ export function DataTable<TData, TValue>({
                     <SelectItem value="all">Todos</SelectItem>
                     {
                       ColumnsBitacoraOpts.area_responsable.map((e) => (
-                        <SelectItem value={e.value}>{e.value}</SelectItem>
+                        <SelectItem key={e.id} value={e.value}>{e.value}</SelectItem>
                       ))
                     }
                   </SelectContent>
@@ -264,7 +224,7 @@ export function DataTable<TData, TValue>({
                     <SelectItem value="all">Todos</SelectItem>
                     {
                       ColumnsBitacoraOpts.channel.map((e) => (
-                        <SelectItem value={e.value}>{e.value}</SelectItem>
+                        <SelectItem key={e.id} value={e.value}>{e.value}</SelectItem>
                       ))
                     }
                   </SelectContent>
@@ -282,7 +242,7 @@ export function DataTable<TData, TValue>({
                     <SelectItem value="all">Todos</SelectItem>
                     {
                       ColumnsBitacoraOpts.category.map((e) => (
-                        <SelectItem value={e.value}>{e.value}</SelectItem>
+                        <SelectItem key={e.id} value={e.value}>{e.value}</SelectItem>
                       ))
                     }
                   </SelectContent>
@@ -300,7 +260,7 @@ export function DataTable<TData, TValue>({
                     <SelectItem value="all">Todos</SelectItem>
                     {
                       ColumnsBitacoraOpts.priority.map((e) => (
-                        <SelectItem value={e.value}>{e.value}</SelectItem>
+                        <SelectItem key={e.id} value={e.value}>{e.value}</SelectItem>
                       ))
                     }
                   </SelectContent>
@@ -318,7 +278,7 @@ export function DataTable<TData, TValue>({
                     <SelectItem value="all">Todos</SelectItem>
                     {
                       ColumnsBitacoraOpts.status.map((e) => (
-                        <SelectItem value={e.value}>{e.value}</SelectItem>
+                        <SelectItem key={e.id} value={e.value}>{e.value}</SelectItem>
                       ))
                     }
                   </SelectContent>
@@ -498,11 +458,11 @@ export function DataTable<TData, TValue>({
       <Sheet open={open} onOpenChange={
         (isOpen) => {
           setOpen(isOpen)
-          if(!isOpen && toEdit) {
+          if (!isOpen && toEdit) {
             handleToEdit()
             setDefaultData({})
           }
-        } 
+        }
       } >
         <SheetContent side="right" className="overflow-y-scroll overflow-x-hidden max-w-[40rem]!">
           <Form toEdit={toEdit} defaultData={defaultData} />
