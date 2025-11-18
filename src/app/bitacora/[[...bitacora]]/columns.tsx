@@ -3,7 +3,7 @@
 import type { DateRange as RDPDateRange } from "react-day-picker";
 import { ColumnDef } from "@tanstack/react-table"
 import { Inputs } from "@/hooks/types"
-import { Building, CircleUser, Inbox, ListRestart, MessageCircle, Pencil, Shield, SignalLow, SignalMedium, Siren, SquareCheckBig, SquareX, Trash, TriangleAlert } from "lucide-react"
+import { Building, Circle, CircleDashed, CircleUser, Inbox, ListRestart, MessageCircle, Pencil, Shield, SignalLow, SignalMedium, Siren, SquareCheckBig, SquareX, Trash, TriangleAlert } from "lucide-react"
 import { AlertDialog } from "@radix-ui/react-alert-dialog"
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { deleteRowBitacora } from "@/hooks/deleteRow"
@@ -740,9 +740,9 @@ export const columns: ColumnDef<Inputs>[] = [
         })
       }
       const handleClick = () => {
-        console.log(row.original)
         const data = row.original
         table.options.meta.setDefaultData({
+          id: data.id,
           username: data.username,
           account: data.account_bitacora.name,
           channel: formatData(data.channel_bitacora.name),
@@ -758,6 +758,7 @@ export const columns: ColumnDef<Inputs>[] = [
           folio: data.folio,
           observations: data.observations,
         })
+        table.options.meta.handleToEdit(),
         table.options.meta.handleOpenForm()
       }
       return (
@@ -789,6 +790,34 @@ export const columns: ColumnDef<Inputs>[] = [
         </div>
       )
     }
+  },
+  {
+    accessorKey: "shared",
+    id: "makeItPublic",
+    header: "Público",
+    cell: ({ getValue }) => {
+      if (!getValue()) {
+        return (
+          <div className="w-full flex items-center justify-center">
+            <Badge className='cursor-pointer w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-black/10 text-black focus-visible:outline-none'>
+              <CircleDashed className="min-w-[20px]" />
+              Privado
+            </Badge>
+          </div>
+        )
+      }
+      return (
+        <div className="w-full flex items-center justify-center">
+          <Badge className='cursor-pointer w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-green-700/10 text-green-700 focus-visible:outline-none'>
+            <Circle className="min-w-[20px]" />
+            Compartido
+          </Badge>
+        </div>
+      )
+    },
+    size: 130,
+    minSize: 130,
+    maxSize: 130
   },
 
 ]

@@ -27,12 +27,51 @@ export const sendDataSupabase = async (formData: Inputs) => {
 
   }
   const { error } = await supabase.from("bitacora").insert(payload)
-
   if (error) {
     console.log("error bitacora insert", error)
     throw new Error("DB insert failed")
   }
   return { ok: true }
+}
+
+export const updateDataSupabase = async (formData: Inputs) => {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error("User not founded")
+
+  const payload = {
+    user_id: user.id,
+    account_id: mustMap(accountMap, formData.account, 'account'),
+    area_id: mustMap(areaMap, formData.area_responsable, 'area_responsable'),
+    category_id: mustMap(categoryMap, formData.category, 'category'),
+    channel_id: mustMap(chanelMap, formData.channel, 'channel'),
+    priority_id: mustMap(priorityMap, formData.priority, 'priority'),
+    status_id: mustMap(statusMap, formData.status, 'status'),
+    colonia: formData.colonia || null,
+    description: formData.description,
+    direction: formData.direction || null,
+    link: formData.link || null,
+    observations: formData.observations || null,
+    created_at: new Date().toISOString(),
+    username: formData.username,
+    folio: formData.folio || null,
+    social_network_id: mustMap(socialNetworkMap, formData.social_network, 'social_network'),
+  }
+  console.log(formData.id)
+  const { error } = await supabase.from("bitacora").update(payload).eq("id", formData.id)
+  if (error) {
+    console.log("error bitacora updated", error)
+    throw new Error("DB insert failed")
+  }
+  return { ok: true }
+}
+
+export const shareRow = async (formData: Inputs) => {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error("User not founded")
+    console.log(":)")
+    return { ok: true }
 }
 
 function mustMap<T extends string>(map: Record<T, number>, key: T, field: string) {

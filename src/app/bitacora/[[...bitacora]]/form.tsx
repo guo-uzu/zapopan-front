@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Inputs } from '@/hooks/types'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
-import { sendDataSupabase } from '@/hooks/sendData'
+import { sendDataSupabase, updateDataSupabase } from '@/hooks/sendData'
 import { toast } from 'sonner'
 0
 interface DataCombox {
@@ -231,21 +231,34 @@ const social_network: DataCombox[] = [
   { value: "tiktok", label: "Tik Tok" }
 ]
 
-export default function Form({ defaultData }) {
+export default function Form({ defaultData, toEdit }) {
   const { register, handleSubmit, control, reset } = useForm<Inputs>({
     defaultValues: defaultData
   })
 
   const saveData: SubmitHandler<Inputs> = async (dataForm) => {
-    toast.promise(sendDataSupabase(dataForm), {
-      loading: "Enviando datos...",
+    if(!toEdit) {
+      toast.promise(sendDataSupabase(dataForm), {
+        loading: "Enviando datos...",
+        success: () => {
+          reset()
+          return "Datos enviados correctamente!"
+        },
+        error: "Error enviando datos, intente nuevamente",
+        position: "top-center"
+      })
+      return
+    }
+    toast.promise(updateDataSupabase(dataForm), {
+      loading: "Actualizando datos...",
       success: () => {
         reset()
-        return "Datos enviados correctamente!"
+        return "Datos actualizados correctamente!"
       },
-      error: "Error enviando datos, intente nuevamente",
+      error: "Error actualizando datos, intente nuevamente",
       position: "top-center"
     })
+    return
   }
 
   return (
@@ -448,7 +461,12 @@ export default function Form({ defaultData }) {
               <Textarea {...register("observations")} id='observations' name='observations' placeholder='Escribe las observaciones y comentarios aquí...' />
             </div>
             <div className='grid gap-3'>
+              {
+                toEdit ?
+              <Button type='submit' className='w-full'>Actualizar</Button>
+                :
               <Button type='submit' className='w-full'>Guardar</Button>
+              }
             </div>
           </div>
         </form>

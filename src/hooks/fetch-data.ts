@@ -8,6 +8,7 @@ export const fetchData = async () => {
     .from("bitacora")
     .select(`
       id,
+      shared,
       users:user_id(full_name),
       account_bitacora:account_id(name),
       created_at,

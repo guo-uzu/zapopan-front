@@ -70,9 +70,13 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFilterState>([])
   const [open, setOpen] = useState(false)
   const [defaultData, setDefaultData] = useState({})
+  const [toEdit, setToEdit] = useState<boolean>(false)
 
   const handleOpenForm = () => {
     setOpen(true)
+  }
+  const handleToEdit = () => {
+    setToEdit(!toEdit)
   }
 
   const table = useReactTable({
@@ -96,7 +100,8 @@ export function DataTable<TData, TValue>({
     },
     meta: {
       handleOpenForm,
-      setDefaultData
+      setDefaultData,
+      handleToEdit,
     }
   })
   // handler Command Form
@@ -493,11 +498,14 @@ export function DataTable<TData, TValue>({
       <Sheet open={open} onOpenChange={
         (isOpen) => {
           setOpen(isOpen)
-          if (!isOpen) setEditRowData(null)
-        }
+          if(!isOpen && toEdit) {
+            handleToEdit()
+            setDefaultData({})
+          }
+        } 
       } >
         <SheetContent side="right" className="overflow-y-scroll overflow-x-hidden max-w-[40rem]!">
-          <Form defaultData={defaultData} />
+          <Form toEdit={toEdit} defaultData={defaultData} />
         </SheetContent>
       </Sheet>
     </>
