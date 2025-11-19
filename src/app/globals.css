@@ -121,12 +121,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-
-@font-face {
-  font-family: Oswald;
-  font-style: normal;
-  font-weight: 200 700;
-  font-display: swap;
-  src: url("/fonts/BerkshireSwash.ttf") format("ttf");
-}

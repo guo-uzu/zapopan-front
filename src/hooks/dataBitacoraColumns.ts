@@ -68,4 +68,10 @@ export const ColumnsBitacoraOpts = {
         { id: "en_proceso", value: "En Proceso" },
         { id: "resuelto", value: "Resuelto" },
     ],
+    social_network: [
+        {id: "x", value: "X"},
+        {id: "tiktok", value: "Tiktok"},
+        {id: "instagram", value: "Instagram"},
+        {id: "facebook", value: "Facebook"},
+    ]
 };

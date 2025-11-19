@@ -8,25 +8,56 @@ import { createClient } from "@/utils/supabase/client"
 
 import { Separator } from "@/components/ui/separator"
 import { AppSidebar } from "@/components/app-sidebar"
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useEffect, useState } from "react"
-import { getDataChartsGeneral } from "@/hooks/fetch-data"
+import { getDataChartsGeneral, getPendientesUser } from "@/hooks/fetch-data"
 
 export default function Home() {
 
   const [generalChartData, setGeneralChartData] = useState<any>([])
-  const [userName, setUserName] = useState<string>("")
+  const [userData, setUserData] = useState<string>("")
+  const [pendientes, setPendientes] = useState(0)
 
   const supabase = createClient()
   const handleFetchData = async () => {
     const data = await getDataChartsGeneral()
     if (data) setGeneralChartData(data)
   }
+  const handleUserData = async () => {
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError) throw authError
+    if (!user) return // User is not logged in
+
+    const { data: profile, error: profileError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+    if (profileError) throw profileError
+
+    // --- STEP 3: Set the Data ---
+    if (profile) {
+      // If they have a profile AND a name, use that
+      setUserData(profile)
+    } else {
+      // Otherwise, just fall back to their email
+      setUserData(profile.email)
+    }
+  }
+
+  const handlePendientes = async () => {
+    const data = await getPendientesUser()
+  }
+
   useEffect(() => {
     handleFetchData()
-
+    handleUserData()
+    handlePendientes()
   }, [supabase])
+
+  console.log(generalChartData)
 
   const chartData = [
     { month: "January", desktop: 186, mobile: 80 },
@@ -62,9 +93,9 @@ export default function Home() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl">
-              <span className="">Bienvenid@, </span>
-
+            <div className="bg-muted/50 aspect-video rounded-xl flex items-center justify-center flex-col">
+              <span className="text-xl">Bienvenid@</span>
+              <span className="font-black text-2xl">{userData.full_name}</span>
             </div>
             <div className="bg-muted/50 aspect-video rounded-xl">
               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
@@ -117,7 +148,7 @@ export default function Home() {
                 >
                   <CartesianGrid vertical={false} />
                   <XAxis
-                    dataKey="day_label"
+                    dataKey="date_label"
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}

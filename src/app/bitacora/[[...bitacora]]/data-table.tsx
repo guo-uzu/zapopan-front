@@ -250,6 +250,24 @@ export function DataTable<TData, TValue>({
               </div>
               <div className="flex items-center py-4">
                 <Select
+                  value={getValueFilter("redes sociales")}
+                  onValueChange={(value: string) => onChangeFilter("redes sociales", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Redes sociales" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {
+                      ColumnsBitacoraOpts.social_network.map((e) => (
+                        <SelectItem key={e.id} value={e.value}>{e.value}</SelectItem>
+                      ))
+                    }
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center py-4">
+                <Select
                   value={getValueFilter("priority")}
                   onValueChange={(value: string) => onChangeFilter("priority", value)}
                 >
