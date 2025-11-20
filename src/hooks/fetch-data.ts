@@ -8,7 +8,6 @@ export const fetchData = async (id?: string | null) => {
     .from("bitacora")
     .select(`
       id,
-      shared,
       users:user_id(full_name),
       account_bitacora:account_id(name),
       created_at,
@@ -33,6 +32,7 @@ export const fetchData = async (id?: string | null) => {
   }
 
   const response = await query.order("created_at", { ascending: false })
+  console.log(response)
   return response
 }
 
@@ -41,9 +41,10 @@ export const getDataChartsGeneral = async () => {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
   const { data } = await supabase
-    .from('daily_bitacora_counts')
-    .select('date_label, count')
-    .order('date-label', { ascending: true });
+    .from('daily_area_counts ')
+    .select('*')
+    .order('date', { ascending: true });
+  console.log(data)
   return data
 }
 
@@ -51,10 +52,10 @@ export const getPendientesUser = async () => {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
-    console.log(user.id)
+  console.log(user.id)
   const { data } = await supabase
     .from('bitacora')
-    .select('*', { count: "exact", head: true})
+    .select('*', { count: "exact", head: true })
   console.log(data)
   return data
 }

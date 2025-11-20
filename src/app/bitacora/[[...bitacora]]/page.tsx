@@ -5,7 +5,6 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { Separator } from "@radix-ui/react-separator"
 import { DataTable } from "./data-table"
 import { useSearchParams } from "next/navigation"
-import { useEffect } from "react"
 
 export default function Bitacora() {
   const searchParams = useSearchParams()

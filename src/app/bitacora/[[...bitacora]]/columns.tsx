@@ -759,8 +759,8 @@ export const columns: ColumnDef<Inputs>[] = [
           folio: data.folio,
           observations: data.observations,
         })
-        table.options.meta.handleToEdit(),
-          table.options.meta.handleOpenForm()
+        table.options.meta?.handleToEdit(),
+          table.options.meta?.handleOpenForm()
       }
       return (
         <div className="w-full">
