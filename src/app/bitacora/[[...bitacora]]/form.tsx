@@ -200,7 +200,7 @@ const area: DataCombox[] = [
   },
   {
     "value": "cursos_en_el_parque_de_las_niñas_y_niños",
-    "label": "Cursos en el Parque de las niñas y  niños"
+    "label": "Cursos en el Parque de las niñas y niños"
   },
   {
     "value": "romería",
@@ -209,7 +209,32 @@ const area: DataCombox[] = [
   {
     "value": "contraloría_ciudadana",
     "label": "Contraloría ciudadana"
-  }
+  },
+  {
+    "value": "toc_toc",
+    "label": "Toc toc"
+  },
+  {
+    "value": "otros",
+    "label": "Otros"
+  },
+  {
+    "value": "equipo_campaña",
+    "label": "Equipo campaña"
+  },
+  {
+    "value": "fiesta_de_abril",
+    "label": "Fiesta de abril"
+  },
+  {
+    "value": "desabasto_de_agua_en_lomas_de_centinela",
+    "label": "Desabasto de agua en lomas de centinela"
+  },
+  {
+    "value": "infraestructura_de_comercio",
+    "label": "Infraestructura de comercio"
+  },
+
 ]
 
 const prioridad: DataCombox[] = [
@@ -221,7 +246,8 @@ const prioridad: DataCombox[] = [
 const estatus: DataCombox[] = [
   { value: "pendiente", label: "Pendiente" },
   { value: "en_proceso", label: "En proceso" },
-  { value: "resuelto", label: "Resuelto" }
+  { value: "resuelto", label: "Resuelto" },
+  { value: "dirección", label: "Dirección" }
 ]
 
 const social_network: DataCombox[] = [
@@ -452,10 +478,6 @@ export default function Form({ defaultData, toEdit }: FormProps) {
                     </Select>
                   )} />
               </div>
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor='direction'>Dirección</Label>
-              <Input {...register("direction")} id='direction' type='text' name='direction' />
             </div>
             <div className="grid gap-3">
               <Label htmlFor='folio'>Folio</Label>

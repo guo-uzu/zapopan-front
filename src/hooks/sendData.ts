@@ -19,7 +19,6 @@ export const sendDataSupabase = async (formData: Inputs) => {
     status_id: mustMap(statusMap, formData.status, 'status'),
     colonia: formData.colonia || null,
     description: formData.description,
-    direction: formData.direction || null,
     link: formData.link || null,
     observations: formData.observations || null,
     created_at: new Date().toISOString(),
@@ -52,7 +51,6 @@ export const updateDataSupabase = async (formData: Inputs) => {
     status_id: mustMap(statusMap, formData.status, 'status'),
     colonia: formData.colonia || null,
     description: formData.description,
-    direction: formData.direction || null,
     link: formData.link || null,
     observations: formData.observations || null,
     created_at: new Date().toISOString(),
@@ -66,15 +64,6 @@ export const updateDataSupabase = async (formData: Inputs) => {
     throw new Error("DB insert failed")
   }
   return { ok: true }
-}
-
-export const shareRow = async (formData: Inputs) => {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error("User not founded")
-    console.log(":)")
-    return { ok: true }
 }
 
 function mustMap<T extends string>(map: Record<T, number>, key: T | undefined, field: string) {
@@ -128,6 +117,12 @@ const areaMap: Record<NonNullable<Inputs['area_responsable']>, number> = {
   "cursos_en_el_parque_de_las_niñas_y_niños": 25, // Se requieren comillas por los espacios
   romería: 26,
   contraloría_ciudadana: 27,
+  toc_toc: 28,
+  otros: 29,
+  equipo_campaña: 30,
+  fiesta_de_abril: 31,
+  desabasto_de_agua_en_lomas_de_centinela: 32,
+  infraestrucura_en_comercio: 33,
 };
 
 const categoryMap: Record<NonNullable<Inputs['category']>, number> = {
@@ -162,5 +157,6 @@ const statusMap: Record<NonNullable<Inputs['status']>, number> = {
   pendiente: 0,
   en_proceso: 1,
   resuelto: 2,
+  dirección: 3
 };
 

@@ -3,7 +3,7 @@
 import type { DateRange } from "react-day-picker";
 import { ColumnDef } from "@tanstack/react-table"
 import { Inputs } from "@/hooks/types"
-import { Building, CircleUser, Inbox, ListRestart, MessageCircle, Pencil, Shield, SignalLow, SignalMedium, Siren, SquareCheckBig, Trash, TriangleAlert } from "lucide-react"
+import { Building, CircleUser, Compass, Inbox, ListRestart, MessageCircle, Pencil, Shield, SignalLow, SignalMedium, Siren, SquareCheckBig, Trash, TriangleAlert } from "lucide-react"
 import { AlertDialog } from "@radix-ui/react-alert-dialog"
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { deleteRowBitacora } from "@/hooks/deleteRow"
@@ -33,8 +33,8 @@ import { Row } from "@tanstack/react-table"
 
 // Define the custom filter function
 export const dateRangeFilterFn = (
-  row: Row<Inputs>, 
-  columnId: string, 
+  row: Row<Inputs>,
+  columnId: string,
   range: DateRange | undefined  // This matches the dateRange state from your picker
 ) => {
   // 1. If no range selected, show everything
@@ -634,6 +634,60 @@ export const columns: ColumnDef<Inputs>[] = [
               </Badge>
             </div>
           )
+        case "Toc toc":
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue() as string}
+              </Badge>
+            </div>
+          )
+        case "Otros":
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue() as string}
+              </Badge>
+            </div>
+          )
+        case "Equipo campaña":
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue() as string}
+              </Badge>
+            </div>
+          )
+        case "Fiesta de Abril":
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue() as string}
+              </Badge>
+            </div>
+          )
+        case "Desabasto de agua en Lomas de Centinela":
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue() as string}
+              </Badge>
+            </div>
+          )
+        case "Infraestructura de Comercio":
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
+                <Building className="min-w-[20px]" />
+                {getValue() as string}
+              </Badge>
+            </div>
+          )
       }
     },
     size: 200,
@@ -710,6 +764,15 @@ export const columns: ColumnDef<Inputs>[] = [
               </Badge>
             </div>
           )
+        case "Dirección":
+          return (
+            <div className="w-full flex items-center justify-center">
+              <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-orange-500/10 text-orange-500  focus-visible:outline-none'>
+                <Compass />
+                {getValue() as string}
+              </Badge>
+            </div>
+          )
         case "En proceso":
           return (
             <div className="w-full flex items-center justify-center">
@@ -724,13 +787,6 @@ export const columns: ColumnDef<Inputs>[] = [
     size: 130,
     minSize: 130,
     maxSize: 130
-  },
-  {
-    accessorKey: "direction",
-    header: "Dirección",
-    size: 200,
-    minSize: 160,
-    maxSize: 300
   },
   {
     accessorKey: "folio",
@@ -761,7 +817,7 @@ export const columns: ColumnDef<Inputs>[] = [
       }
       const handleClick = () => {
         const data = row.original
-        
+
         // 1. Cast the meta to your custom interface
         const meta = table.options.meta as BitacoraTableMeta | undefined
 
@@ -774,13 +830,12 @@ export const columns: ColumnDef<Inputs>[] = [
           link: data.link,
           category: formatData(data.category_bitacora?.name ?? ""),
           // Typo fix from before:
-          area_responsable: formatData(data.area_responsable_bitacora?.name ?? ""), 
+          area_responsable: formatData(data.area_responsable_bitacora?.name ?? ""),
           description: data.description,
           colonia: data.colonia,
           social_network: formatData(data.social_network_bitacora?.name ?? ""),
           priority: formatData(data.priority_bitacora?.name ?? ""),
           status: formatData(data.status_bitacora?.name ?? ""),
-          direction: data.direction,
           folio: data.folio,
           observations: data.observations,
         })

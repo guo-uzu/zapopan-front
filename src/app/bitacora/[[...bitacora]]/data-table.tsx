@@ -56,7 +56,7 @@ import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns"
 
 import { type DateRange } from "react-day-picker"
 import { Calendar } from "@/components/ui/calendar"
-import { CalendarDays, InfoIcon, Settings2 } from "lucide-react"
+import { CalendarDays, Settings2 } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 export function DataTable<TData, TValue>({

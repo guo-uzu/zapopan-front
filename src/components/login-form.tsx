@@ -49,7 +49,7 @@ export function LoginForm({
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `https://zapopan-front.vercel.app/auth/callback`,
+                    redirectTo: `/auth/callback`,
                 },
             });
             if (error) throw error;

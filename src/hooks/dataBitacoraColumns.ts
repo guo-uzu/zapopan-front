@@ -33,6 +33,12 @@ export const ColumnsBitacoraOpts = {
         { id: "cursos_parque_ninas_ninos", value: "Cursos en el Parque de las niñas y  niños" },
         { id: "romeria", value: "Romería" },
         { id: "contraloria_ciudadana", value: "Contraloría ciudadana" },
+        { id: "toc_toc", value: "Toc toc" },
+        { id: "otros", value: "Otros" },
+        { id: "equipo_campana", value: "Equipo campaña" },
+        { id: "fiesta_de_abril", value: "Fiesta de Abril" },
+        { id: "desabasto_de_agua_en_lomas_de_centinela", value: "Desabasto de agua en Lomas de Centinela" },
+        { id: "infraestrucura_en_comercio", value: "Infraestructura de Comercio" },
     ],
 
     category: [

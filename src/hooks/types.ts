@@ -35,7 +35,6 @@ export type Inputs = {
   // --- 3. SHARED FIELDS ---
   colonia: string
   description: string
-  direction: string
   link: string
   observations: string
   username: string

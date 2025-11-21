@@ -13,7 +13,6 @@ export const fetchData = async (id?: string | null) => {
       created_at,
       category_bitacora:category_id(name),
       description,
-      direction,
       folio,
       link,
       observations,
