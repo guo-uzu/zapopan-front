@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Label } from "@/components/ui/label"
 import { Input } from '@/components/ui/input'
 import { SelectItem, SelectContent, Select, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -231,7 +231,12 @@ const social_network: DataCombox[] = [
   { value: "tiktok", label: "Tik Tok" }
 ]
 
-export default function Form({ defaultData, toEdit }) {
+interface FormProps {
+  defaultData: Partial<Inputs> // Partial means "some or all properties of Inputs"
+  toEdit: boolean
+}
+
+export default function Form({ defaultData, toEdit }: FormProps) {
   const { register, handleSubmit, control, reset } = useForm<Inputs>({
     defaultValues: defaultData
   })
@@ -287,7 +292,7 @@ export default function Form({ defaultData, toEdit }) {
                       <SelectContent>
                         {
                           cuentas.map((option) => (
-                            <SelectItem value={option.value}>
+                            <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
                           ))
@@ -310,7 +315,7 @@ export default function Form({ defaultData, toEdit }) {
                       <SelectContent>
                         {
                           canal.map((option) => (
-                            <SelectItem value={option.value}>
+                            <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
                           ))
@@ -339,7 +344,7 @@ export default function Form({ defaultData, toEdit }) {
                       <SelectContent>
                         {
                           categoria.map((option) => (
-                            <SelectItem value={option.value}>
+                            <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
                           ))
@@ -362,7 +367,7 @@ export default function Form({ defaultData, toEdit }) {
                       <SelectContent>
                         {
                           area.map((option) => (
-                            <SelectItem value={option.value}>
+                            <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
                           ))
@@ -394,7 +399,7 @@ export default function Form({ defaultData, toEdit }) {
                       <SelectContent>
                         {
                           social_network.map((option) => (
-                            <SelectItem value={option.value}>
+                            <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
                           ))
@@ -416,7 +421,7 @@ export default function Form({ defaultData, toEdit }) {
                       <SelectContent>
                         {
                           prioridad.map((option) => (
-                            <SelectItem value={option.value}>
+                            <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
                           ))
@@ -438,7 +443,7 @@ export default function Form({ defaultData, toEdit }) {
                       <SelectContent>
                         {
                           estatus.map((option) => (
-                            <SelectItem value={option.value}>
+                            <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
                           ))

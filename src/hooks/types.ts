@@ -1,17 +1,44 @@
+// src/hooks/types.ts
+
+type NestedName = {
+  name: string
+}
+
+type NestedUser = {
+  full_name: string
+}
+
 export type Inputs = {
-  account: "jjf" | "zapopan",
-  area_responsable: "infraestructura_comercio" | "servicios_municipales" | "gestion_integral" | "secretaria_ayuntamiento" | "desarrollo_economico" | "construccion_comunidad" | "dif" | "tesoreria" | "cfe" | "siapa" | "siop" | "otras_coordinaciones" | "otras_dependencias_estatales" | "presidencia" | "guadalajara" | "inspeccion_vigilancia" | "pcyb" | "cercania_ciudadana" | "salud_zapopan" | "comisaria" | "comude" | "caec" | "sindicatura" | "administracion_inovacion_gubernamental" | "amim" | "cursos_parque_ninas_ninos" | "romeria" | "contraloria_ciudadana",
-  category: "solicitud_informacion" | "canalizacion_dependencia" | "solicitudes_nuevas" | "reportes_servicios" | "reporte_obras" | "reporte_externos" | "solicitudes_especiales" | "reporte_inspeccion_vigilancia" | "reportes_denuncias" | "solicitud_empleo" | "coyuntura" | "participacion_curso" | "solicitud_obra" | "otros",
-  channel: "comentario" | "inbox",
-  colonia: string,
-  description: string,
-  direction: string,
-  link: string,
-  name: string,
-  observations: string,
-  priority: "baja" | "media" | "alta",
-  status: "pendiente" | "en_proceso" | "resuelto",
-  username: string,
-  folio: string,
-  social_network: "instagram" | "x" | "facebook" | "tiktok"
+  id: string
+  created_at?: string | Date 
+  
+  // --- 1. NESTED OBJECTS (For the Table View) ---
+  users?: NestedUser | null
+  account_bitacora?: NestedName | null
+  area_responsable_bitacora?: NestedName | null
+  category_bitacora?: NestedName | null
+  channel_bitacora?: NestedName | null
+  priority_bitacora?: NestedName | null
+  status_bitacora?: NestedName | null
+  social_network_bitacora?: NestedName | null
+  
+  // --- 2. FLAT FIELDS (For the Edit Form) ---
+  // We need to add these back so setDefaultData works!
+  account?: string
+  area_responsable?: string
+  category?: string
+  channel?: string
+  priority?: string
+  status?: string
+  social_network?: string
+
+  // --- 3. SHARED FIELDS ---
+  colonia: string
+  description: string
+  direction: string
+  link: string
+  observations: string
+  username: string
+  folio: string
+  shared?: boolean
 }

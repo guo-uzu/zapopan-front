@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 export const createClient = (request: NextRequest) => {
   // Create an unmodified response
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: request.headers,
     },
@@ -33,10 +33,9 @@ export const createClient = (request: NextRequest) => {
         },
         remove(name: string, options: CookieOptions) {
           // If the cookie is removed, update the request cookies
-          request.cookies.delete({
-            name,
-            ...options,
-          })
+          // FIX: Pass only the 'name', not the whole object
+          request.cookies.delete(name)
+          
           // And update the response cookies
           response.cookies.set({
             name,

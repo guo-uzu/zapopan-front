@@ -1,6 +1,6 @@
 "use client"
 
-import type { DateRange as RDPDateRange } from "react-day-picker";
+import type { DateRange } from "react-day-picker";
 import { ColumnDef } from "@tanstack/react-table"
 import { Inputs } from "@/hooks/types"
 import { Building, CircleUser, Inbox, ListRestart, MessageCircle, Pencil, Shield, SignalLow, SignalMedium, Siren, SquareCheckBig, Trash, TriangleAlert } from "lucide-react"
@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 import Share from "@/components/columns/share-btn";
 
 
+
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
 const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
 
@@ -28,28 +29,46 @@ const toTimestamp = (v: unknown): number | null => {
   return isNaN(d.getTime()) ? null : d.getTime();
 };
 
-const dateRangeFilterFn: import('@tanstack/react-table').FilterFn<any> =
-  (row, columnId, range?: RDPDateRange | null) => {
-    if (!range || (!range.from && !range.to)) return true;
+import { Row } from "@tanstack/react-table"
 
-    const ts = row.getValue<number | null>(columnId);
-    if (ts == null) return false;
+// Define the custom filter function
+export const dateRangeFilterFn = (
+  row: Row<Inputs>, 
+  columnId: string, 
+  range: DateRange | undefined  // This matches the dateRange state from your picker
+) => {
+  // 1. If no range selected, show everything
+  if (!range || (!range.from && !range.to)) return true
 
-    const min = range.from ? startOfDay(range.from).getTime() : -Infinity;
-    const max = range.to ? endOfDay(range.to).getTime() : +Infinity;
+  // 2. Get the RAW string value from the row (Supabase ISO string)
+  const val = row.getValue(columnId) as string
+  if (!val) return false
 
-    return ts >= min && ts <= max; // inclusive
-  };
+  // 3. Convert that string to a Timestamp Number (ms)
+  const rowTime = new Date(val).getTime()
 
+  // 4. Calculate your Min/Max bounds
+  //    We use startOfDay/endOfDay to ensure we cover the full selected dates
+  const min = range.from ? startOfDay(range.from).getTime() : -Infinity
+  const max = range.to ? endOfDay(range.to).getTime() : Infinity
+
+  // 5. Compare numbers
+  return rowTime >= min && rowTime <= max
+}
+interface BitacoraTableMeta {
+  setDefaultData: (data: Inputs) => void
+  handleToEdit: () => void
+  handleOpenForm: () => void
+}
 
 
 export const columns: ColumnDef<Inputs>[] = [
   {
-    accessorFn: (row) => `${row.users.full_name}`,
+    accessorFn: (row) => row.users?.full_name ?? "Usuario desconocido",
     id: "user name",
     header: "Nombre",
     cell: ({ getValue }) => {
-      return <p>{getValue()}</p>
+      return <p>{getValue() as string}</p>
     },
     size: 200,
     minSize: 150,
@@ -66,7 +85,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='capitalize w-full rounded-full border-none bg-blue-600/10 text-blue-600 focus-visible:ring-amber-600/20 focus-visible:outline-none'>
                 <FaFacebookSquare />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -75,7 +94,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='capitalize w-full rounded-full border-none bg-black/10 text-black focus-visible:ring-amber-600/20 focus-visible:outline-none text-uppercase'>
                 <FaSquareXTwitter />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -84,7 +103,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='capitalize w-full border-transparent bg-[#ee2a7b]/10 text-[#ee2a7b]  bg-center '>
                 <FaSquareInstagram />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -94,7 +113,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='capitalize w-full rounded-full border-none shadow-xl bg-black/10 text-black  focus-visible:outline-none'>
                 <AiFillTikTok />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -116,7 +135,7 @@ export const columns: ColumnDef<Inputs>[] = [
           <div className="w-full flex items-center justify-center">
             <Badge className='w-full rounded-full border-none shadow-xl uppercase bg-purple-400/10 text-purple-400  focus-visible:outline-none'>
               <CircleUser />
-              {getValue()}
+              {getValue() as string}
             </Badge>
           </div>
         )
@@ -125,7 +144,7 @@ export const columns: ColumnDef<Inputs>[] = [
           <div className="w-full flex items-center justify-center">
             <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-orange-500/10 text-orange-500  focus-visible:outline-none'>
               <Shield />
-              {getValue()}
+              {getValue() as string}
             </Badge>
           </div>
         )
@@ -138,7 +157,7 @@ export const columns: ColumnDef<Inputs>[] = [
     filterFn: "includesString"
   },
   {
-    accessorFn: (row) => row.channel_bitacora.name,
+    accessorFn: (row) => row?.channel_bitacora?.name ?? "Usuario no encontrado",
     id: "channel",
     header: "Canal",
     cell: ({ getValue }) => {
@@ -147,7 +166,7 @@ export const columns: ColumnDef<Inputs>[] = [
           <div className="w-full flex items-center justify-center">
             <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-yellow-500/10 text-yellow-500  focus-visible:outline-none'>
               <MessageCircle />
-              {getValue()}
+              {getValue() as string}
             </Badge>
           </div>
         )
@@ -156,7 +175,7 @@ export const columns: ColumnDef<Inputs>[] = [
           <div className="w-full flex items-center justify-center">
             <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-indigo-500/10 text-indigo-500  focus-visible:outline-none'>
               <Inbox />
-              {getValue()}
+              {getValue() as string}
             </Badge>
           </div>
         )
@@ -211,7 +230,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-violet-500/10 text-violet-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -220,7 +239,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-teal-500/10 text-teal-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -229,7 +248,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-sky-500/10 text-sky-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -238,7 +257,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-green-500/10 text-green-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -247,7 +266,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-yellow-500/10 text-yellow-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -256,7 +275,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-orange-400/10 text-orange-400 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -265,7 +284,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-cyan-500/10 text-cyan-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -274,7 +293,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-gray-500/10 text-gray-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -283,7 +302,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-green-400/10 text-green-400 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -292,7 +311,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-blue-800/10 text-blue-800 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -301,7 +320,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-violet-500/10 text-violet-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -310,7 +329,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-emerald-700/10 text-emerald-700 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -319,7 +338,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-fuchsia-500/10 text-fuchsia-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -328,7 +347,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-red-400/10 text-red-400 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -337,7 +356,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-violet-500/10 text-violet-500 focus-visible:outline-none'>
                 <Siren />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -368,7 +387,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-400/10 text-blue-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -377,7 +396,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-emerald-400/10 text-emerald-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -386,7 +405,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-sky-400/10 text-sky-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -395,7 +414,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-red-400/10 text-red-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -404,7 +423,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-orange-400/10 text-orange-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -413,7 +432,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-purple-400/10 text-purple-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -422,7 +441,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-yellow-400/10 text-yellow-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -431,7 +450,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-amber-400/10 text-amber-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -440,7 +459,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-gray-400/10 text-gray-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -449,7 +468,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-rose-400/10 text-rose-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -458,7 +477,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-cyan-400/10 text-cyan-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -467,7 +486,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-fuchsia-400/10 text-fuchsia-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -476,7 +495,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-indigo-400/10 text-indigo-400 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -485,7 +504,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-rose-600/10 text-rose-600 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -494,7 +513,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-600/10 text-blue-600 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -503,7 +522,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-sky-600/10 text-sky-600 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -512,7 +531,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-yellow-600/10 text-yellow-600 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -521,7 +540,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-red-600/10 text-red-600 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -530,7 +549,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-green-600/10 text-green-600 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -539,7 +558,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-sky-600/10 text-sky-600 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -548,7 +567,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-amber-600/10 text-amber-600 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -557,7 +576,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -566,7 +585,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -575,7 +594,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -584,7 +603,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -593,7 +612,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/1F0 text-blue-700 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -602,7 +621,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -611,7 +630,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full max-w-[200px] whitespace-normal capitalize rounded-full border-none shadow-xl bg-blue-700/10 text-blue-700 focus-visible:outline-none'>
                 <Building className="min-w-[20px]" />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -639,7 +658,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-red-500/10 text-red-500  focus-visible:outline-none'>
                 <SignalMedium />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -648,7 +667,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-yellow-500/10 text-yellow-500  focus-visible:outline-none'>
                 <SignalMedium />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -657,7 +676,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-green-500/10 text-green-500  focus-visible:outline-none'>
                 <SignalLow />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -678,7 +697,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-green-500/10 text-green-500  focus-visible:outline-none'>
                 <SquareCheckBig />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -687,7 +706,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-yellow-500/10 text-yellow-500  focus-visible:outline-none'>
                 <TriangleAlert />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -696,7 +715,7 @@ export const columns: ColumnDef<Inputs>[] = [
             <div className="w-full flex items-center justify-center">
               <Badge className='w-full capitalize rounded-full border-none shadow-xl bg-red-500/10 text-red-500  focus-visible:outline-none'>
                 <ListRestart />
-                {getValue()}
+                {getValue() as string}
               </Badge>
             </div>
           )
@@ -742,25 +761,32 @@ export const columns: ColumnDef<Inputs>[] = [
       }
       const handleClick = () => {
         const data = row.original
-        table.options.meta.setDefaultData({
+        
+        // 1. Cast the meta to your custom interface
+        const meta = table.options.meta as BitacoraTableMeta | undefined
+
+        // 2. Now TypeScript knows these functions exist!
+        meta?.setDefaultData({
           id: data.id,
           username: data.username,
-          account: data.account_bitacora.name,
-          channel: formatData(data.channel_bitacora.name),
+          account: data.account_bitacora?.name ?? "",
+          channel: formatData(data.channel_bitacora?.name ?? ""),
           link: data.link,
-          category: formatData(data.category_bitacora.name),
-          area_responsable: formatData(data.responsable_area_bitacora.name),
+          category: formatData(data.category_bitacora?.name ?? ""),
+          // Typo fix from before:
+          area_responsable: formatData(data.area_responsable_bitacora?.name ?? ""), 
           description: data.description,
-          colonia: data.description,
-          social_network: formatData(data.social_network_bitacora.name),
-          priority: formatData(data.priority_bitacora.name),
-          status: formatData(data.status_bitacora.name),
+          colonia: data.colonia,
+          social_network: formatData(data.social_network_bitacora?.name ?? ""),
+          priority: formatData(data.priority_bitacora?.name ?? ""),
+          status: formatData(data.status_bitacora?.name ?? ""),
           direction: data.direction,
           folio: data.folio,
           observations: data.observations,
         })
-        table.options.meta?.handleToEdit(),
-          table.options.meta?.handleOpenForm()
+
+        meta?.handleToEdit()
+        meta?.handleOpenForm()
       }
       return (
         <div className="w-full">

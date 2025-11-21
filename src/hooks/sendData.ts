@@ -1,9 +1,11 @@
 "use server"
 import { createClient } from "@/utils/supabase/server"
 import { Inputs } from "@/hooks/types";
+import { cookies } from 'next/headers'
 
 export const sendDataSupabase = async (formData: Inputs) => {
-  const supabase = createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
 
@@ -35,7 +37,8 @@ export const sendDataSupabase = async (formData: Inputs) => {
 }
 
 export const updateDataSupabase = async (formData: Inputs) => {
-  const supabase = createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
 
@@ -57,7 +60,6 @@ export const updateDataSupabase = async (formData: Inputs) => {
     folio: formData.folio || null,
     social_network_id: mustMap(socialNetworkMap, formData.social_network, 'social_network'),
   }
-  console.log(formData.id)
   const { error } = await supabase.from("bitacora").update(payload).eq("id", formData.id)
   if (error) {
     console.log("error bitacora updated", error)
@@ -67,32 +69,37 @@ export const updateDataSupabase = async (formData: Inputs) => {
 }
 
 export const shareRow = async (formData: Inputs) => {
-  const supabase = createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
     console.log(":)")
     return { ok: true }
 }
 
-function mustMap<T extends string>(map: Record<T, number>, key: T, field: string) {
+function mustMap<T extends string>(map: Record<T, number>, key: T | undefined, field: string) {
+  if (key === undefined || key === null) {
+      throw new Error(`Valor requerido faltante para: ${field}`);
+  }
+  
   const id = map[key];
   if (id === undefined || id === null) throw new Error(`Valor inválido para ${field}: "${key}"`);
   return id;
 }
 
-const accountMap: Record<Inputs['account'], number> = {
+const accountMap: Record<NonNullable<Inputs['account']>, number> = {
   zapopan: 0,
   jjf: 1,
 };
 
-const socialNetworkMap: Record<Inputs['social_network'], number> = {
+const socialNetworkMap: Record<NonNullable<Inputs['social_network']>, number> = {
   facebook: 1,
   x: 2,
   instagram: 3,
   tiktok: 4
 };
 
-const areaMap: Record<Inputs['area_responsable'], number> = {
+const areaMap: Record<NonNullable<Inputs['area_responsable']>, number> = {
   infraestructura_de_comercio: 0,
   servicios_municipales: 1,
   gestión_integral: 2,
@@ -123,7 +130,7 @@ const areaMap: Record<Inputs['area_responsable'], number> = {
   contraloría_ciudadana: 27,
 };
 
-const categoryMap: Record<Inputs['category'], number> = {
+const categoryMap: Record<NonNullable<Inputs['category']>, number> = {
   solicitud_de_información: 0,
   canalización_a_dependencia: 1,
   solicitudes_nuevas: 2,
@@ -140,18 +147,18 @@ const categoryMap: Record<Inputs['category'], number> = {
   otros: 13,
 };
 
-const chanelMap: Record<Inputs['channel'], number> = {
+const chanelMap: Record<NonNullable<Inputs['channel']>, number> = {
   comentarios: 0,
   inbox: 1,
 };
 
-const priorityMap: Record<Inputs['priority'], number> = {
+const priorityMap: Record<NonNullable<Inputs['priority']>, number> = {
   baja: 0,
   media: 1,
   alta: 2,
 };
 
-const statusMap: Record<Inputs['status'], number> = {
+const statusMap: Record<NonNullable<Inputs['status']>, number> = {
   pendiente: 0,
   en_proceso: 1,
   resuelto: 2,

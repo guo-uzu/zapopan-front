@@ -1,7 +1,6 @@
 "use client"
 
 import {
-
   ChevronsUpDown,
   LogOut,
 } from "lucide-react"
@@ -14,7 +13,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -29,7 +27,7 @@ import {
 
 import { useEffect, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation" // Use router for client-side redirects
 
 interface UserData {
   full_name: string
@@ -41,54 +39,59 @@ interface UserData {
 export function NavUser() {
   const { isMobile } = useSidebar()
   const supabase = createClient()
-  const [userData, setUserData] = useState<UserData | null>({})
+  const router = useRouter() // Initialize router
+  
+  // FIX 1: Initialize with 'null', not '{}'
+  const [userData, setUserData] = useState<UserData | null>(null)
   const [fallBackAvatar, setFallbackAvatar] = useState<string>("")
 
   useEffect(() => {
-    // Create an async function inside the effect
     const fetchUserData = async () => {
       try {
-        // --- STEP 1: Get the Auth User ---
-        // This gets the user's session from the browser's cookies
         const { data: { user }, error: authError } = await supabase.auth.getUser()
 
         if (authError) throw authError
-        if (!user) return // User is not logged in
+        if (!user) return 
 
-        // We have the user! Now, let's get their profile.
-        // --- STEP 2: Get the Profile Data ---
-        // We use the user.id to find the matching row in our 'users' table
         const { data: profile, error: profileError } = await supabase
           .from('users')
-          .select('*') // Get the columns you need
-          .eq('id', user.id) // Find the row where 'id' matches the auth user's id
-          .single() // We expect only one row, so .single() is perfect
+          .select('*')
+          .eq('id', user.id)
+          .single()
 
-        if (profileError) throw profileError
+        // We don't throw on profileError immediately, in case the user exists
+        // in Auth but hasn't been created in the 'users' table yet.
 
-        // --- STEP 3: Set the Data ---
         if (profile) {
-          // If they have a profile AND a name, use that
-          setUserData(profile)
-          setFallbackAvatar(profile.full_name[0])
+          setUserData(profile as UserData)
+          // Safe check for full_name before accessing index 0
+          setFallbackAvatar(profile.full_name?.[0] || "U")
         } else {
-          // Otherwise, just fall back to their email
-          setUserData(profile.email)
+          // FIX 3: If no profile exists, create a temporary object from Auth data
+          // You cannot just pass 'user.email' string to setUserData
+          setUserData({
+            id: user.id,
+            email: user.email || "",
+            full_name: user.email || "Usuario", // Fallback name
+            avatar_url: ""
+          })
+          setFallbackAvatar(user.email?.[0]?.toUpperCase() || "U")
         }
 
       } catch (error) {
-        console.error('Error fetching user data:', error.message)
+        // FIX 2: Cast error to Error type
+        console.error('Error fetching user data:', (error as Error).message)
       }
     }
 
-    // Call the function
     fetchUserData()
   }, [supabase])
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (!error) {
-      redirect("/sign-in")
+      // Use router.push for client-side navigation
+      router.push("/sign-in")
     }
   }
 
@@ -102,7 +105,8 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={userData?.avatar_url} alt={`Imagen de perfil de ${userData?.full_name}`} />
+                {/* Use Optional Chaining just in case */}
+                <AvatarImage src={userData?.avatar_url} alt={userData?.full_name} />
                 <AvatarFallback className="rounded-lg">{fallBackAvatar}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -121,7 +125,7 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={userData?.avatar_url} alt={`Imagen de perfil de ${userData?.full_name}`} />
+                  <AvatarImage src={userData?.avatar_url} alt={userData?.full_name} />
                   <AvatarFallback className="rounded-lg">{fallBackAvatar}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">

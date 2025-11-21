@@ -23,9 +23,9 @@ export function LoginForm({
     const supabase = createClient()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [error, setError] = useState(null)
+    const [error, setError] = useState<string | null>(null)
 
-    const handleSignIn = async (e) => {
+    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setError(null)
 
@@ -38,8 +38,8 @@ export function LoginForm({
             router.push("/")
             router.refresh()
         } catch (error) {
-            console.error('Sign-in error:', error.message)
-            setError(error.message)
+            console.error('Sign-in error:', (error as Error).message)
+            setError((error as Error).message)
         }
     }
 
@@ -56,8 +56,8 @@ export function LoginForm({
             // Note: We don't redirect here. Supabase handles the
             // redirect *to* Google.
         } catch (error) {
-            console.error('Google Sign-in error:', error.message);
-            setError(error.message);
+            console.error('Google Sign-in error:', (error as Error).message);
+            setError((error as Error).message);
         }
     };
 

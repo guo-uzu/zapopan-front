@@ -66,11 +66,12 @@ export function DataTable<TData, TValue>({
   const supabase = createClient()
   const [dataFetch, setDataFetch] = useState<TData[]>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [globalFilter, setGlobalFilter] = useState<any>([])
+  const [globalFilter, setGlobalFilter] = useState<unknown>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFilterState>([])
   const [open, setOpen] = useState(false)
   const [defaultData, setDefaultData] = useState({})
   const [toEdit, setToEdit] = useState<boolean>(false)
+  
 
   const handleOpenForm = () => {
     setOpen(true)

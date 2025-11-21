@@ -36,12 +36,18 @@ import {
 export type AreaResponsableTable = {
   date: Date
   count: number
-  area_responsable: string
+  area_name: string // This key must match your data!
 }
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+}
+
+type UserProfile = {
+  id: string
+  full_name: string
+  email?: string
 }
 
 export const columns: ColumnDef<AreaResponsableTable>[] = [
@@ -64,10 +70,10 @@ export const columns: ColumnDef<AreaResponsableTable>[] = [
 
 export default function Home() {
 
-  const [generalChartData, setGeneralChartData] = useState<any>([])
-  const [userData, setUserData] = useState<string>("")
+  const [generalChartData, setGeneralChartData] = useState<AreaResponsableTable[]>([])
+  const [userData, setUserData] = useState<UserProfile | null>(null)
   const [pendientes, setPendientes] = useState(0)
-  const totalReportes = generalChartData.reduce((acc: number, curr: any) => {
+  const totalReportes = generalChartData.reduce((acc, curr) => {
     return acc + (Number(curr.count) || 0)
   }, 0)
 
