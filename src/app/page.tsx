@@ -51,11 +51,7 @@ type UserProfile = {
 }
 
 export const columns: ColumnDef<AreaResponsableTable>[] = [
-  {
-    accessorKey: "date",
-    header: "Fecha",
-
-  },
+  
   {
     accessorKey: "area_name",
     header: "Área responsable",
