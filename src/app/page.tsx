@@ -63,11 +63,11 @@ const toTimestamp = (v: unknown): number | null => {
 };
 import { Row } from "@tanstack/react-table"
 
-export const dateRangeFilterFn = (
-  row: Row<any>,
+export function dateRangeFilterFn<TData>(
+  row: Row<TData>,
   columnId: string,
   range: DateRange | undefined
-) => {
+) {
   // 1. If no range selected, show everything
   if (!range || (!range.from && !range.to)) return true
 

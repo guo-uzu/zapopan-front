@@ -71,7 +71,7 @@ export function DataTable<TData, TValue>({
   const [open, setOpen] = useState(false)
   const [defaultData, setDefaultData] = useState({})
   const [toEdit, setToEdit] = useState<boolean>(false)
-  
+
 
   const handleOpenForm = () => {
     setOpen(true)
@@ -160,6 +160,21 @@ export function DataTable<TData, TValue>({
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
 
+  useEffect(() => {
+    try {
+      const account = localStorage.getItem("account name")
+      if (account) {
+        onChangeFilter("account name", account)
+      }
+      else {
+        throw Error("Account no se encontró")
+      }
+    } catch (error) {
+      onChangeFilter("account name", "all")
+    }
+
+  }, [])
+
   return (
     <>
       <Card>
@@ -178,8 +193,13 @@ export function DataTable<TData, TValue>({
               </div>
               <div className="flex items-center py-4">
                 <Select
-                  value={getValueFilter("account name")}
-                  onValueChange={(value: string) => onChangeFilter("account name", value)}
+                  value={
+                    getValueFilter("account name")
+                  }
+                  onValueChange={(value: string) => {
+                    localStorage.setItem("account name", value)
+                    onChangeFilter("account name", value)
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Cuentas" />
