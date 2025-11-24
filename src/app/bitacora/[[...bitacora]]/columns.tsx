@@ -199,10 +199,9 @@ export const columns: ColumnDef<Inputs>[] = [
     accessorKey: "link",
     header: "Enlace a perfil/publicación",
     cell: ({ row }) => {
-      return <div className="">{row.getValue("link")}</div>
+      return <div className="w-full text-center mx-auto"><a target="_blank" href={row.getValue("link")} className="text-blue-500 underline underline-offset-2">Enlace</a></div>
     },
-    size: 300,
-    minSize: 300,
+    minSize: 180,
   },
   {
     accessorKey: "created_at",
