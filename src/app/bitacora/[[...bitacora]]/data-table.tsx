@@ -162,9 +162,9 @@ export function DataTable<TData, TValue>({
 
   useEffect(() => {
     try {
-      const account = localStorage.getItem("account name")
-      if (account) {
-        onChangeFilter("account name", account)
+      const localStorageData = localStorage.getItem("account name")
+      if (localStorageData) {
+        onChangeFilter("account name", localStorageData)
       }
       else {
         throw Error("Account no se encontró")
@@ -174,6 +174,137 @@ export function DataTable<TData, TValue>({
     }
 
   }, [])
+
+  useEffect(() => {
+    try {
+      const localStorageData = localStorage.getItem("area")
+      if (localStorageData) {
+        onChangeFilter("area", localStorageData)
+      }
+      else {
+        throw Error("Account no se encontró")
+      }
+    } catch (error) {
+      onChangeFilter("area", "all")
+    }
+
+  }, [])
+
+  useEffect(() => {
+    try {
+      const localStorageData = localStorage.getItem("channel")
+      if (localStorageData) {
+        onChangeFilter("channel", localStorageData)
+      }
+      else {
+        throw Error("Account no se encontró")
+      }
+    } catch (error) {
+      onChangeFilter("channel", "all")
+    }
+
+  }, [])
+
+  useEffect(() => {
+    try {
+      const localStorageData = localStorage.getItem("category")
+      if (localStorageData) {
+        onChangeFilter("category", localStorageData)
+      }
+      else {
+        throw Error("Account no se encontró")
+      }
+    } catch (error) {
+      onChangeFilter("category", "all")
+    }
+
+  }, [])
+  useEffect(() => {
+    try {
+      const localStorageData = localStorage.getItem("redes sociales")
+      if (localStorageData) {
+        onChangeFilter("redes sociales", localStorageData)
+      }
+      else {
+        throw Error("Account no se encontró")
+      }
+    } catch (error) {
+      onChangeFilter("redes sociales", "all")
+    }
+
+  }, [])
+
+  useEffect(() => {
+    try {
+      const localStorageData = localStorage.getItem("priority")
+      if (localStorageData) {
+        onChangeFilter("priority", localStorageData)
+      }
+      else {
+        throw Error("Account no se encontró")
+      }
+    } catch (error) {
+      onChangeFilter("priority", "all")
+    }
+
+  }, [])
+
+  useEffect(() => {
+    try {
+      const localStorageData = localStorage.getItem("status")
+      if (localStorageData) {
+        onChangeFilter("status", localStorageData)
+      }
+      else {
+        throw Error("Account no se encontró")
+      }
+    } catch (error) {
+      onChangeFilter("status", "all")
+    }
+
+  }, [])
+
+  useEffect(() => {
+    try {
+      const localStorageData = localStorage.getItem("status")
+      if (localStorageData) {
+        onChangeFilter("status", localStorageData)
+      }
+      else {
+        throw Error("Account no se encontró")
+      }
+    } catch (error) {
+      onChangeFilter("status", "all")
+    }
+
+  }, [])
+
+  useEffect(() => {
+    try {
+      const storedDate = localStorage.getItem("bitacora_date_range")
+
+      if (storedDate) {
+        const parsed = JSON.parse(storedDate)
+
+        // ⚠️ CRITICAL STEP: Convert the strings back to Date objects
+        const restoredRange = {
+          from: parsed.from ? new Date(parsed.from) : undefined,
+          to: parsed.to ? new Date(parsed.to) : undefined
+        }
+
+        // 1. Update State
+        setDateRange(restoredRange)
+
+        // 2. Update Table Filter immediately
+        const col = table.getColumn("created_at") // Make sure this ID matches your column def
+        if (col) col.setFilterValue(restoredRange)
+      }
+    } catch (error) {
+      console.error("Error loading date from local storage", error)
+      // Optional: clear invalid data
+      localStorage.removeItem("bitacora_date_range")
+    }
+  }, []) // Empty dependency array = runs once on mount
 
   return (
     <>
@@ -218,7 +349,10 @@ export function DataTable<TData, TValue>({
               <div className="flex items-center py-4">
                 <Select
                   value={getValueFilter("area")}
-                  onValueChange={(value: string) => onChangeFilter("area", value)}
+                  onValueChange={(value: string) => {
+                    localStorage.setItem("area", value)
+                    onChangeFilter("area", value)
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Area" />
@@ -236,7 +370,10 @@ export function DataTable<TData, TValue>({
               <div className="flex items-center py-4">
                 <Select
                   value={getValueFilter("channel")}
-                  onValueChange={(value: string) => onChangeFilter("channel", value)}
+                  onValueChange={(value: string) => {
+                    localStorage.setItem("channel", value)
+                    onChangeFilter("channel", value)
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Canal" />
@@ -254,7 +391,10 @@ export function DataTable<TData, TValue>({
               <div className="flex items-center py-4">
                 <Select
                   value={getValueFilter("category")}
-                  onValueChange={(value: string) => onChangeFilter("category", value)}
+                  onValueChange={(value: string) => {
+                    localStorage.setItem("category", value)
+                    onChangeFilter("category", value)
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Categoría" />
@@ -272,7 +412,10 @@ export function DataTable<TData, TValue>({
               <div className="flex items-center py-4">
                 <Select
                   value={getValueFilter("redes sociales")}
-                  onValueChange={(value: string) => onChangeFilter("redes sociales", value)}
+                  onValueChange={(value: string) => {
+                    localStorage.setItem("redes sociales", value)
+                    onChangeFilter("redes sociales", value)
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Redes sociales" />
@@ -290,7 +433,10 @@ export function DataTable<TData, TValue>({
               <div className="flex items-center py-4">
                 <Select
                   value={getValueFilter("priority")}
-                  onValueChange={(value: string) => onChangeFilter("priority", value)}
+                  onValueChange={(value: string) => {
+                    localStorage.setItem("priority", value)
+                    onChangeFilter("priority", value)
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Prioridad" />
@@ -308,7 +454,10 @@ export function DataTable<TData, TValue>({
               <div className="flex items-center py-4">
                 <Select
                   value={getValueFilter("status")}
-                  onValueChange={(value: string) => onChangeFilter("status", value)}
+                  onValueChange={(value: string) => {
+                    localStorage.setItem("status", value)
+                    onChangeFilter("status", value)
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Estatus" />
@@ -336,12 +485,27 @@ export function DataTable<TData, TValue>({
                       defaultMonth={dateRange?.from}
                       selected={dateRange}
                       onSelect={(range) => {
+                        // 1. Update React State
                         setDateRange(range);
+
+                        // 2. Update Table Filter
                         const col = table.getColumn("created_at");
-                        if (!col) return;
-                        // Store the DateRange object in the column filter
-                        if (!range || (!range.from && !range.to)) col.setFilterValue(undefined);
-                        else col.setFilterValue(range);
+                        if (col) {
+                          if (!range || (!range.from && !range.to)) {
+                            col.setFilterValue(undefined);
+                          } else {
+                            col.setFilterValue(range);
+                          }
+                        }
+
+                        // 3. SAVE TO LOCAL STORAGE
+                        if (range) {
+                          // JSON.stringify automatically converts Dates to ISO strings
+                          localStorage.setItem("bitacora_date_range", JSON.stringify(range));
+                        } else {
+                          // If user cleared the date, remove from storage
+                          localStorage.removeItem("bitacora_date_range");
+                        }
                       }}
                       numberOfMonths={2}
                       className="rounded-lg border shadow-sm"
@@ -364,45 +528,6 @@ export function DataTable<TData, TValue>({
                     <span className="text-xs">⌘</span>J
                   </kbd>
                 </p>
-              </div>
-              {
-                // Visibility component
-              }
-              <div className="flex items-center py-4">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="ml-auto hidden h-8 lg:flex"
-                    >
-                      <Settings2 />
-                      Vistas
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-full">
-                    <DropdownMenuLabel>Oculta/Muestra columnas</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {table
-                      .getAllColumns()
-                      .filter(
-                        (column) =>
-                          typeof column.accessorFn !== "undefined" && column.getCanHide()
-                      )
-                      .map((column) => {
-                        return (
-                          <DropdownMenuCheckboxItem
-                            key={column.id}
-                            className="capitalize"
-                            checked={column.getIsVisible()}
-                            onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                          >
-                            {column.id}
-                          </DropdownMenuCheckboxItem>
-                        )
-                      })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
             </div>
           </div>

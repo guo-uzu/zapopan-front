@@ -209,9 +209,9 @@ export default function Home() {
       }
     }
   }, [dateRange, table]); // dependency on dateRange updates the table
+
   const filteredRows = table.getFilteredRowModel().rows;
   const totalReportes = filteredRows.reduce((acc, row) => {
-    // We use row.original.count because 'row' is the Table object
     return acc + (Number(row.original.count) || 0)
   }, 0)
   const chartData = filteredRows.map(row => row.original)
