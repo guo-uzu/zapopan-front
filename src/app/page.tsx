@@ -244,8 +244,8 @@ export default function Home() {
             <div className="bg-muted/50 aspect-video rounded-xl"></div>
           </div>
           <div className="bg-muted/50 min-h-[100vh] flex-1 flex flex-col gap-4 p-4 rounded-xl">
-            <div className="grid grid-cols-3 gap-2">
-              <div className="col-span-1">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="">
                 <div className="flex items-center py-4">
                   <Popover>
                     <PopoverTrigger asChild>
@@ -265,67 +265,70 @@ export default function Home() {
                     </PopoverContent>
                   </Popover>
                 </div>
-                <Card className="h-fit">
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-center mx-auto w-full font-black">Datos de la bitácora</CardTitle>
                     <CardDescription></CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                          <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                              return (
-                                <TableHead key={header.id}>
-                                  {header.isPlaceholder
-                                    ? null
-                                    : flexRender(
-                                      header.column.columnDef.header,
-                                      header.getContext()
-                                    )}
-                                </TableHead>
-                              )
-                            })}
-                          </TableRow>
-                        ))}
-                      </TableHeader>
-                      <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                          table.getRowModel().rows.map((row) => (
-                            <TableRow
-                              key={row.id}
-                              data-state={row.getIsSelected() && "selected"}
-                            >
-                              {row.getVisibleCells().map((cell) => (
-                                <TableCell key={cell.id}>
-                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </TableCell>
-                              ))}
+                  <CardContent className="flex-1 overflow-hidden">
+                    <div className="max-h-[400px] overflow-y-auto">
+                      <Table className="relative">
+                        <TableHeader className="sticky h-10 top-0 z-20">
+                          {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                              {headerGroup.headers.map((header) => {
+                                return (
+                                  <TableHead key={header.id}>
+                                    {header.isPlaceholder
+                                      ? null
+                                      : flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                      )}
+                                  </TableHead>
+                                )
+                              })}
                             </TableRow>
-                          ))
-                        ) : (
+                          ))}
+                        </TableHeader>
+                        <TableBody>
+                          {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                              <TableRow
+                                className=""
+                                key={row.id}
+                                data-state={row.getIsSelected() && "selected"}
+                              >
+                                {row.getVisibleCells().map((cell) => (
+                                  <TableCell className="w-full" key={cell.id}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow className="sticky bottom-0 z-20 bg-background">
+                              <TableCell colSpan={columns.length} className="h-24 text-center">
+                                No results.
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                        <TableFooter>
                           <TableRow>
-                            <TableCell colSpan={columns.length} className="h-24 text-center">
-                              No results.
-                            </TableCell>
+                            <TableCell className="font-bold ">Total</TableCell>
+                            {/* This now shows the dynamic total */}
+                            <TableCell className="font-bold">{totalReportes}</TableCell>
                           </TableRow>
-                        )}
-                      </TableBody>
-                      <TableFooter>
-                        <TableRow>
-                          <TableCell className="font-bold ">Total</TableCell>
-                          {/* This now shows the dynamic total */}
-                          <TableCell className="font-bold">{totalReportes}</TableCell>
-                        </TableRow>
-                      </TableFooter>
-                    </Table>
+                        </TableFooter>
+                      </Table>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
-              <div className="col-span-2">
-                <ChartContainer config={chartConfig}>
-                  <BarChart accessibilityLayer data={chartData}>
+              <div className=" flex">
+                <ChartContainer config={chartConfig} className=" w-full">
+                  <BarChart accessibilityLayer data={chartData} >
                     <CartesianGrid vertical={true} />
                     <XAxis
                       dataKey="area_name"
@@ -348,8 +351,8 @@ export default function Home() {
               <div className="bg-red-700 col-span-2"></div>
             </div>
           </div>
-        </div>
-      </SidebarInset>
+        </div >
+      </SidebarInset >
     </SidebarProvider >
   );
 }
