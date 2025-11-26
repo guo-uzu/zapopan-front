@@ -92,7 +92,7 @@ export const columns: ColumnDef<AreaResponsableTable>[] = [
     accessorKey: "area_name",
     header: "Área responsable",
     cell: ({ row }) => {
-      return <div className="text-clip">{row.original.area_name}</div>
+      return <div className="w-full whitespace-nowrap overflow-hidden truncate">{row.original.area_name}</div>
     }
   },
   {
@@ -131,7 +131,7 @@ import { Calendar } from "@/components/ui/calendar"
 export default function Home() {
   const [generalChartData, setGeneralChartData] = useState<AreaResponsableTable[]>([])
   const [userData, setUserData] = useState<UserProfile | null>(null)
-  const [pendientes, setPendientes] = useState(0)
+  const [pendientes, setPendientes] = useState<number | null>(null)
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -184,7 +184,11 @@ export default function Home() {
   }
 
   const handlePendientes = async () => {
-    const data = await getPendientesUser()
+    const { count, error } = await getPendientesUser()
+    if (error) {
+      throw Error("Error fetching the data. Try again")
+    }
+    setPendientes(count)
   }
 
   useEffect(() => {
@@ -230,9 +234,9 @@ export default function Home() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div className="grid auto-rows-min gap-4 md:grid-cols-3 ">
             <div className="bg-muted/50 aspect-video rounded-xl flex items-center justify-center flex-col">
-              <span className="text-xl">Bienvenid@</span>
+              <span className="text-xl font-light">Bienvenid@</span>
               {
                 !userData ?
                   <Skeleton className="bg-zinc-200/90 w-[300px] h-[40] rounded-full" />
@@ -241,11 +245,21 @@ export default function Home() {
               }
             </div>
             <div className="bg-muted/50 aspect-video rounded-xl"></div>
-            <div className="bg-muted/50 aspect-video rounded-xl"></div>
+            <div className="bg-muted/50 aspect-video h-full rounded-xl p-4">
+              <p className="font-light text-xl">Pendientes</p>
+              <div className="font-black text-red-500 w-full h-full flex items-center justify-center text-8xl">
+                {
+                  pendientes ?
+                    <span>{pendientes}</span>
+                    :
+                    <span>-</span>
+                }
+              </div>
+            </div>
           </div>
           <div className="bg-muted/50 min-h-[100vh] flex-1 flex flex-col gap-4 p-4 rounded-xl">
-            <div className="grid grid-cols-2 gap-2">
-              <div className="">
+            <div className="grid grid-cols-12 gap-2">
+              <div className="col-span-4 flex flex-col">
                 <div className="flex items-center py-4">
                   <Popover>
                     <PopoverTrigger asChild>
@@ -270,9 +284,9 @@ export default function Home() {
                     <CardTitle className="text-center mx-auto w-full font-black">Datos de la bitácora</CardTitle>
                     <CardDescription></CardDescription>
                   </CardHeader>
-                  <CardContent className="flex-1 overflow-hidden">
+                  <CardContent className="flex-1">
                     <div className="max-h-[400px] overflow-y-auto">
-                      <Table className="relative">
+                      <Table className="">
                         <TableHeader className="sticky h-10 top-0 z-20">
                           {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
@@ -295,12 +309,12 @@ export default function Home() {
                           {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                               <TableRow
-                                className=""
+                                className="whitespace-nowrap overflow-hidden truncate"
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
                               >
                                 {row.getVisibleCells().map((cell) => (
-                                  <TableCell className="w-full" key={cell.id}>
+                                  <TableCell key={cell.id}>
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                   </TableCell>
                                 ))}
@@ -326,8 +340,8 @@ export default function Home() {
                   </CardContent>
                 </Card>
               </div>
-              <div className=" flex">
-                <ChartContainer config={chartConfig} className=" w-full">
+              <div className="col-span-8 flex">
+                <ChartContainer config={chartConfig} className="max-h-[500px] w-full">
                   <BarChart accessibilityLayer data={chartData} >
                     <CartesianGrid vertical={true} />
                     <XAxis

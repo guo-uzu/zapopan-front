@@ -43,7 +43,6 @@ export const getDataChartsGeneral = async () => {
     .from('daily_area_counts ')
     .select('*')
     .order('date', { ascending: true });
-  console.log(data)
   return data
 }
 
@@ -51,10 +50,10 @@ export const getPendientesUser = async () => {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
-  console.log(user.id)
-  const { data } = await supabase
+  const { count, error } = await supabase
     .from('bitacora')
-    .select('*', { count: "exact", head: true })
-  console.log(data)
-  return data
+    .select('*', { count: 'exact', head: true })
+    .eq("user_id", user.id)
+    .eq("status_id", 0)
+  return { count, error }
 }
