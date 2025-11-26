@@ -252,7 +252,7 @@ export default function Home() {
                   pendientes ?
                     <span>{pendientes}</span>
                     :
-                    <span>-</span>
+                    <span>0</span>
                 }
               </div>
             </div>
