@@ -50,10 +50,19 @@ export const getPendientesUser = async () => {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
-  const { count, error } = await supabase
+  const { data, error } = await supabase
     .from('bitacora')
-    .select('*', { count: 'exact', head: true })
+    .select('status_id', { head: false })
     .eq("user_id", user.id)
-    .eq("status_id", 0)
-  return { count, error }
+    .in("status_id", [0, 1, 2, 3])
+
+  if (error) throw error
+
+  const counts = {
+    status0: data.filter(x => x.status_id === 0).length,
+    status1: data.filter(x => x.status_id === 1).length,
+    status2: data.filter(x => x.status_id === 2).length,
+    status3: data.filter(x => x.status_id === 3).length,
+  }
+  return { counts, error }
 }

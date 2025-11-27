@@ -15,6 +15,8 @@ import { getDataChartsGeneral, getPendientesUser } from "@/hooks/fetch-data"
 import { Skeleton } from "@/components/ui/skeleton"
 import { addDays, subDays } from "date-fns"
 
+import { Pie, PieChart } from "recharts"
+
 import {
   ColumnDef,
   flexRender,
@@ -120,6 +122,7 @@ interface ColumnFilter {
   id: string
   value: unknown
 }
+
 type ColumnFiltersState = ColumnFilter[]
 import { type DateRange } from "react-day-picker"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -132,6 +135,9 @@ export default function Home() {
   const [generalChartData, setGeneralChartData] = useState<AreaResponsableTable[]>([])
   const [userData, setUserData] = useState<UserProfile | null>(null)
   const [pendientes, setPendientes] = useState<number | null>(null)
+  const [resueltos, setResueltos] = useState<number | null>(null)
+  const [enProceso, setEnProceso] = useState<number | null>(null)
+  const [direccion, setDireccion] = useState<number | null>(null)
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -184,11 +190,14 @@ export default function Home() {
   }
 
   const handlePendientes = async () => {
-    const { count, error } = await getPendientesUser()
+    const { counts, error } = await getPendientesUser()
     if (error) {
       throw Error("Error fetching the data. Try again")
     }
-    setPendientes(count)
+    setPendientes(counts.status0)
+    setEnProceso(counts.status1)
+    setResueltos(counts.status2)
+    setDireccion(counts.status3)
   }
 
   useEffect(() => {
@@ -200,6 +209,32 @@ export default function Home() {
   const chartConfig = {
     count: {
       label: "Reportes",
+    },
+  } satisfies ChartConfig
+
+  const chartPieConfig = {
+    visitors: {
+      label: "Visitors",
+    },
+    chrome: {
+      label: "Chrome",
+      color: "var(--chart-1)",
+    },
+    safari: {
+      label: "Safari",
+      color: "var(--chart-2)",
+    },
+    firefox: {
+      label: "Firefox",
+      color: "var(--chart-3)",
+    },
+    edge: {
+      label: "Edge",
+      color: "var(--chart-4)",
+    },
+    other: {
+      label: "Other",
+      color: "var(--chart-5)",
     },
   } satisfies ChartConfig
 
@@ -219,6 +254,12 @@ export default function Home() {
     return acc + (Number(row.original.count) || 0)
   }, 0)
   const chartData = filteredRows.map(row => row.original)
+  const chartPieData = [
+    { status: "Pendientes", count: pendientes, fill: "oklch(79.5% 0.184 86.047)" },
+    { status: "En Proceso", count: enProceso, fill: "oklch(63.7% 0.237 25.331)" },
+    { status: "Resueltos", count: resueltos, fill: "oklch(72.3% 0.219 149.579)" },
+    { status: "Dirección", count: direccion, fill: "oklch(70.5% 0.213 47.604)" },
+  ]
 
   return (
     <SidebarProvider>
@@ -246,14 +287,17 @@ export default function Home() {
             </div>
             <div className="bg-muted/50 aspect-video rounded-xl"></div>
             <div className="bg-muted/50 aspect-video h-full rounded-xl p-4">
-              <p className="font-light text-xl">Pendientes</p>
-              <div className="font-black text-red-500 w-full h-full flex items-center justify-center text-8xl">
-                {
-                  pendientes ?
-                    <span>{pendientes}</span>
-                    :
-                    <span>0</span>
-                }
+              <p className="font-light text-xl">Estatus de respuestas</p>
+              <div className="w-full h-full flex">
+                <ChartContainer
+                  config={chartPieConfig}
+                  className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square w-full h-full max-h-[250px0] pb-0"
+                >
+                  <PieChart>
+                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                    <Pie data={chartPieData} dataKey="count" label nameKey="status" />
+                  </PieChart>
+                </ChartContainer>
               </div>
             </div>
           </div>
