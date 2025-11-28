@@ -11,7 +11,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
 import { useEffect, useState } from "react"
-import { getDataChartsGeneral, getPendientesUser } from "@/hooks/fetch-data"
+import { getDataChartsGeneral, getPendientesTotal, getPendientesUser } from "@/hooks/fetch-data"
 import { Skeleton } from "@/components/ui/skeleton"
 import { addDays, subDays } from "date-fns"
 
@@ -130,6 +130,12 @@ import { Button } from "@/components/ui/button"
 import { CalendarDays } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 
+interface PendientesTotal {
+  pendientesT: number | null
+  resueltosT: number | null
+  enProcesoT: number | null
+  direccionT: number | null
+}
 
 export default function Home() {
   const [generalChartData, setGeneralChartData] = useState<AreaResponsableTable[]>([])
@@ -138,6 +144,12 @@ export default function Home() {
   const [resueltos, setResueltos] = useState<number | null>(null)
   const [enProceso, setEnProceso] = useState<number | null>(null)
   const [direccion, setDireccion] = useState<number | null>(null)
+  const [pendientesTotal, setPendientesTotal] = useState<PendientesTotal>({
+    pendientesT: null,
+    resueltosT: null,
+    enProcesoT: null,
+    direccionT: null
+  })
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -200,10 +212,24 @@ export default function Home() {
     setDireccion(counts.status3)
   }
 
+  const handlePendientesTotal = async () => {
+    const { counts, error } = await getPendientesTotal()
+    if (error) {
+      throw Error("Error fetching the data. Try again")
+    }
+    setPendientesTotal({
+      pendientesT: counts.status0,
+      resueltosT: counts.status1,
+      enProcesoT: counts.status2,
+      direccionT: counts.status3
+    })
+  }
+
   useEffect(() => {
     handleFetchData()
     handleUserData()
     handlePendientes()
+    handlePendientesTotal()
   }, [supabase])
 
   const chartConfig = {
@@ -218,11 +244,9 @@ export default function Home() {
     },
     chrome: {
       label: "Chrome",
-      color: "var(--chart-1)",
     },
     safari: {
       label: "Safari",
-      color: "var(--chart-2)",
     },
     firefox: {
       label: "Firefox",
@@ -254,11 +278,19 @@ export default function Home() {
     return acc + (Number(row.original.count) || 0)
   }, 0)
   const chartData = filteredRows.map(row => row.original)
+
   const chartPieData = [
     { status: "Pendientes", count: pendientes, fill: "oklch(79.5% 0.184 86.047)" },
     { status: "En Proceso", count: enProceso, fill: "oklch(63.7% 0.237 25.331)" },
     { status: "Resueltos", count: resueltos, fill: "oklch(72.3% 0.219 149.579)" },
     { status: "Dirección", count: direccion, fill: "oklch(70.5% 0.213 47.604)" },
+  ]
+
+  const chartPieDataTotal = [
+    { status: "Pendientes", count: pendientesTotal.pendientesT, fill: "oklch(79.5% 0.184 86.047)" },
+    { status: "En Proceso", count: pendientesTotal.enProcesoT, fill: "oklch(63.7% 0.237 25.331)" },
+    { status: "Resueltos", count: pendientesTotal.resueltosT, fill: "oklch(72.3% 0.219 149.579)" },
+    { status: "Dirección", count: pendientesTotal.direccionT, fill: "oklch(70.5% 0.213 47.604)" },
   ]
 
   return (
@@ -277,7 +309,7 @@ export default function Home() {
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3 ">
             <div className="bg-muted/50 aspect-video rounded-xl flex items-center justify-center flex-col">
-              <span className="text-xl font-light">Bienvenid@</span>
+              <span className=" text-xl font-light">Bienvenid@</span>
               {
                 !userData ?
                   <Skeleton className="bg-zinc-200/90 w-[300px] h-[40] rounded-full" />
@@ -285,17 +317,36 @@ export default function Home() {
                   <span className="font-black text-2xl">{userData.full_name}</span>
               }
             </div>
-            <div className="bg-muted/50 aspect-video rounded-xl"></div>
-            <div className="bg-muted/50 aspect-video h-full rounded-xl p-4">
-              <p className="font-light text-xl">Estatus de respuestas</p>
+            <div className="bg-muted/50 aspect-video rounded-xl p-4 h-full">
+              <p className="font-light text-xl">Estatus de respuestas | Total</p>
               <div className="w-full h-full flex">
                 <ChartContainer
                   config={chartPieConfig}
-                  className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square w-full h-full max-h-[250px0] pb-0"
+                  className="mx-auto aspect-square max-h-[250px]"
                 >
                   <PieChart>
-                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                    <Pie data={chartPieData} dataKey="count" label nameKey="status" />
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent hideLabel />}
+                    />
+                    <Pie data={chartPieDataTotal} dataKey="count" nameKey="status" />
+                  </PieChart>
+                </ChartContainer>
+              </div>
+            </div>
+            <div className="bg-muted/50 aspect-video h-full rounded-xl p-4">
+              <p className="font-light text-xl">Estatus de respuestas | Individual</p>
+              <div className="w-full h-full flex">
+                <ChartContainer
+                  config={chartPieConfig}
+                  className="mx-auto aspect-square max-h-[250px]"
+                >
+                  <PieChart>
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent hideLabel />}
+                    />
+                    <Pie data={chartPieData} dataKey="count" nameKey="status" />
                   </PieChart>
                 </ChartContainer>
               </div>
@@ -326,7 +377,11 @@ export default function Home() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-center mx-auto w-full font-black">Datos de la bitácora</CardTitle>
-                    <CardDescription></CardDescription>
+                    <CardDescription className="flex gap-2 w-full justify-center">
+                      <span>{dateRange?.from?.getDate()}/{dateRange?.from?.getMonth()}/{dateRange?.from?.getFullYear()}</span>
+                      <span>-</span>
+                      <span>{dateRange?.to?.getDate()}/{dateRange?.to?.getMonth()}/{dateRange?.to?.getFullYear()}</span>
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1">
                     <div className="max-h-[400px] overflow-y-auto">

@@ -66,3 +66,23 @@ export const getPendientesUser = async () => {
   }
   return { counts, error }
 }
+
+export const getPendientesTotal = async () => {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error("User not founded")
+  const { data, error } = await supabase
+    .from('bitacora')
+    .select('status_id', { head: false })
+    .in("status_id", [0, 1, 2, 3])
+
+  if (error) throw error
+
+  const counts = {
+    status0: data.filter(x => x.status_id === 0).length,
+    status1: data.filter(x => x.status_id === 1).length,
+    status2: data.filter(x => x.status_id === 2).length,
+    status3: data.filter(x => x.status_id === 3).length,
+  }
+  return { counts, error }
+}
