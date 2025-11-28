@@ -40,8 +40,21 @@ export const getDataChartsGeneral = async () => {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
   const { data } = await supabase
-    .from('daily_area_counts ')
+    .from('daily_area_counts')
     .select('*')
+    .eq("municipal", true)
+    .order('date', { ascending: true });
+  return data
+}
+
+export const getDataChartsAreaEstatal = async () => {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error("User not founded")
+  const { data } = await supabase
+    .from('daily_area_counts')
+    .select('*')
+    .eq("municipal", false)
     .order('date', { ascending: true });
   return data
 }

@@ -11,7 +11,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
 import { useEffect, useState } from "react"
-import { getDataChartsGeneral, getPendientesTotal, getPendientesUser } from "@/hooks/fetch-data"
+import { getDataChartsAreaEstatal, getDataChartsGeneral, getPendientesTotal, getPendientesUser } from "@/hooks/fetch-data"
 import { Skeleton } from "@/components/ui/skeleton"
 import { addDays, subDays } from "date-fns"
 
@@ -139,6 +139,7 @@ interface PendientesTotal {
 
 export default function Home() {
   const [generalChartData, setGeneralChartData] = useState<AreaResponsableTable[]>([])
+  const [chartAreaEstatal, setChartAreaEstatal] = useState<AreaResponsableTable[]>([])
   const [userData, setUserData] = useState<UserProfile | null>(null)
   const [pendientes, setPendientes] = useState<number | null>(null)
   const [resueltos, setResueltos] = useState<number | null>(null)
@@ -173,11 +174,33 @@ export default function Home() {
     }
   })
 
+  const tableEstatales = useReactTable({
+    data: chartAreaEstatal,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      columnFilters,
+    },
+    onColumnFiltersChange: setColumnFilters,
+    initialState: {
+      columnVisibility: {
+        date: false
+      }
+    }
+  })
+
   const supabase = createClient()
   const handleFetchData = async () => {
     const data = await getDataChartsGeneral()
     if (data) setGeneralChartData(data)
   }
+
+  const handleFetchChartAreaEstatal = async () => {
+    const data = await getDataChartsAreaEstatal()
+    if (data) setChartAreaEstatal(data)
+  }
+
   const handleUserData = async () => {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
@@ -227,6 +250,7 @@ export default function Home() {
 
   useEffect(() => {
     handleFetchData()
+    handleFetchChartAreaEstatal()
     handleUserData()
     handlePendientes()
     handlePendientesTotal()
@@ -279,6 +303,12 @@ export default function Home() {
   }, 0)
   const chartData = filteredRows.map(row => row.original)
 
+  const filteredRowsEstatales = tableEstatales.getFilteredRowModel().rows;
+  const totalReportesEstatales = filteredRowsEstatales.reduce((acc, row) => {
+    return acc + (Number(row.original.count) || 0)
+  }, 0)
+  const chartDataEstatales = filteredRowsEstatales.map(row => row.original)
+
   const chartPieData = [
     { status: "Pendientes", count: pendientes, fill: "oklch(79.5% 0.184 86.047)" },
     { status: "En Proceso", count: enProceso, fill: "oklch(63.7% 0.237 25.331)" },
@@ -292,7 +322,6 @@ export default function Home() {
     { status: "Resueltos", count: pendientesTotal.resueltosT, fill: "oklch(72.3% 0.219 149.579)" },
     { status: "Dirección", count: pendientesTotal.direccionT, fill: "oklch(70.5% 0.213 47.604)" },
   ]
-
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -353,6 +382,198 @@ export default function Home() {
             </div>
           </div>
           <div className="bg-muted/50 min-h-[100vh] flex-1 flex flex-col gap-4 p-4 rounded-xl">
+            <div className="grid grid-cols-12 gap-2">
+              <div className="col-span-4 flex flex-col">
+                <div className="flex items-center py-4">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant='outline' size='icon'>
+                        <CalendarDays />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className='w-full'>
+                      <Calendar
+                        mode="range"
+                        defaultMonth={dateRange?.from}
+                        selected={dateRange}
+                        onSelect={setDateRange} // Just update state, useEffect handles the rest
+                        numberOfMonths={2}
+                        className="rounded-lg border shadow-sm"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-center mx-auto w-full font-black">Reportes de áreas municipales</CardTitle>
+                    <CardDescription className="flex gap-2 w-full justify-center">
+                      <span>{dateRange?.from?.getDate()}/{dateRange?.from?.getMonth()}/{dateRange?.from?.getFullYear()}</span>
+                      <span>-</span>
+                      <span>{dateRange?.to?.getDate()}/{dateRange?.to?.getMonth()}/{dateRange?.to?.getFullYear()}</span>
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <div className="max-h-[400px] overflow-y-auto">
+                      <Table className="">
+                        <TableHeader className="sticky h-10 top-0 z-20">
+                          {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                              {headerGroup.headers.map((header) => {
+                                return (
+                                  <TableHead key={header.id}>
+                                    {header.isPlaceholder
+                                      ? null
+                                      : flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                      )}
+                                  </TableHead>
+                                )
+                              })}
+                            </TableRow>
+                          ))}
+                        </TableHeader>
+                        <TableBody>
+                          {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                              <TableRow
+                                className="whitespace-nowrap overflow-hidden truncate"
+                                key={row.id}
+                                data-state={row.getIsSelected() && "selected"}
+                              >
+                                {row.getVisibleCells().map((cell) => (
+                                  <TableCell key={cell.id}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow className="sticky bottom-0 z-20 bg-background">
+                              <TableCell colSpan={columns.length} className="h-24 text-center">
+                                No results.
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                        <TableFooter>
+                          <TableRow>
+                            <TableCell className="font-bold ">Total</TableCell>
+                            <TableCell className="font-bold">{totalReportes}</TableCell>
+                          </TableRow>
+                        </TableFooter>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="col-span-8 flex">
+                <ChartContainer config={chartConfig} className="max-h-[500px] w-full">
+                  <BarChart accessibilityLayer data={chartData} >
+                    <CartesianGrid vertical={true} />
+                    <XAxis
+                      dataKey="area_name"
+                      tickLine={true}
+                      tickMargin={10}
+                      axisLine={false}
+                      tickFormatter={(value) => value.slice(0, 10)}
+                    />
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent hideLabel={false} indicator="dot" />}
+                    />
+                    <Bar dataKey="count" fill="oklch(70.7% 0.165 254.624)" radius={4} />
+                  </BarChart>
+                </ChartContainer>
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-2">
+              <div className="col-span-4 flex flex-col">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-center mx-auto w-full font-black">Reportes de áreas estatales</CardTitle>
+                    <CardDescription className="flex gap-2 w-full justify-center">
+                      <span>{dateRange?.from?.getDate()}/{dateRange?.from?.getMonth()}/{dateRange?.from?.getFullYear()}</span>
+                      <span>-</span>
+                      <span>{dateRange?.to?.getDate()}/{dateRange?.to?.getMonth()}/{dateRange?.to?.getFullYear()}</span>
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <div className="max-h-[400px] overflow-y-auto">
+                      <Table>
+                        <TableHeader className="sticky h-10 top-0 z-20">
+                          {tableEstatales.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                              {headerGroup.headers.map((header) => {
+                                return (
+                                  <TableHead key={header.id}>
+                                    {header.isPlaceholder
+                                      ? null
+                                      : flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                      )}
+                                  </TableHead>
+                                )
+                              })}
+                            </TableRow>
+                          ))}
+                        </TableHeader>
+                        <TableBody>
+                          {tableEstatales.getRowModel().rows?.length ? (
+                            tableEstatales.getRowModel().rows.map((row) => (
+                              <TableRow
+                                className="whitespace-nowrap overflow-hidden truncate"
+                                key={row.id}
+                                data-state={row.getIsSelected() && "selected"}
+                              >
+                                {row.getVisibleCells().map((cell) => (
+                                  <TableCell key={cell.id}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow className="sticky bottom-0 z-20 bg-background">
+                              <TableCell colSpan={columns.length} className="h-24 text-center">
+                                No results.
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                        <TableFooter>
+                          <TableRow>
+                            <TableCell className="font-bold ">Total</TableCell>
+                            {/* This now shows the dynamic total */}
+                            <TableCell className="font-bold">{totalReportesEstatales}</TableCell>
+                          </TableRow>
+                        </TableFooter>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="col-span-8 flex">
+                <ChartContainer config={chartConfig} className="max-h-[500px] w-full">
+                  <BarChart accessibilityLayer data={chartDataEstatales} >
+                    <CartesianGrid vertical={true} />
+                    <XAxis
+                      dataKey="area_name"
+                      tickLine={true}
+                      tickMargin={10}
+                      axisLine={false}
+                      tickFormatter={(value) => value.slice(0, 10)}
+                    />
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent hideLabel={false} indicator="dot" />}
+                    />
+                    <Bar dataKey="count" fill="oklch(70.7% 0.165 254.624)" radius={4} />
+                  </BarChart>
+                </ChartContainer>
+              </div>
+            </div>
             <div className="grid grid-cols-12 gap-2">
               <div className="col-span-4 flex flex-col">
                 <div className="flex items-center py-4">
@@ -458,10 +679,6 @@ export default function Home() {
                   </BarChart>
                 </ChartContainer>
               </div>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="bg-red-700 col-span-1 h-[600px]"></div>
-              <div className="bg-red-700 col-span-2"></div>
             </div>
           </div>
         </div >
