@@ -7,6 +7,7 @@ import {
   Command,
   GalleryVerticalEnd,
   SquareTerminal,
+  LoaderPinwheel
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -49,6 +50,11 @@ const data = {
       title: "Bitácora",
       url: "/bitacora",
       icon: Bot,
+    },
+    {
+      title: "Respuestas",
+      url: "/respuestas",
+      icon: LoaderPinwheel,
     }
   ],
 }
