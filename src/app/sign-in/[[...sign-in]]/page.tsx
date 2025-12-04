@@ -1,5 +1,6 @@
 import { Cat } from "lucide-react"
 import { LoginForm } from "@/components/login-form"
+import Image from "next/image"
 
 export default function LoginPage() {
   return (
@@ -20,10 +21,11 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
+        <Image
           src="/bg-zapopan.png"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+
         />
       </div>
     </div>
