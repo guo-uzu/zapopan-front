@@ -147,15 +147,13 @@ export default function Respuestas() {
                                         <Card key={response.id} className="overflow-hidden rounded-lg hover:shadow-md transition-all duration-200 border-zinc-200">
                                             <CardHeader className="pb-3">
                                                 <CardTitle className="text-lg font-bold leading-tight truncate max-w-[300px]">{response.title}</CardTitle>
-                                                <CardDescription>
-                                                    <div className="flex items-center justify-between text-xs mt-2">
-                                                        <span className="font-medium text-zinc-700 truncate max-w-[120px]">
-                                                            {response.user?.full_name ?? "Anónimo"}
-                                                        </span>
-                                                        <span>
-                                                            {new Date(response.created_at).toLocaleDateString("es-MX")}
-                                                        </span>
-                                                    </div>
+                                                <CardDescription className="flex items-center justify-between text-xs mt-2">
+                                                    <span className="font-medium text-zinc-700 truncate max-w-[120px]">
+                                                        {response.user?.full_name ?? "Anónimo"}
+                                                    </span>
+                                                    <span>
+                                                        {new Date(response.created_at).toLocaleDateString("es-MX")}
+                                                    </span>
                                                 </CardDescription>
                                             </CardHeader>
                                             <CardContent className="flex flex-col gap-4">
@@ -190,15 +188,12 @@ export default function Respuestas() {
                                         <DialogHeader>
                                             <DialogTitle>{response.title}</DialogTitle>
                                             <DialogDescription className="text-xs flex flex-col justify-center pt-3">
-                                                <span className="block w-full text-center">{response.id}</span>
-                                                <div className="flex items-center justify-between text-xs pt-2 w-full">
-                                                    <span className="font-medium text-zinc-700">
-                                                        {response.user?.full_name ?? "Anónimo"}
-                                                    </span>
-                                                    <span>
-                                                        {new Date(response.created_at).toLocaleDateString("es-MX")}
-                                                    </span>
-                                                </div>
+                                                <span className="flex flex-row items-center justify-between text-xs pt-2 w-full font-medium text-zinc-700">
+                                                    {response.user?.full_name ?? "Anónimo"}
+                                                </span>
+                                                <span>
+                                                    {new Date(response.created_at).toLocaleDateString("es-MX")}
+                                                </span>
                                             </DialogDescription>
                                         </DialogHeader>
                                         <CardContent className="flex flex-col gap-4">
