@@ -11,6 +11,7 @@ import { Hash, Search, X } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { DialogDescription, DialogHeader } from "@/components/ui/dialog"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 
 interface Response {
     id: string
@@ -98,6 +99,18 @@ export default function Respuestas() {
         setSearchTerm(prev => prev ? `${prev}, ${tag}` : tag)
     }
 
+    const [open, setOpen] = useState(false)
+    useEffect(() => {
+        const down = (e: KeyboardEvent) => {
+            if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                setOpen((open) => !open)
+            }
+        }
+        document.addEventListener("keydown", down)
+        return () => document.removeEventListener("keydown", down)
+    }, [])
+
     return (
         <SidebarProvider className="">
             <AppSidebar />
@@ -109,14 +122,13 @@ export default function Respuestas() {
                     </div>
                 </header>
                 <div className="px-4 pb-10">
-
                     {/* SEARCH BAR SECTION */}
                     <div className="max-w-xl w-full mx-auto flex flex-col gap-4 mb-8">
                         <div className="text-center">
                             <h1 className="text-2xl font-bold">Respuestas</h1>
                             <p className="text-muted-foreground">Separa con comas para múltiples búsquedas (ej: obras, alumbrado)</p>
                         </div>
-                        <div className="relative flex gap-2">
+                        <div className="relative flex flex-col gap-2">
                             <div className="relative w-full">
                                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input
@@ -134,6 +146,26 @@ export default function Respuestas() {
                                         <X className="h-4 w-4" />
                                     </button>
                                 )}
+                            </div>
+                            <div>
+                                <p className="text-muted-foreground text-sm">
+                                    Crea una respuesta {" "}
+                                    <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+                                        <span className="text-xs">⌘</span>J
+                                    </kbd>
+                                </p>
+                                <Sheet open={open} onOpenChange={setOpen} >
+                                    <SheetContent>
+                                        <SheetHeader>
+                                            <SheetTitle>Envia una respuesta</SheetTitle>
+                                        </SheetHeader>
+                                        <form>
+                                            <div>
+
+                                            </div>
+                                        </form>
+                                    </SheetContent>
+                                </Sheet>
                             </div>
                         </div>
                     </div>
