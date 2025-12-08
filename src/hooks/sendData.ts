@@ -68,9 +68,9 @@ export const updateDataSupabase = async (formData: Inputs) => {
 
 function mustMap<T extends string>(map: Record<T, number>, key: T | undefined, field: string) {
   if (key === undefined || key === null) {
-      throw new Error(`Valor requerido faltante para: ${field}`);
+    throw new Error(`Valor requerido faltante para: ${field}`);
   }
-  
+
   const id = map[key];
   if (id === undefined || id === null) throw new Error(`Valor inválido para ${field}: "${key}"`);
   return id;
@@ -160,3 +160,19 @@ const statusMap: Record<NonNullable<Inputs['status']>, number> = {
   dirección: 3
 };
 
+
+export const sendResponse = async (formData: { title: string, description_jjf: string, description_gob: string, tags: string[] }) => {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error("User not founded")
+
+  const payload = formData
+  const { error } = await supabase.from("respuestas").insert(payload)
+  if (error) {
+    console.log("error bitacora insert", error)
+    throw new Error("DB insert failed")
+  }
+  return { ok: true }
+
+}

@@ -99,3 +99,49 @@ export const getPendientesTotal = async () => {
   }
   return { counts, error }
 }
+
+
+interface Response {
+  id: string
+  tags: string[]
+  created_at: string
+  description_jjf: string
+  description_gob: string
+  title: string
+  user: {
+    full_name: string
+    email: string
+    avatar_url: string
+  } | undefined
+}
+
+export const getResponses = async () => {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error("User not founded")
+  const { data } = await supabase
+    .from("respuestas")
+    .select(`
+                    id,
+                    title,
+                    description_jjf,
+                    description_gob,
+                    tags,
+                    created_at,
+                    user:users(
+                        full_name,
+                        email,
+                        avatar_url
+                    )
+                `)
+
+  if (data) {
+    const formattedData: Response[] = data.map((item) => {
+      return ({
+        ...item,
+        user: Array.isArray(item.user) ? item.user[0] : item.user
+      })
+    })
+    return formattedData
+  }
+}

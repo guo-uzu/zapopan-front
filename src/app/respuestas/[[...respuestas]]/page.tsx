@@ -11,56 +11,44 @@ import { Hash, Search, X } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { DialogDescription, DialogHeader } from "@/components/ui/dialog"
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Label } from "@/components/ui/label"
+import { Field, FieldError, FieldGroup } from "@/components/ui/field"
+import { Textarea } from "@/components/ui/textarea"
+import { sendResponse } from "@/hooks/sendData"
+import { getResponses } from "@/hooks/fetch-data"
 
 interface Response {
     id: string
     tags: string[]
     created_at: string
-    description: string
+    description_jjf: string
+    description_gob: string
     title: string
     user: {
         full_name: string
         email: string
         avatar_url: string
-    } | null
+    } | undefined
 }
 
 export default function Respuestas() {
-    const [responses, setResponses] = useState<Response[] | null>(null)
+    const [responses, setResponses] = useState<Response[] | undefined>(undefined)
     const [searchTerm, setSearchTerm] = useState("")
+    const [title, setTitle] = useState("")
+    const [jjfDescription, setJJFDescription] = useState("")
+    const [gobDescription, setGobDescription] = useState("")
+    const [labels, setLabels] = useState<string[] | []>([])
+
 
     const supabase = createClient()
 
-    useEffect(() => {
-        const handleData = async () => {
-            const { data } = await supabase
-                .from("respuestas")
-                .select(`
-                    id,
-                    title,
-                    description,
-                    tags,
-                    created_at,
-                    user:users(
-                        full_name,
-                        email,
-                        avatar_url
-                    )
-                `)
+    const handleData = async () => {
+        const data = await getResponses()
+        setResponses(data)
+    }
 
-            if (data) {
-                const formattedData: Response[] = data.map((item) => {
-                    console.log(item)
-                    return ({
-                        ...item,
-                        user: Array.isArray(item.user) ? item.user[0] : item.user
-                    })
-                })
-                //     ())
-                setResponses(formattedData)
-            }
-        }
+    useEffect(() => {
         handleData()
     }, [])
 
@@ -83,10 +71,11 @@ export default function Respuestas() {
         // If you want them to match ALL terms (AND logic), change .some() to .every()
         return terms.some(term => {
             const matchesTitle = response.title.toLowerCase().includes(term)
-            const matchesDesc = response.description.toLowerCase().includes(term)
+            const matchesDescJJF = response.description_jjf.toLowerCase().includes(term)
+            const matchesDescGob = response.description_gob.toLowerCase().includes(term)
             const matchesTags = response.tags?.some(tag => tag.toLowerCase().includes(term))
 
-            return matchesTitle || matchesDesc || matchesTags
+            return matchesTitle || matchesDescJJF || matchesDescGob || matchesTags
         })
     })
 
@@ -109,6 +98,39 @@ export default function Respuestas() {
         }
         document.addEventListener("keydown", down)
         return () => document.removeEventListener("keydown", down)
+    }, [])
+
+    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const formData: { title: string, description_jjf: string, description_gob: string, tags: string[] } = {
+            title,
+            description_jjf: jjfDescription,
+            description_gob: gobDescription,
+            tags: labels
+        }
+        sendResponse(formData)
+    }
+
+    const handleLabels = (e: string) => {
+        const splitLabels = e.split(",")
+        const trimLabels = splitLabels.map((label: string) => label.trim())
+        setLabels(trimLabels)
+    }
+
+    useEffect(() => {
+        const subscription = supabase
+            .channel("changes")
+            .on("postgres_changes", {
+                event: "*",
+                schema: "public",
+                table: "respuestas"
+            }, () => {
+                handleData()
+            })
+            .subscribe()
+        return () => {
+            supabase.removeChannel(subscription)
+        }
     }, [])
 
     return (
@@ -148,21 +170,42 @@ export default function Respuestas() {
                                 )}
                             </div>
                             <div>
-                                <p className="text-muted-foreground text-sm">
-                                    Crea una respuesta {" "}
-                                    <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
-                                        <span className="text-xs">⌘</span>J
-                                    </kbd>
-                                </p>
                                 <Sheet open={open} onOpenChange={setOpen} >
+                                    <SheetTrigger className="text-muted-foreground text-sm">
+                                        Click aquí para crear una respuesta o teclea {" "}
+                                        <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+                                            <span className="text-xs">⌘</span>J
+                                        </kbd>
+                                    </SheetTrigger>
                                     <SheetContent>
                                         <SheetHeader>
-                                            <SheetTitle>Envia una respuesta</SheetTitle>
+                                            <SheetTitle>Crea una respuesta</SheetTitle>
                                         </SheetHeader>
-                                        <form>
-                                            <div>
-
-                                            </div>
+                                        <form onSubmit={handleFormSubmit} className="grid flex-1 auto-rows-min gap-6 px-4">
+                                            <FieldGroup>
+                                                <FieldGroup>
+                                                    <Field>
+                                                        <Label htmlFor="title">Título</Label>
+                                                        <Input onChange={(e) => setTitle(e.target.value)} type="text" name="title" id="title" />
+                                                    </Field>
+                                                    <Field>
+                                                        <Label htmlFor="description_jjf">Descripción Frangie</Label>
+                                                        <Textarea id="description_jjf" rows={4} onChange={(e) => setJJFDescription(e.target.value)} />
+                                                        <FieldError />
+                                                    </Field>
+                                                    <Field>
+                                                        <Label htmlFor="description_gob">Descripción Gobierno de Zapopan</Label>
+                                                        <Textarea id="description_gob" rows={4} onChange={(e) => setGobDescription(e.target.value)} />
+                                                    </Field>
+                                                    <Field>
+                                                        <Label htmlFor="labels">Etiquetas</Label>
+                                                        <Input type="text" name="labels" id="labels" onChange={(e) => handleLabels(e.target.value)} />
+                                                    </Field>
+                                                    <Field orientation="responsive">
+                                                        <Button type="submit">Enviar</Button>
+                                                    </Field>
+                                                </FieldGroup>
+                                            </FieldGroup>
                                         </form>
                                     </SheetContent>
                                 </Sheet>
@@ -190,7 +233,10 @@ export default function Respuestas() {
                                             </CardHeader>
                                             <CardContent className="flex flex-col gap-4">
                                                 <p className="line-clamp-4 text-sm text-zinc-600 leading-relaxed">
-                                                    {response.description}
+                                                    {response.description_jjf}
+                                                </p>
+                                                <p className="line-clamp-4 text-sm text-zinc-600 leading-relaxed">
+                                                    {response.description_gob}
                                                 </p>
                                             </CardContent>
                                             <CardFooter>
@@ -230,7 +276,7 @@ export default function Respuestas() {
                                         </DialogHeader>
                                         <CardContent className="flex flex-col gap-4">
                                             <p className="text-sm text-zinc-600 leading-relaxed">
-                                                {response.description}
+                                                {response.description_jjf}
                                             </p>
                                         </CardContent>
                                         <DialogFooter>
