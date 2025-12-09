@@ -63,17 +63,15 @@ export default function Respuestas() {
             .split(",")
             .map(term => term.trim()) // Remove spaces around words
             .filter(term => term.length > 0) // Remove empty strings (e.g. trailing comma)
-        console.log(terms)
         // If user typed a comma but no words yet, return true
         if (terms.length === 0) return true
 
         // B. Check if ANY of the terms match (OR logic)
         // If you want them to match ALL terms (AND logic), change .some() to .every()
-        return terms.some(term => {
+        return terms.some((term: string) => {
             const matchesTitle = response.title.toLowerCase().includes(term)
             const matchesDescJJF = response.description_jjf.toLowerCase().includes(term)
-            const matchesTags = response.tags?.some(tag => tag.toLowerCase().includes(term))
-
+            const matchesTags = response.tags?.some(tag => tag.toLowerCase().includes(term.split("#")[1]))
             return matchesTitle || matchesDescJJF || matchesTags
         })
     })
