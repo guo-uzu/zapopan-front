@@ -72,10 +72,9 @@ export default function Respuestas() {
         return terms.some(term => {
             const matchesTitle = response.title.toLowerCase().includes(term)
             const matchesDescJJF = response.description_jjf.toLowerCase().includes(term)
-            const matchesDescGob = response.description_gob.toLowerCase().includes(term)
             const matchesTags = response.tags?.some(tag => tag.toLowerCase().includes(term))
 
-            return matchesTitle || matchesDescJJF || matchesDescGob || matchesTags
+            return matchesTitle || matchesDescJJF || matchesTags
         })
     })
 
