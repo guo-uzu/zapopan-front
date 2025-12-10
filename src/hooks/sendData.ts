@@ -167,7 +167,10 @@ export const sendResponse = async (formData: { title: string, description_jjf: s
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
 
-  const payload = formData
+  const payload = {
+    ...formData,
+    user_id: user.id
+  }
   const { error } = await supabase.from("respuestas").insert(payload)
   if (error) {
     console.log("error bitacora insert", error)
