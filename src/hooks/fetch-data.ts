@@ -103,7 +103,8 @@ export const getPendientesTotal = async () => {
 
 interface Response {
   id: string
-  tags: string[]
+  labels_areas: string[]
+  labels_categories: string[]
   created_at: string
   description_jjf: string
   description_gob: string
@@ -126,7 +127,8 @@ export const getResponses = async () => {
                     title,
                     description_jjf,
                     description_gob,
-                    tags,
+                    labels_areas,
+                    labels_categories,
                     created_at,
                     user:users(
                         full_name,

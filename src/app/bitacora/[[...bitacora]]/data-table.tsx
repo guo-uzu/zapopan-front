@@ -13,15 +13,6 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table"
 
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
 import { Input } from "@/components/ui/input"
 
 import {

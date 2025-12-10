@@ -7,20 +7,23 @@ import { Input } from "@/components/ui/input"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { createClient } from "@/utils/supabase/client"
 import { Separator } from "@/components/ui/separator"
-import { Hash, Search, X } from "lucide-react"
+import { CirclePlus, Hash, LoaderCircleIcon, Search, X } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { DialogDescription, DialogHeader } from "@/components/ui/dialog"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Label } from "@/components/ui/label"
-import { Field, FieldError, FieldGroup } from "@/components/ui/field"
+import { Field, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
 import { sendResponse } from "@/hooks/sendData"
 import { getResponses } from "@/hooks/fetch-data"
+import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns"
+import MultipleSelector from "./multi-select"
 
 interface Response {
     id: string
-    tags: string[]
+    labels_areas: string[]
+    labels_categories: string[]
     created_at: string
     description_jjf: string
     description_gob: string
@@ -38,7 +41,9 @@ export default function Respuestas() {
     const [title, setTitle] = useState("")
     const [jjfDescription, setJJFDescription] = useState("")
     const [gobDescription, setGobDescription] = useState("")
-    const [labels, setLabels] = useState<string[] | []>([])
+    const [labelsAreas, setLabelsAreas] = useState<string[] | []>([])
+    const [labelsCategories, setLabelsCategories] = useState<string[] | []>([])
+    const [isLoading, setLoading] = useState(false)
 
 
     const supabase = createClient()
@@ -71,8 +76,10 @@ export default function Respuestas() {
         return terms.some((term: string) => {
             const matchesTitle = response.title.toLowerCase().includes(term)
             const matchesDescJJF = response.description_jjf.toLowerCase().includes(term)
-            const matchesTags = response.tags?.some(tag => tag.toLowerCase().includes(term.split("#")[1]))
-            return matchesTitle || matchesDescJJF || matchesTags
+            const matchesTagsAreas = response.labels_areas?.some(tag => tag.toLowerCase().includes(term.split("#")[1]))
+            const matchesTagsCategories = response.labels_categories?.some(tag => tag.toLowerCase().includes(term.split("#")[1]))
+
+            return matchesTitle || matchesDescJJF || matchesTagsAreas || matchesTagsCategories
         })
     })
 
@@ -99,19 +106,36 @@ export default function Respuestas() {
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const formData: { title: string, description_jjf: string, description_gob: string, tags: string[] } = {
+        setLoading(true)
+        const formData: { title: string, description_jjf: string, description_gob: string, labels_areas: string[], labels_categories: string[] } = {
             title,
             description_jjf: jjfDescription,
             description_gob: gobDescription,
-            tags: labels
+            labels_areas: labelsAreas,
+            labels_categories: labelsCategories
         }
         sendResponse(formData)
+        setLoading(false)
     }
 
-    const handleLabels = (e: string) => {
-        const splitLabels = e.split(",")
-        const trimLabels = splitLabels.map((label: string) => label.trim())
-        setLabels(trimLabels)
+    interface LabelsData {
+        [key: string]: string | boolean | undefined;
+        value: string;
+        label: string;
+        disable?: boolean | undefined;
+        fixed?: boolean | undefined;
+    }
+
+    const handleLabelsArea = (labelsUser: LabelsData[], type: string) => {
+        const labelsOnly = labelsUser.map(label => label.label)
+        switch (type) {
+            case "area":
+                setLabelsAreas(labelsOnly)
+                break
+            case "category":
+                setLabelsCategories(labelsOnly)
+                break
+        }
     }
 
     useEffect(() => {
@@ -183,23 +207,65 @@ export default function Respuestas() {
                                                 <FieldGroup>
                                                     <Field>
                                                         <Label htmlFor="title">Título</Label>
-                                                        <Input onChange={(e) => setTitle(e.target.value)} type="text" name="title" id="title" />
+                                                        <Input required onChange={(e) => setTitle(e.target.value)} type="text" name="title" id="title" />
                                                     </Field>
                                                     <Field>
                                                         <Label htmlFor="description_jjf">Descripción Frangie</Label>
-                                                        <Textarea id="description_jjf" rows={4} onChange={(e) => setJJFDescription(e.target.value)} />
-                                                        <FieldError />
+                                                        <Textarea required id="description_jjf" rows={4} onChange={(e) => setJJFDescription(e.target.value)} />
                                                     </Field>
                                                     <Field>
                                                         <Label htmlFor="description_gob">Descripción Gobierno de Zapopan</Label>
-                                                        <Textarea id="description_gob" rows={4} onChange={(e) => setGobDescription(e.target.value)} />
+                                                        <Textarea required id="description_gob" rows={4} onChange={(e) => setGobDescription(e.target.value)} />
                                                     </Field>
-                                                    <Field>
-                                                        <Label htmlFor="labels">Etiquetas</Label>
-                                                        <Input type="text" name="labels" id="labels" onChange={(e) => handleLabels(e.target.value)} />
-                                                    </Field>
+                                                    <FieldSet>
+                                                        <FieldLegend>Etiquetas</FieldLegend>
+                                                        <FieldGroup>
+                                                            <Field orientation="vertical">
+                                                                <FieldLabel>Áreas responsables</FieldLabel>
+                                                                <MultipleSelector
+                                                                    commandProps={{
+                                                                        label: 'Selecciona un área'
+                                                                    }}
+                                                                    defaultOptions={ColumnsBitacoraOpts.area_responsable}
+                                                                    placeholder='Selecciona un área'
+                                                                    hidePlaceholderWhenSelected
+                                                                    emptyIndicator={<p className='text-center text-sm'>No se encontraron resultados</p>}
+                                                                    className='w-full'
+                                                                    onChange={(labels) => handleLabelsArea(labels, "area")}
+                                                                />
+                                                                <FieldLabel>Categorías</FieldLabel>
+                                                                <MultipleSelector
+                                                                    commandProps={{
+                                                                        label: 'Selecciona una categoría'
+                                                                    }}
+                                                                    defaultOptions={ColumnsBitacoraOpts.category}
+                                                                    placeholder='Selecciona una categoría'
+                                                                    hidePlaceholderWhenSelected
+                                                                    emptyIndicator={<p className='text-center text-sm'>No se encontraron resultados</p>}
+                                                                    className='w-full'
+                                                                    onChange={(labels) => handleLabelsArea(labels, "category")}
+                                                                />
+                                                            </Field>
+                                                        </FieldGroup>
+                                                    </FieldSet>
                                                     <Field orientation="responsive">
-                                                        <Button type="submit">Enviar</Button>
+                                                        <Button type="submit">
+                                                            {
+                                                                !isLoading ? (
+                                                                    <>
+                                                                        Enviar
+                                                                    </>
+                                                                )
+                                                                    :
+                                                                    (
+                                                                        <>
+                                                                            <LoaderCircleIcon className='animate-spin' />
+                                                                            Cargando
+                                                                        </>
+                                                                    )
+                                                            }
+                                                        </Button>
+                                                        <Button type="reset" variant="secondary">Resetear</Button>
                                                     </Field>
                                                 </FieldGroup>
                                             </FieldGroup>
@@ -239,7 +305,24 @@ export default function Respuestas() {
                                             <CardFooter>
                                                 <div className="flex flex-wrap gap-1.5 mt-auto">
                                                     {
-                                                        response.tags?.map((tag, i) => (
+                                                        response.labels_areas?.map((tag, i) => (
+                                                            <Badge
+                                                                key={i}
+                                                                variant="secondary"
+                                                                className='cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal'
+                                                                // 3. UPDATED CLICK HANDLER
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation()
+                                                                    handleTagClick(tag) // Now adds with comma!
+                                                                }}
+                                                            >
+                                                                <Hash className="w-3 h-3 mr-1 opacity-50" />
+                                                                {tag}
+                                                            </Badge>
+                                                        ))
+                                                    }
+                                                    {
+                                                        response.labels_categories?.map((tag, i) => (
                                                             <Badge
                                                                 key={i}
                                                                 variant="secondary"
@@ -279,7 +362,24 @@ export default function Respuestas() {
                                         <DialogFooter>
                                             <div className="flex flex-wrap gap-1.5 mt-auto w-full">
                                                 {
-                                                    response.tags?.map((tag, i) => (
+                                                    response.labels_areas?.map((tag, i) => (
+                                                        <Badge
+                                                            key={i}
+                                                            variant="secondary"
+                                                            className='cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal'
+                                                            // 3. UPDATED CLICK HANDLER
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                handleTagClick(tag) // Now adds with comma!
+                                                            }}
+                                                        >
+                                                            <Hash className="w-3 h-3 mr-1 opacity-50" />
+                                                            {tag}
+                                                        </Badge>
+                                                    ))
+                                                }
+                                                {
+                                                    response.labels_categories?.map((tag, i) => (
                                                         <Badge
                                                             key={i}
                                                             variant="secondary"
