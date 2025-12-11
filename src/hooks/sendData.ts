@@ -2,6 +2,9 @@
 import { createClient } from "@/utils/supabase/server"
 import { Inputs } from "@/hooks/types";
 import { cookies } from 'next/headers'
+import { Option } from "@/app/respuestas/[[...respuestas]]/multi-select";
+import { title } from "process";
+import { id } from "date-fns/locale";
 
 export const sendDataSupabase = async (formData: Inputs) => {
   const cookieStore = await cookies()
@@ -161,14 +164,17 @@ const statusMap: Record<NonNullable<Inputs['status']>, number> = {
 };
 
 
-export const sendResponse = async (formData: { title: string, description_jjf: string, description_gob: string, labels_areas: string[], labels_categories: string[] }) => {
+export const sendResponse = async (formData: { id: string, title: string, jjfDescription: string, gobDescription: string, selectedAreas: Option[], selectedCategories: Option[] }) => {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
-
   const payload = {
-    ...formData,
+    title: formData.title,
+    description_jjf: formData.jjfDescription,
+    description_gob: formData.gobDescription,
+    labels_areas: formData.selectedAreas,
+    labels_categories: formData.selectedCategories,
     user_id: user.id
   }
   const { error } = await supabase.from("respuestas").insert(payload)
@@ -177,5 +183,26 @@ export const sendResponse = async (formData: { title: string, description_jjf: s
     throw new Error("DB insert failed")
   }
   return { ok: true }
+}
 
+export const updateResponse = async (formData: { id: string, title: string, jjfDescription: string, gobDescription: string, selectedAreas: Option[], selectedCategories: Option[] }) => {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error("User not founded")
+  const payload = {
+    title: formData.title,
+    description_jjf: formData.jjfDescription,
+    description_gob: formData.gobDescription,
+    labels_areas: formData.selectedAreas,
+    labels_categories: formData.selectedCategories,
+    user_id: user.id
+  }
+  console.log(formData)
+  const { error } = await supabase.from("respuestas").update(payload).eq("id", formData.id)
+  if (error) {
+    console.log("error bitacora insert", error)
+    throw new Error("DB insert failed")
+  }
+  return { ok: true }
 }

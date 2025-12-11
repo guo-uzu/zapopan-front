@@ -1,3 +1,4 @@
+import { Option } from "@/app/respuestas/[[...respuestas]]/multi-select"
 import { createClient } from "@/utils/supabase/client"
 
 export const fetchData = async (id?: string | null) => {
@@ -103,8 +104,8 @@ export const getPendientesTotal = async () => {
 
 interface Response {
   id: string
-  labels_areas: string[]
-  labels_categories: string[]
+  labels_areas: Option[]
+  labels_categories: Option[]
   created_at: string
   description_jjf: string
   description_gob: string
@@ -123,19 +124,20 @@ export const getResponses = async () => {
   const { data } = await supabase
     .from("respuestas")
     .select(`
-                    id,
-                    title,
-                    description_jjf,
-                    description_gob,
-                    labels_areas,
-                    labels_categories,
-                    created_at,
-                    user:users(
-                        full_name,
-                        email,
-                        avatar_url
-                    )
-                `)
+      id,
+      title,
+      description_jjf,
+      description_gob,
+      labels_areas,
+      labels_categories,
+      created_at,
+      user:users(
+        full_name,
+        email,
+        avatar_url
+      )
+      `)
+    .eq("available", true)
 
   if (data) {
     const formattedData: Response[] = data.map((item) => {
@@ -144,6 +146,7 @@ export const getResponses = async () => {
         user: Array.isArray(item.user) ? item.user[0] : item.user
       })
     })
+    console.log(formattedData)
     return formattedData
   }
 }
