@@ -164,7 +164,7 @@ const statusMap: Record<NonNullable<Inputs['status']>, number> = {
 };
 
 
-export const sendResponse = async (formData: { id: string, title: string, jjfDescription: string, gobDescription: string, selectedAreas: Option[], selectedCategories: Option[] }) => {
+export const sendResponse = async (formData: { title: string | undefined, jjfDescription: string | undefined, gobDescription: string | undefined, selectedAreas: Option[] | undefined, selectedCategories: Option[] | undefined }) => {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
@@ -179,13 +179,14 @@ export const sendResponse = async (formData: { id: string, title: string, jjfDes
   }
   const { error } = await supabase.from("respuestas").insert(payload)
   if (error) {
-    console.log("error bitacora insert", error)
+    console.log(payload)
+    console.log("error respuestas insert", error)
     throw new Error("DB insert failed")
   }
   return { ok: true }
 }
 
-export const updateResponse = async (formData: { id: string, title: string, jjfDescription: string, gobDescription: string, selectedAreas: Option[], selectedCategories: Option[] }) => {
+export const updateResponse = async (formData: { id: string | undefined, title: string | undefined, jjfDescription: string | undefined, gobDescription: string | undefined, selectedAreas: Option[] | undefined, selectedCategories: Option[] | undefined }) => {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
@@ -198,10 +199,9 @@ export const updateResponse = async (formData: { id: string, title: string, jjfD
     labels_categories: formData.selectedCategories,
     user_id: user.id
   }
-  console.log(formData)
   const { error } = await supabase.from("respuestas").update(payload).eq("id", formData.id)
   if (error) {
-    console.log("error bitacora insert", error)
+    console.log("error respuestas update", error)
     throw new Error("DB insert failed")
   }
   return { ok: true }

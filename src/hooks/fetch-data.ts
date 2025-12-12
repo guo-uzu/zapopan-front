@@ -32,7 +32,6 @@ export const fetchData = async (id?: string | null) => {
   }
 
   const response = await query.order("created_at", { ascending: false })
-  console.log(response)
   return response
 }
 
@@ -134,10 +133,10 @@ export const getResponses = async () => {
       user:users(
         full_name,
         email,
-        avatar_url
-      )
+        avatar_url)
       `)
     .eq("available", true)
+    .order("created_at", { ascending: false })
 
   if (data) {
     const formattedData: Response[] = data.map((item) => {
@@ -146,7 +145,6 @@ export const getResponses = async () => {
         user: Array.isArray(item.user) ? item.user[0] : item.user
       })
     })
-    console.log(formattedData)
     return formattedData
   }
 }
