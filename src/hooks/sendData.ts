@@ -3,8 +3,6 @@ import { createClient } from "@/utils/supabase/server"
 import { Inputs } from "@/hooks/types";
 import { cookies } from 'next/headers'
 import { Option } from "@/app/respuestas/[[...respuestas]]/multi-select";
-import { title } from "process";
-import { id } from "date-fns/locale";
 
 export const sendDataSupabase = async (formData: Inputs) => {
   const cookieStore = await cookies()
