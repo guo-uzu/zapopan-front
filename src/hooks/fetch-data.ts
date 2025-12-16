@@ -116,11 +116,22 @@ interface Response {
   } | undefined
 }
 
-export const getResponses = async () => {
+interface Department {
+  area: Option | undefined,
+  category: string | undefined
+}
+
+export const getResponses = async ({ area, category }: Department) => {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
-  const { data } = await supabase
+  const filterValue = [{
+    id: area?.id,
+    label: area?.label,
+    value: area?.value
+  }]
+  console.log(filterValue)
+  const { data, error } = await supabase
     .from("respuestas")
     .select(`
       id,
@@ -136,7 +147,14 @@ export const getResponses = async () => {
         avatar_url)
       `)
     .eq("available", true)
+    .contains("labels_areas", JSON.stringify(filterValue))
     .order("created_at", { ascending: false })
+
+  console.log(data)
+
+  if (error) {
+    console.log(error)
+  }
 
   if (data) {
     const formattedData: Response[] = data.map((item) => {

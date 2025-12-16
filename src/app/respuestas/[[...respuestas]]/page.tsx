@@ -23,7 +23,6 @@ import { toast } from "sonner"
 import { AlertDialogFooter, AlertDialogHeader, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog"
 import { deleteRespuesta } from "@/hooks/deleteRow"
-import { is } from "date-fns/locale"
 
 interface Response {
     id: string
@@ -49,6 +48,11 @@ interface DefaultForm {
     selectedCategories: Option[] | undefined
 }
 
+interface Department {
+    area: Option | undefined,
+    category: string | undefined
+}
+
 export default function Respuestas() {
     const [responses, setResponses] = useState<Response[] | undefined>(undefined)
     const [searchTerm, setSearchTerm] = useState("")
@@ -56,6 +60,10 @@ export default function Respuestas() {
     const [openDialog, setOpenDialog] = useState(false)
     const [isLoading, setLoading] = useState(false)
     const [isEditing, setEditing] = useState(false)
+    const [department, setDepartment] = useState<Department>({
+        area: undefined,
+        category: undefined
+    })
     const [selectedResponse, setSelectedResponse] = useState<Response | null>(null)
     const [formDefaultData, setFormDefaultData] = useState<DefaultForm>({
         id: "",
@@ -65,17 +73,20 @@ export default function Respuestas() {
         selectedAreas: [],
         selectedCategories: [],
     })
+    const [upperMenu, setUpperMenu] = useState(false)
 
     const supabase = createClient()
 
     const handleData = async () => {
-        const data = await getResponses()
+        const data = await getResponses(department)
         setResponses(data)
     }
 
     useEffect(() => {
-        handleData()
-    }, [])
+        if (department.area) {
+            handleData()
+        }
+    }, [department])
 
     // 2. THE NEW MULTI-WORD FILTER LOGIC
     const filteredResponses = responses?.filter((response) => {
@@ -98,7 +109,6 @@ export default function Respuestas() {
             const matchesDescJJF = response.description_jjf.toLowerCase().includes(term)
             const matchesTagsAreas = response.labels_areas?.some(tag => tag.label.toLowerCase().includes(term.split("#")[1]))
             const matchesTagsCategories = response.labels_categories?.some(tag => tag.label.toLowerCase().includes(term.split("#")[1]))
-
             return matchesTitle || matchesDescJJF || matchesTagsAreas || matchesTagsCategories
         })
     })
@@ -366,9 +376,44 @@ export default function Respuestas() {
                             </div>
                         </div>
                     </div>
+                    {/* Upper Menu */}
+                    {
+                        upperMenu ? (
+                            <div className="scroller w-full flex flex-row gap-x-2 overflow-x-scroll mb-8 text-xs py-2 px-10">
+                                {
+                                    ColumnsBitacoraOpts.area_responsable.map((area, index) => (
+                                        <Badge key={index} variant="outline" onClick={() => {
+                                            setDepartment((prev) => ({ ...prev, area: area }))
+                                        }} className="cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal">
+                                            {area.value}
+                                        </Badge>
+                                    ))
+                                }
+                            </div>
+                        )
+                            :
+                            ""
+                    }
 
                     {/* RESULTS GRID */}
                     <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {
+                            !upperMenu ? (
+                                ColumnsBitacoraOpts.area_responsable.map((area, index) => (
+                                    <Card key={index} onClick={() => {
+                                        setDepartment((prev) => ({ ...prev, area: area }))
+                                        setUpperMenu((prev) => !prev)
+
+                                    }} className="rounded-lg hover:shadow-md transition-all duration-200">
+                                        <CardHeader>{area.value}</CardHeader>
+                                    </Card>
+                                ))
+                            )
+                                : ""
+                        }
+                        {
+                            //  Data 
+                        }
                         {
                             filteredResponses?.map(response => (
                                 <Card onClick={() => handleViewDialog(response)} key={response.id} className="overflow-hidden rounded-lg hover:shadow-md transition-all duration-200 border-zinc-200">
