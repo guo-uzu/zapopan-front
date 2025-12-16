@@ -258,7 +258,7 @@ const social_network: DataCombox[] = [
 ]
 
 interface FormProps {
-  defaultData: Partial<Inputs> // Partial means "some or all properties of Inputs"
+  defaultData: Partial<Inputs>
   toEdit: boolean
 }
 
@@ -268,7 +268,7 @@ export default function Form({ defaultData, toEdit }: FormProps) {
   })
 
   const saveData: SubmitHandler<Inputs> = async (dataForm) => {
-    if(!toEdit) {
+    if (!toEdit) {
       toast.promise(sendDataSupabase(dataForm), {
         loading: "Enviando datos...",
         success: () => {
@@ -291,6 +291,8 @@ export default function Form({ defaultData, toEdit }: FormProps) {
     })
     return
   }
+
+  console.log(defaultData)
 
   return (
     <Card>
@@ -490,9 +492,9 @@ export default function Form({ defaultData, toEdit }: FormProps) {
             <div className='grid gap-3'>
               {
                 toEdit ?
-              <Button type='submit' className='w-full'>Actualizar</Button>
-                :
-              <Button type='submit' className='w-full'>Guardar</Button>
+                  <Button type='submit' className='w-full'>Actualizar</Button>
+                  :
+                  <Button type='submit' className='w-full'>Guardar</Button>
               }
             </div>
           </div>
