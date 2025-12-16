@@ -379,9 +379,20 @@ export default function Respuestas() {
                     {/* Upper Menu */}
                     {
                         upperMenu ? (
-                            <div className="scroller w-full flex flex-row gap-x-2 overflow-x-scroll mb-8 text-xs py-2 px-10">
+                            <div className="scroller w-full flex flex-row gap-x-2 overflow-x-scroll text-xs py-2 px-8">
+                                <Badge>Áreas responsables</Badge>
                                 {
                                     ColumnsBitacoraOpts.area_responsable.map((area, index) => (
+                                        <Badge key={index} variant="outline" onClick={() => {
+                                            setDepartment((prev) => ({ ...prev, area: area }))
+                                        }} className="cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal">
+                                            {area.value}
+                                        </Badge>
+                                    ))
+                                }
+                                <Badge>Categorías</Badge>
+                                {
+                                    ColumnsBitacoraOpts.category.map((area, index) => (
                                         <Badge key={index} variant="outline" onClick={() => {
                                             setDepartment((prev) => ({ ...prev, area: area }))
                                         }} className="cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal">
@@ -396,94 +407,130 @@ export default function Respuestas() {
                     }
 
                     {/* RESULTS GRID */}
-                    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {
-                            !upperMenu ? (
-                                ColumnsBitacoraOpts.area_responsable.map((area, index) => (
-                                    <Card key={index} onClick={() => {
-                                        setDepartment((prev) => ({ ...prev, area: area }))
-                                        setUpperMenu((prev) => !prev)
+                    <div >
+                        <div className="flex flex-col gap-6 mb-10">
+                            {
+                                !upperMenu ? (
+                                    <>
+                                        <h2 className="text-xl font-bold">Área responsable</h2>
+                                        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                            {
 
-                                    }} className="rounded-lg hover:shadow-md transition-all duration-200">
-                                        <CardHeader>{area.value}</CardHeader>
+                                                ColumnsBitacoraOpts.area_responsable.map((area, index) => (
+                                                    <Card key={index} onClick={() => {
+                                                        setDepartment((prev) => ({ ...prev, area: area }))
+                                                        setUpperMenu((prev) => !prev)
+
+                                                    }} className="rounded-lg hover:shadow-md transition-all duration-200">
+                                                        <CardHeader>{area.value}</CardHeader>
+                                                    </Card>
+                                                ))
+                                            }
+                                        </div>
+                                    </>
+                                )
+                                    : ""
+                            }
+                        </div>
+                        <div className="flex flex-col gap-6">
+                            {
+                                !upperMenu ? (
+                                    <>
+                                        <h2 className="text-xl font-bold">Categoría</h2>
+                                        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                            {
+
+                                                ColumnsBitacoraOpts.category.map((area, index) => (
+                                                    <Card key={index} onClick={() => {
+                                                        setDepartment((prev) => ({ ...prev, area: area }))
+                                                        setUpperMenu((prev) => !prev)
+
+                                                    }} className="rounded-lg hover:shadow-md transition-all duration-200">
+                                                        <CardHeader>{area.value}</CardHeader>
+                                                    </Card>
+                                                ))
+                                            }
+                                        </div>
+                                    </>
+                                )
+                                    : ""
+                            }
+                        </div>
+                        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {
+                                //  Data 
+                            }
+                            {
+                                filteredResponses?.map(response => (
+                                    <Card onClick={() => handleViewDialog(response)} key={response.id} className="overflow-hidden rounded-lg hover:shadow-md transition-all duration-200 border-zinc-200">
+                                        <CardHeader className="pb-3">
+                                            <CardTitle className="text-lg font-bold leading-tight truncate max-w-[300px]">{response.title}</CardTitle>
+                                            <CardDescription className="flex items-center justify-between text-xs mt-2">
+                                                <span className="font-medium text-zinc-700 truncate max-w-[120px]">
+                                                    {response.user?.full_name ?? "Anónimo"}
+                                                </span>
+                                                <span>
+                                                    {new Date(response.created_at).toLocaleDateString("es-MX")}
+                                                </span>
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="flex flex-col gap-4">
+                                            <div>
+                                                <h2 className="text-sm font-bold">JJF</h2>
+                                                <p className="line-clamp-4 text-sm text-zinc-600 leading-relaxed">
+                                                    {response.description_jjf}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <h2 className="text-sm font-bold">Gobierno de Zapopan</h2>
+                                                <p className="line-clamp-4 text-sm text-zinc-600 leading-relaxed">
+                                                    {response.description_gob}
+                                                </p>
+                                            </div>
+                                        </CardContent>
+                                        <CardFooter>
+                                            <div className="flex flex-wrap gap-1.5 mt-auto">
+                                                {
+                                                    response.labels_areas?.map((tag, i) => (
+                                                        <Badge
+                                                            key={i}
+                                                            variant="secondary"
+                                                            className='cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal'
+                                                            // 3. UPDATED CLICK HANDLER
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                handleTagClick(tag.label) // Now adds with comma!
+                                                            }}
+                                                        >
+                                                            <Hash className="w-3 h-3 mr-1 opacity-50" />
+                                                            {tag.label}
+                                                        </Badge>
+                                                    ))
+                                                }
+                                                {
+                                                    response.labels_categories?.map((tag, i) => (
+                                                        <Badge
+                                                            key={i}
+                                                            variant="secondary"
+                                                            className='cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal'
+                                                            // 3. UPDATED CLICK HANDLER
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                console.log(tag.label)
+                                                                handleTagClick(tag.label) // Now adds with comma!
+                                                            }}
+                                                        >
+                                                            <Hash className="w-3 h-3 mr-1 opacity-50" />
+                                                            {tag.label}
+                                                        </Badge>
+                                                    ))
+                                                }
+                                            </div>
+                                        </CardFooter>
                                     </Card>
                                 ))
-                            )
-                                : ""
-                        }
-                        {
-                            //  Data 
-                        }
-                        {
-                            filteredResponses?.map(response => (
-                                <Card onClick={() => handleViewDialog(response)} key={response.id} className="overflow-hidden rounded-lg hover:shadow-md transition-all duration-200 border-zinc-200">
-                                    <CardHeader className="pb-3">
-                                        <CardTitle className="text-lg font-bold leading-tight truncate max-w-[300px]">{response.title}</CardTitle>
-                                        <CardDescription className="flex items-center justify-between text-xs mt-2">
-                                            <span className="font-medium text-zinc-700 truncate max-w-[120px]">
-                                                {response.user?.full_name ?? "Anónimo"}
-                                            </span>
-                                            <span>
-                                                {new Date(response.created_at).toLocaleDateString("es-MX")}
-                                            </span>
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="flex flex-col gap-4">
-                                        <div>
-                                            <h2 className="text-sm font-bold">JJF</h2>
-                                            <p className="line-clamp-4 text-sm text-zinc-600 leading-relaxed">
-                                                {response.description_jjf}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <h2 className="text-sm font-bold">Gobierno de Zapopan</h2>
-                                            <p className="line-clamp-4 text-sm text-zinc-600 leading-relaxed">
-                                                {response.description_gob}
-                                            </p>
-                                        </div>
-                                    </CardContent>
-                                    <CardFooter>
-                                        <div className="flex flex-wrap gap-1.5 mt-auto">
-                                            {
-                                                response.labels_areas?.map((tag, i) => (
-                                                    <Badge
-                                                        key={i}
-                                                        variant="secondary"
-                                                        className='cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal'
-                                                        // 3. UPDATED CLICK HANDLER
-                                                        onClick={(e) => {
-                                                            e.stopPropagation()
-                                                            handleTagClick(tag.label) // Now adds with comma!
-                                                        }}
-                                                    >
-                                                        <Hash className="w-3 h-3 mr-1 opacity-50" />
-                                                        {tag.label}
-                                                    </Badge>
-                                                ))
-                                            }
-                                            {
-                                                response.labels_categories?.map((tag, i) => (
-                                                    <Badge
-                                                        key={i}
-                                                        variant="secondary"
-                                                        className='cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal'
-                                                        // 3. UPDATED CLICK HANDLER
-                                                        onClick={(e) => {
-                                                            e.stopPropagation()
-                                                            console.log(tag.label)
-                                                            handleTagClick(tag.label) // Now adds with comma!
-                                                        }}
-                                                    >
-                                                        <Hash className="w-3 h-3 mr-1 opacity-50" />
-                                                        {tag.label}
-                                                    </Badge>
-                                                ))
-                                            }
-                                        </div>
-                                    </CardFooter>
-                                </Card>
-                            ))
-                        }
+                            }
+                        </div>
                         <Dialog open={openDialog} onOpenChange={() => setOpenDialog(!openDialog)}>
                             <DialogContent>
                                 <DialogHeader>
