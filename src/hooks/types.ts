@@ -10,8 +10,8 @@ type NestedUser = {
 
 export type Inputs = {
   id: string
-  created_at?: string | Date 
-  
+  created_at?: string | Date
+
   // --- 1. NESTED OBJECTS (For the Table View) ---
   users?: NestedUser | null
   account_bitacora?: NestedName | null
@@ -21,7 +21,7 @@ export type Inputs = {
   priority_bitacora?: NestedName | null
   status_bitacora?: NestedName | null
   social_network_bitacora?: NestedName | null
-  
+
   // --- 2. FLAT FIELDS (For the Edit Form) ---
   // We need to add these back so setDefaultData works!
   account?: string
@@ -31,6 +31,9 @@ export type Inputs = {
   priority?: string
   status?: string
   social_network?: string
+  responsable_area_bitacora?: {
+    name: string
+  }
 
   // --- 3. SHARED FIELDS ---
   colonia: string

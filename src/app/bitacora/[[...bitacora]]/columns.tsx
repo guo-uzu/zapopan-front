@@ -819,7 +819,6 @@ export const columns: ColumnDef<Inputs>[] = [
 
         // 1. Cast the meta to your custom interface
         const meta = table.options.meta as BitacoraTableMeta | undefined
-
         // 2. Now TypeScript knows these functions exist!
         meta?.setDefaultData({
           id: data.id,
@@ -829,7 +828,7 @@ export const columns: ColumnDef<Inputs>[] = [
           link: data.link,
           category: formatData(data.category_bitacora?.name ?? ""),
           // Typo fix from before:
-          area_responsable: formatData(data.area_responsable_bitacora?.name ?? ""),
+          area_responsable: formatData(data.responsable_area_bitacora?.name ?? ""),
           description: data.description,
           colonia: data.colonia,
           social_network: formatData(data.social_network_bitacora?.name ?? ""),

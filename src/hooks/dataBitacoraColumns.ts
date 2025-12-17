@@ -5,7 +5,7 @@ export const ColumnsBitacoraOpts = {
     ],
 
     area_responsable: [
-        { id: "infraestructura_comercio", value: "Infraestructura de comercio", label: "infraestructura_comercio" },
+        { id: "infraestructura_de_comercio", value: "Infraestructura de comercio", label: "infraestructura_de_comercio" },
         { id: "servicios_municipales", value: "Servicios municipales", label: "servicios_municipales" },
         { id: "gestion_integral", value: "Gestión integral", label: "gestion_integral" },
         { id: "secretaria_ayuntamiento", value: "Secretaría del ayuntamiento", label: "secretaria_ayuntamiento" },
@@ -17,7 +17,7 @@ export const ColumnsBitacoraOpts = {
         { id: "siapa", value: "SIAPA", label: "siapa" },
         { id: "siop", value: "SIOP", label: "siop" },
         { id: "otras_coordinaciones", value: "Otras coordinaciones", label: "otras_coordinaciones" },
-        { id: "otras_dependencias_estatales", value: "Otras dependencias estatales", label: "otras_dependencias_estatales" },
+        { id: "otras_dependencias_estatales", value: "Otras dependencias estatales", label: "otra s_dependencias_estatales" },
         { id: "presidencia", value: "Presidencia", label: "presidencia" },
         { id: "guadalajara", value: "Guadalajara", label: "guadalajara" },
         { id: "inspeccion_vigilancia", value: "Inspección y vigilancia", label: "inspeccion_vigilancia" },
@@ -38,7 +38,6 @@ export const ColumnsBitacoraOpts = {
         { id: "equipo_campana", value: "Equipo campaña", label: "equipo_campana" },
         { id: "fiesta_de_abril", value: "Fiesta de Abril", label: "fiesta_de_abril" },
         { id: "desabasto_de_agua_en_lomas_de_centinela", value: "Desabasto de agua en Lomas de Centinela", label: "desabasto_de_agua_en_lomas_de_centinela" },
-        { id: "infraestrucura_en_comercio", value: "Infraestructura de Comercio", label: "infraestrucura_en_comercio" },
     ],
 
     category: [
