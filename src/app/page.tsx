@@ -237,13 +237,14 @@ export default function Home() {
 
   const handlePendientesTotal = async () => {
     const { counts, error } = await getPendientesTotal()
+    console.log(counts)
     if (error) {
       throw Error("Error fetching the data. Try again")
     }
     setPendientesTotal({
       pendientesT: counts.status0,
-      resueltosT: counts.status1,
-      enProcesoT: counts.status2,
+      enProcesoT: counts.status1,
+      resueltosT: counts.status2,
       direccionT: counts.status3
     })
   }
