@@ -9,7 +9,7 @@ export const fetchData = async (id?: string | null) => {
     .from("bitacora")
     .select(`
       id,
-      users:user_id(full_name),
+      user_id(full_name),
       account_bitacora:account_id(name),
       created_at,
       category_bitacora:category_id(name),
@@ -23,15 +23,17 @@ export const fetchData = async (id?: string | null) => {
       responsable_area_bitacora:area_id(name),
       colonia,
       channel_bitacora:channel_id(name),
-      social_network_bitacora:social_network_id(name)
+      social_network_bitacora:social_network_id(name),
+      updated_at,
+      latest_updated_user_id(full_name)
     `)
     .eq("available", true)
 
   if (id) {
     query = query.eq("id", id)
   }
-
   const response = await query.order("created_at", { ascending: false })
+  console.log(response)
   return response
 }
 
@@ -118,19 +120,13 @@ interface Response {
 
 interface Department {
   area: Option | undefined,
-  category: string | undefined
 }
 
-export const getResponses = async ({ area, category }: Department) => {
+export const getResponses = async () => {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
-  const filterValue = [{
-    id: area?.id,
-    label: area?.label,
-    value: area?.value
-  }]
-  console.log(filterValue)
+
   const { data, error } = await supabase
     .from("respuestas")
     .select(`
@@ -147,7 +143,6 @@ export const getResponses = async ({ area, category }: Department) => {
         avatar_url)
       `)
     .eq("available", true)
-    .contains("labels_areas", JSON.stringify(filterValue))
     .order("created_at", { ascending: false })
 
   console.log(data)

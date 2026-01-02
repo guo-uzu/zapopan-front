@@ -64,15 +64,13 @@ interface BitacoraTableMeta {
 
 export const columns: ColumnDef<Inputs>[] = [
   {
-    accessorFn: (row) => row.users?.full_name ?? "Usuario desconocido",
+    accessorFn: (row) => row.user_id?.full_name ?? "Usuario desconocido",
     id: "user name",
     header: "Nombre",
     cell: ({ getValue }) => {
-      return <p>{getValue() as string}</p>
+      return <p className="overflow-hidden">{getValue() as string}</p>
     },
     size: 200,
-    minSize: 150,
-    maxSize: 300
   },
   {
     accessorFn: (row) => row.social_network_bitacora?.name ?? "",
@@ -215,8 +213,6 @@ export const columns: ColumnDef<Inputs>[] = [
       return <div className="text-center">{day} / {month} / {rawDate.getFullYear()}</div>
     },
     size: 160,
-    minSize: 160,
-    maxSize: 160
   },
   {
     accessorKey: "category_bitacora.name",
@@ -802,6 +798,25 @@ export const columns: ColumnDef<Inputs>[] = [
     maxSize: 450
   },
   {
+    accessorKey: "updated_at",
+    header: "Ultima actualización",
+    cell: ({ row }) => {
+      const rawDate = new Date(row.getValue("updated_at"))
+      const day = ("0" + rawDate.getDate()).slice(-2)
+      const month = ("0" + (rawDate.getMonth() + 1)).slice(-2)
+      return <div className="text-center">{day} / {month} / {rawDate.getFullYear()}</div>
+    },
+    size: 150
+  },
+  {
+    accessorFn: (row) => row.latest_updated_user_id?.full_name ?? "Usuario desconocido",
+    header: "Ultimo en actualizar",
+    cell: ({ getValue }) => {
+      return <p className="overflow-hidden">{getValue() as string}</p>
+    },
+    size: 200
+  },
+  {
     accessorKey: "functions",
     header: "Edita/Elimina",
     maxSize: 450,
@@ -837,7 +852,6 @@ export const columns: ColumnDef<Inputs>[] = [
           folio: data.folio,
           observations: data.observations,
         })
-
         meta?.handleToEdit()
         meta?.handleOpenForm()
       }

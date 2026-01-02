@@ -7,7 +7,7 @@ export const ColumnsBitacoraOpts = {
     area_responsable: [
         { id: "infraestructura_de_comercio", value: "Infraestructura de comercio", label: "infraestructura_de_comercio" },
         { id: "servicios_municipales", value: "Servicios municipales", label: "servicios_municipales" },
-        { id: "gestion_integral", value: "Gestión integral", label: "gestion_integral" },
+        { id: "gestión_integral", value: "Gestión integral", label: "gestión_integral" },
         { id: "secretaria_ayuntamiento", value: "Secretaría del ayuntamiento", label: "secretaria_ayuntamiento" },
         { id: "desarrollo_economico", value: "Desarrollo económico", label: "desarrollo_economico" },
         { id: "construccion_comunidad", value: "Construcción comunidad", label: "construccion_comunidad" },
@@ -17,7 +17,7 @@ export const ColumnsBitacoraOpts = {
         { id: "siapa", value: "SIAPA", label: "siapa" },
         { id: "siop", value: "SIOP", label: "siop" },
         { id: "otras_coordinaciones", value: "Otras coordinaciones", label: "otras_coordinaciones" },
-        { id: "otras_dependencias_estatales", value: "Otras dependencias estatales", label: "otra s_dependencias_estatales" },
+        { id: "otras_dependencias_estatales", value: "Otras dependencias estatales", label: "otras_dependencias_estatales" },
         { id: "presidencia", value: "Presidencia", label: "presidencia" },
         { id: "guadalajara", value: "Guadalajara", label: "guadalajara" },
         { id: "inspeccion_vigilancia", value: "Inspección y vigilancia", label: "inspeccion_vigilancia" },
@@ -30,7 +30,7 @@ export const ColumnsBitacoraOpts = {
         { id: "sindicatura", value: "Sindicatura", label: "sindicatura" },
         { id: "administracion_inovacion_gubernamental", value: "Administración e Innovación Gubernamental", label: "administracion_inovacion_gubernamental" },
         { id: "amim", value: "AMIM", label: "amim" },
-        { id: "cursos_parque_ninas_ninos", value: "Cursos en el Parque de las niñas y  niños", label: "cursos_parque_ninas_ninos" },
+        { id: "cursos_parque_ninas_ninos", value: "Cursos en el Parque de las niñas y niños", label: "cursos_parque_ninas_ninos" },
         { id: "romeria", value: "Romería", label: "romeria" },
         { id: "contraloria_ciudadana", value: "Contraloría ciudadana", label: "contraloria_ciudadana" },
         { id: "toc_toc", value: "Toc toc", label: "toc_toc" },
@@ -41,12 +41,12 @@ export const ColumnsBitacoraOpts = {
     ],
 
     category: [
-        { id: "solicitud_informacion", value: "Solicitud de información", label: "solicitud_informacion" },
-        { id: "canalizacion_dependencia", value: "Canalización a dependencia", label: "canalizacion_dependencia" },
+        { id: "solicitud_de_información", value: "Solicitud de información", label: "solicitud_de_información" },
+        { id: "canalizacion_a_dependencia", value: "Canalización a dependencia", label: "canalizacion_a_dependencia" },
         { id: "solicitudes_nuevas", value: "Solicitudes nuevas", label: "solicitudes_nuevas" },
-        { id: "reportes_servicios", value: "Reportes de servicios", label: "reportes_servicios" },
-        { id: "reporte_obras", value: "Reportes de obra", label: "reporte_obras" },
-        { id: "reporte_externos", value: "Reportes externos", label: "reporte_externos" },
+        { id: "reportes_de_servicios", value: "Reportes de servicios", label: "reportes_de_servicios" },
+        { id: "reportes_de_obras", value: "Reportes de obra", label: "reportes_obras" },
+        { id: "reportes_externos", value: "Reportes externos", label: "reportes_externos" },
         { id: "solicitudes_especiales", value: "Solicitudes especiales", label: "solicitudes_especiales" },
         { id: "reporte_inspeccion_vigilancia", value: "Reporte de inspección y vigilancia", label: "reporte_inspeccion_vigilancia" },
         { id: "reportes_denuncias", value: "Reportes y denuncias", label: "reportes_denuncias" },
@@ -58,7 +58,7 @@ export const ColumnsBitacoraOpts = {
     ],
 
     channel: [
-        { id: "comentario", value: "Comentario" },
+        { id: "comentarios", value: "Comentarios" },
         { id: "inbox", value: "Inbox" },
     ],
 
@@ -72,11 +72,23 @@ export const ColumnsBitacoraOpts = {
         { id: "pendiente", value: "Pendiente" },
         { id: "en_proceso", value: "En Proceso" },
         { id: "resuelto", value: "Resuelto" },
+        { id: "dirección", value: "Dirección" },
     ],
     social_network: [
         { id: "x", value: "X" },
         { id: "tiktok", value: "Tiktok" },
         { id: "instagram", value: "Instagram" },
         { id: "facebook", value: "Facebook" },
+    ],
+    excluded_view: [
+        { id: "siop", value: "SIOP", label: "siop" },
+        { id: "otras_coordinaciones", value: "Otras coordinaciones", label: "otras_coordinaciones" },
+        { id: "caec", value: "CAEC (Boletos Charros)", label: "caec" },
+        { id: "romeria", value: "Romería", label: "romeria" },
+        { id: "toc_toc", value: "Toc toc", label: "toc_toc" },
+        { id: "otros", value: "Otros", label: "otros" },
+        { id: "equipo_campana", value: "Equipo campaña", label: "equipo_campana" },
+        { id: "fiesta_de_abril", value: "Fiesta de Abril", label: "fiesta_de_abril" },
+        { id: "desabasto_de_agua_en_lomas_de_centinela", value: "Desabasto de agua en Lomas de Centinela", label: "desabasto_de_agua_en_lomas_de_centinela" },
     ]
 };

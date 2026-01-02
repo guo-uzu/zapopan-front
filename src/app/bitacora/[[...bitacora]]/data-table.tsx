@@ -32,10 +32,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   idFilter?: string | null
 }
-import {
-  Sheet,
-  SheetContent,
-} from "@/components/ui/sheet"
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 interface ColumnFilter {
   id: string,
@@ -47,8 +44,9 @@ import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns"
 
 import { type DateRange } from "react-day-picker"
 import { Calendar } from "@/components/ui/calendar"
-import { CalendarDays, Settings2 } from "lucide-react"
+import { CalendarDays } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import FormBitacora from "./form"
 
 export function DataTable<TData, TValue>({
   columns,
@@ -610,19 +608,7 @@ export function DataTable<TData, TValue>({
           </div>
         </CardContent>
       </Card >
-      <Sheet open={open} onOpenChange={
-        (isOpen) => {
-          setOpen(isOpen)
-          if (!isOpen && toEdit) {
-            handleToEdit()
-            setDefaultData({})
-          }
-        }
-      } >
-        <SheetContent side="right" className="overflow-y-scroll overflow-x-hidden max-w-[40rem]!">
-          <Form toEdit={toEdit} defaultData={defaultData} />
-        </SheetContent>
-      </Sheet>
+      <FormBitacora toEdit={toEdit} defaultData={defaultData} setOpen={setOpen} open={open} handleToEdit={handleToEdit} setDefaultData={setDefaultData} />
     </>
   )
 }

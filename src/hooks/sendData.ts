@@ -9,7 +9,6 @@ export const sendDataSupabase = async (formData: Inputs) => {
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
-
   const payload = {
     user_id: user.id,
     account_id: mustMap(accountMap, formData.account, 'account'),
@@ -43,7 +42,7 @@ export const updateDataSupabase = async (formData: Inputs) => {
   if (!user) throw new Error("User not founded")
 
   const payload = {
-    user_id: user.id,
+    latest_updated_user_id: user.id,
     account_id: mustMap(accountMap, formData.account, 'account'),
     area_id: mustMap(areaMap, formData.area_responsable, 'area_responsable'),
     category_id: mustMap(categoryMap, formData.category, 'category'),
@@ -54,8 +53,7 @@ export const updateDataSupabase = async (formData: Inputs) => {
     description: formData.description,
     link: formData.link || null,
     observations: formData.observations || null,
-    created_at: new Date().toISOString(),
-    username: formData.username,
+    updated_at: new Date().toISOString(),
     folio: formData.folio || null,
     social_network_id: mustMap(socialNetworkMap, formData.social_network, 'social_network'),
   }
@@ -162,7 +160,7 @@ const statusMap: Record<NonNullable<Inputs['status']>, number> = {
 };
 
 
-export const sendResponse = async (formData: { title: string | undefined, jjfDescription: string | undefined, gobDescription: string | undefined, selectedAreas: Option[] | undefined, selectedCategories: Option[] | undefined }) => {
+export const sendResponse = async (formData: { title?: string, jjfDescription?: string, gobDescription?: string, selectedAreas?: Option[], selectedCategories?: Option[] }) => {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
@@ -184,7 +182,7 @@ export const sendResponse = async (formData: { title: string | undefined, jjfDes
   return { ok: true }
 }
 
-export const updateResponse = async (formData: { id: string | undefined, title: string | undefined, jjfDescription: string | undefined, gobDescription: string | undefined, selectedAreas: Option[] | undefined, selectedCategories: Option[] | undefined }) => {
+export const updateResponse = async (formData: { id?: string | undefined, title: string | undefined, jjfDescription: string | undefined, gobDescription: string | undefined, selectedAreas: Option[] | undefined, selectedCategories: Option[] | undefined }) => {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()

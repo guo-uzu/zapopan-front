@@ -9,11 +9,13 @@ type NestedUser = {
 }
 
 export type Inputs = {
-  id: string
+  id?: string
   created_at?: string | Date
+  updated_at?: string | Date
 
   // --- 1. NESTED OBJECTS (For the Table View) ---
-  users?: NestedUser | null
+  user_id?: NestedUser | null
+  latest_updated_user_id?: NestedUser | null
   account_bitacora?: NestedName | null
   area_responsable_bitacora?: NestedName | null
   category_bitacora?: NestedName | null
