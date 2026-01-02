@@ -787,15 +787,31 @@ export const columns: ColumnDef<Inputs>[] = [
     accessorKey: "folio",
     header: "Folio",
     size: 150,
-    minSize: 150,
-    maxSize: 150
   },
   {
     accessorKey: "observations",
     header: "Observaciones y comentarios",
     size: 450,
-    minSize: 450,
-    maxSize: 450
+    cell: ({ row }) => {
+      const data = row.original.observations
+      if (data) {
+        const splitedText = data.split(/(https?:\/\/[^\s]+)/g)
+        return splitedText.map((text, index) => {
+          if (text.match(/https?:\/\/[^\s]+/)) {
+            return (<a
+              key={index}
+              href={text}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline hover:text-blue-700"
+            >
+              {text}
+            </a>)
+          }
+          return <div>{text}</div>
+        })
+      }
+    }
   },
   {
     accessorKey: "updated_at",

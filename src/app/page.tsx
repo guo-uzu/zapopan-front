@@ -158,6 +158,18 @@ export default function Home() {
     to: new Date(), // Today
   });
 
+  const formatDataFrom = () => {
+    const day = String(dateRange?.from?.getDate()).padStart(2, "0")
+    const month = dateRange?.from?.toLocaleDateString("es-MX", { month: "short" })
+    return `${day}/${month}/${dateRange?.from?.getFullYear()}`
+  }
+
+  const formatDataTo = () => {
+    const day = String(dateRange?.to?.getDate()).padStart(2, "0")
+    const month = dateRange?.to?.toLocaleDateString("es-MX", { month: "short" })
+    return `${day}/${month}/${dateRange?.to?.getFullYear()}`
+  }
+
   const table = useReactTable({
     data: generalChartData,
     columns,
@@ -408,9 +420,9 @@ export default function Home() {
                   <CardHeader>
                     <CardTitle className="text-center mx-auto w-full font-black">Reportes de áreas municipales</CardTitle>
                     <CardDescription className="flex gap-2 w-full justify-center">
-                      <span>{dateRange?.from?.getDate()}/{dateRange?.from?.getMonth()}/{dateRange?.from?.getFullYear()}</span>
+                      <span>{formatDataFrom()}</span>
                       <span>-</span>
-                      <span>{dateRange?.to?.getDate()}/{dateRange?.to?.getMonth()}/{dateRange?.to?.getFullYear()}</span>
+                      <span>{formatDataTo()}</span>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1">
@@ -494,9 +506,9 @@ export default function Home() {
                   <CardHeader>
                     <CardTitle className="text-center mx-auto w-full font-black">Reportes de áreas estatales</CardTitle>
                     <CardDescription className="flex gap-2 w-full justify-center">
-                      <span>{dateRange?.from?.getDate()}/{dateRange?.from?.getMonth()}/{dateRange?.from?.getFullYear()}</span>
+                      <span>{formatDataFrom()}</span>
                       <span>-</span>
-                      <span>{dateRange?.to?.getDate()}/{dateRange?.to?.getMonth()}/{dateRange?.to?.getFullYear()}</span>
+                      <span>{formatDataTo()}</span>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1">
@@ -558,112 +570,6 @@ export default function Home() {
               <div className="col-span-8 flex">
                 <ChartContainer config={chartConfig} className="max-h-[500px] w-full">
                   <BarChart accessibilityLayer data={chartDataEstatales} >
-                    <CartesianGrid vertical={true} />
-                    <XAxis
-                      dataKey="area_name"
-                      tickLine={true}
-                      tickMargin={10}
-                      axisLine={false}
-                      tickFormatter={(value) => value.slice(0, 10)}
-                    />
-                    <ChartTooltip
-                      cursor={false}
-                      content={<ChartTooltipContent hideLabel={false} indicator="dot" />}
-                    />
-                    <Bar dataKey="count" fill="oklch(70.7% 0.165 254.624)" radius={4} />
-                  </BarChart>
-                </ChartContainer>
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-2">
-              <div className="col-span-4 flex flex-col">
-                <div className="flex items-center py-4">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant='outline' size='icon'>
-                        <CalendarDays />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className='w-full'>
-                      <Calendar
-                        mode="range"
-                        defaultMonth={dateRange?.from}
-                        selected={dateRange}
-                        onSelect={setDateRange} // Just update state, useEffect handles the rest
-                        numberOfMonths={2}
-                        className="rounded-lg border shadow-sm"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-center mx-auto w-full font-black">Datos de la bitácora</CardTitle>
-                    <CardDescription className="flex gap-2 w-full justify-center">
-                      <span>{dateRange?.from?.getDate()}/{dateRange?.from?.getMonth()}/{dateRange?.from?.getFullYear()}</span>
-                      <span>-</span>
-                      <span>{dateRange?.to?.getDate()}/{dateRange?.to?.getMonth()}/{dateRange?.to?.getFullYear()}</span>
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-1">
-                    <div className="max-h-[400px] overflow-y-auto">
-                      <Table className="">
-                        <TableHeader className="sticky h-10 top-0 z-20">
-                          {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                              {headerGroup.headers.map((header) => {
-                                return (
-                                  <TableHead key={header.id}>
-                                    {header.isPlaceholder
-                                      ? null
-                                      : flexRender(
-                                        header.column.columnDef.header,
-                                        header.getContext()
-                                      )}
-                                  </TableHead>
-                                )
-                              })}
-                            </TableRow>
-                          ))}
-                        </TableHeader>
-                        <TableBody>
-                          {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                              <TableRow
-                                className="whitespace-nowrap overflow-hidden truncate"
-                                key={row.id}
-                                data-state={row.getIsSelected() && "selected"}
-                              >
-                                {row.getVisibleCells().map((cell) => (
-                                  <TableCell key={cell.id}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            ))
-                          ) : (
-                            <TableRow className="sticky bottom-0 z-20 bg-background">
-                              <TableCell colSpan={columns.length} className="h-24 text-center">
-                                No results.
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
-                        <TableFooter>
-                          <TableRow>
-                            <TableCell className="font-bold ">Total</TableCell>
-                            {/* This now shows the dynamic total */}
-                            <TableCell className="font-bold">{totalReportes}</TableCell>
-                          </TableRow>
-                        </TableFooter>
-                      </Table>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="col-span-8 flex">
-                <ChartContainer config={chartConfig} className="max-h-[500px] w-full">
-                  <BarChart accessibilityLayer data={chartData} >
                     <CartesianGrid vertical={true} />
                     <XAxis
                       dataKey="area_name"
