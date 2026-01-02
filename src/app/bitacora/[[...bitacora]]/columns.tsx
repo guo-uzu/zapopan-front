@@ -821,7 +821,7 @@ export const columns: ColumnDef<Inputs>[] = [
     header: "Edita/Elimina",
     maxSize: 450,
     cell: ({ row, table }) => {
-      const deleteRowBitacoraHandler = async (id: string) => {
+      const deleteRowBitacoraHandler = async (id?: string) => {
         toast.promise(deleteRowBitacora(id), {
           loading: "Eliminando registro...",
           success: "Registro eliminado correctamente.",

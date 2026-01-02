@@ -4,7 +4,7 @@ import { toast } from "sonner"
 import { Badge } from "../ui/badge"
 import { Share2 } from "lucide-react"
 
-export default function Share({ id }: { id: string }) {
+export default function Share({ id }: { id?: string }) {
     const pathname = usePathname()
     const handleCopy = () => {
         // 2. Now we can safely use 'pathname' inside the click handler
