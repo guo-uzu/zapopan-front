@@ -106,20 +106,19 @@ export const getPendientesTotal = async () => {
 interface Response {
   id: string
   labels_areas: Option[]
-  labels_categories: Option[]
   created_at: string
   description_jjf: string
   description_gob: string
   title: string
-  user: {
+  updated_at: string
+  latest_updated_user_id?: {
+    full_name: string
+  }
+  user_id?: {
     full_name: string
     email: string
     avatar_url: string
-  } | undefined
-}
-
-interface Department {
-  area: Option | undefined,
+  }
 }
 
 export const getResponses = async () => {
@@ -135,29 +134,16 @@ export const getResponses = async () => {
       description_jjf,
       description_gob,
       labels_areas,
-      labels_categories,
       created_at,
-      user:users(
-        full_name,
-        email,
-        avatar_url)
+      updated_at,
+      latest_updated_user_id(full_name),
+      user_id(full_name,email,avatar_url)
       `)
     .eq("available", true)
     .order("created_at", { ascending: false })
-
-  console.log(data)
-
   if (error) {
     console.log(error)
   }
-
-  if (data) {
-    const formattedData: Response[] = data.map((item) => {
-      return ({
-        ...item,
-        user: Array.isArray(item.user) ? item.user[0] : item.user
-      })
-    })
-    return formattedData
-  }
+  console.log(data)
+  return data
 }

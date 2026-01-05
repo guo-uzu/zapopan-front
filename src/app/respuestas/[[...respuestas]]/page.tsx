@@ -9,7 +9,7 @@ import { createClient } from "@/utils/supabase/client"
 import { Separator } from "@/components/ui/separator"
 import { Hash, LoaderCircleIcon, Search, X } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog"
 import { DialogDescription, DialogHeader } from "@/components/ui/dialog"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Label } from "@/components/ui/label"
@@ -27,16 +27,19 @@ import { deleteRespuesta } from "@/hooks/deleteRow"
 interface Response {
     id: string
     labels_areas: Option[]
-    labels_categories: Option[]
     created_at: string
     description_jjf: string
     description_gob: string
     title: string
-    user: {
+    updated_at: string
+    latest_updated_user_id?: {
+        full_name: string
+    }
+    user_id: {
         full_name: string
         email: string
         avatar_url: string
-    } | undefined
+    }
 }
 
 interface DefaultForm {
@@ -45,11 +48,6 @@ interface DefaultForm {
     jjfDescription: string
     gobDescription: string
     selectedAreas: Option[]
-    selectedCategories: Option[]
-}
-
-interface Department {
-    area: Option | undefined
 }
 
 export default function Respuestas() {
@@ -58,16 +56,15 @@ export default function Respuestas() {
         jjfDescription: "",
         gobDescription: "",
         selectedAreas: [],
-        selectedCategories: []
     })
-    const [responses, setResponses] = useState<Response[] | undefined>(undefined)
+    const [responses, setResponses] = useState<Response[]>([])
     const [searchTerm, setSearchTerm] = useState("")
     const [openSheet, setOpenSheet] = useState(false)
     const [openDialog, setOpenDialog] = useState(false)
     const [isLoading, setLoading] = useState(false)
     const [isEditing, setEditing] = useState(false)
 
-    const [selectedResponse, setSelectedResponse] = useState<Response | null>(null)
+    const [selectedResponse, setSelectedResponse] = useState<Response>()
 
     const [upperMenu, setUpperMenu] = useState(false)
 
@@ -75,7 +72,26 @@ export default function Respuestas() {
 
     const handleData = async () => {
         const data = await getResponses()
-        setResponses(data)
+        if (!data) {
+            setResponses([])
+            return
+        }
+        const formattedData = data.map((item: any) => ({
+            ...item,
+
+            // REGLA: Si user_id es un array, extrae la posición [0]. Si ya es objeto o null, déjalo igual.
+            user_id: Array.isArray(item.user_id)
+                ? item.user_id[0]
+                : item.user_id,
+
+            // Misma lógica para el usuario que actualizó
+            latest_updated_user_id: Array.isArray(item.latest_updated_user_id)
+                ? item.latest_updated_user_id[0]
+                : item.latest_updated_user_id
+        }))
+
+        // Ahora sí, los datos coinciden perfectamente con tu interfaz Response[]
+        setResponses(formattedData as Response[])
     }
 
     useEffect(() => {
@@ -110,14 +126,12 @@ export default function Respuestas() {
             const matchesTitle = response.title.toLowerCase().includes(term)
             const matchesDescJJF = response.description_jjf.toLowerCase().includes(term)
             const matchesTagsAreas = response.labels_areas?.some(tag => tag.label.toLowerCase().includes(term.split("#")[1]))
-            const matchesTagsCategories = response.labels_categories?.some(tag => tag.label.toLowerCase().includes(term.split("#")[1]))
-            return matchesTitle || matchesDescJJF || matchesTagsAreas || matchesTagsCategories
+            return matchesTitle || matchesDescJJF || matchesTagsAreas
         })
     })
 
     const handleTagClick = (tag: string) => {
         const tagWithHash = `#${tag}`
-        console.log(tagWithHash)
         if (searchTerm.includes(tagWithHash)) return
 
         // If search is empty, just set the tag
@@ -151,7 +165,6 @@ export default function Respuestas() {
                 jjfDescription: formDefaultData.jjfDescription,
                 gobDescription: formDefaultData.gobDescription,
                 selectedAreas: formDefaultData.selectedAreas,
-                selectedCategories: formDefaultData.selectedCategories
             }
             toast.promise(
                 sendResponse(formData),
@@ -195,7 +208,6 @@ export default function Respuestas() {
             jjfDescription: "",
             gobDescription: "",
             selectedAreas: [],
-            selectedCategories: []
         })
     }
 
@@ -218,7 +230,6 @@ export default function Respuestas() {
             jjfDescription: selectedResponse?.description_jjf || "",
             gobDescription: selectedResponse?.description_gob || "",
             selectedAreas: selectedResponse?.labels_areas || [],
-            selectedCategories: selectedResponse?.labels_categories || []
         })
     }
 
@@ -242,6 +253,17 @@ export default function Respuestas() {
             supabase.removeChannel(subscription)
         }
     }, [])
+
+    const formatDataFrom = (dateString?: string) => {
+        if (!dateString) return "N/A"
+        const date = new Date(dateString)
+        if (isNaN(date.getTime())) return "Fecha inválida"
+        const day = String(date?.getDate()).padStart(2, "0")
+        const month = date?.toLocaleDateString("es-MX", { month: "short" })
+        return `${day}/${month}/${date?.getFullYear()}`
+    }
+
+
     return (
         <SidebarProvider >
             <AppSidebar />
@@ -327,22 +349,6 @@ export default function Respuestas() {
                                                                     onChange={(data) => setFormDefaultData({
                                                                         ...formDefaultData,
                                                                         selectedAreas: data
-                                                                    })}
-                                                                    className='w-full'
-                                                                />
-                                                                <FieldLabel>Categorías</FieldLabel>
-                                                                <MultipleSelector
-                                                                    commandProps={{
-                                                                        label: 'Selecciona una categoría'
-                                                                    }}
-                                                                    defaultOptions={ColumnsBitacoraOpts.category}
-                                                                    placeholder='Selecciona una categoría'
-                                                                    hidePlaceholderWhenSelected
-                                                                    emptyIndicator={<p className='text-center text-sm'>No se encontraron resultados</p>}
-                                                                    value={formDefaultData.selectedCategories}
-                                                                    onChange={(data) => setFormDefaultData({
-                                                                        ...formDefaultData,
-                                                                        selectedCategories: data
                                                                     })}
                                                                     className='w-full'
                                                                 />
@@ -441,10 +447,10 @@ export default function Respuestas() {
                                                 <CardTitle className="text-lg font-bold leading-tight truncate max-w-[300px]">{response.title}</CardTitle>
                                                 <CardDescription className="flex items-center justify-between text-xs mt-2">
                                                     <span className="font-medium text-zinc-700 truncate max-w-[120px]">
-                                                        {response.user?.full_name ?? "Anónimo"}
+                                                        {response.user_id?.full_name ?? "Anónimo"}
                                                     </span>
                                                     <span>
-                                                        {new Date(response.created_at).toLocaleDateString("es-MX")}
+                                                        {formatDataFrom(response.created_at)}
                                                     </span>
                                                 </CardDescription>
                                             </CardHeader>
@@ -481,24 +487,7 @@ export default function Respuestas() {
                                                             </Badge>
                                                         ))
                                                     }
-                                                    {
-                                                        response.labels_categories?.map((tag, i) => (
-                                                            <Badge
-                                                                key={i}
-                                                                variant="secondary"
-                                                                className='cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal'
-                                                                // 3. UPDATED CLICK HANDLER
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation()
-                                                                    console.log(tag.label)
-                                                                    handleTagClick(tag.label) // Now adds with comma!
-                                                                }}
-                                                            >
-                                                                <Hash className="w-3 h-3 mr-1 opacity-50" />
-                                                                {tag.label}
-                                                            </Badge>
-                                                        ))
-                                                    }
+
                                                 </div>
                                             </CardFooter>
                                         </Card>
@@ -509,15 +498,26 @@ export default function Respuestas() {
                             <DialogContent>
                                 <DialogHeader>
                                     <DialogTitle>{selectedResponse?.title}</DialogTitle>
-                                    <DialogDescription className="flex items-center justify-between text-xs mt-2">
-                                        <span className="flex flex-row items-center justify-between text-xs pt-2 w-full font-medium text-zinc-700">
-                                            {selectedResponse?.user?.full_name ?? "Anónimo"}
-                                        </span>
-                                        <span>
-                                        </span>
+                                    <DialogDescription className="flex flex-col gap-2 text-xs mt-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="flex flex-row items-center justify-between text-xs pt-2 w-full font-medium text-zinc-700">
+                                                {selectedResponse?.user_id?.full_name ?? "Anónimo"}
+                                            </span>
+                                            <span>
+                                                {formatDataFrom(selectedResponse?.created_at)}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="flex flex-row items-center justify-between text-xs pt-2 w-full font-medium text-zinc-700">
+                                                {selectedResponse?.latest_updated_user_id?.full_name ?? "Anónimo"}
+                                            </span>
+                                            <span>
+                                                {formatDataFrom(selectedResponse?.updated_at)}
+                                            </span>
+                                        </div>
                                     </DialogDescription>
                                 </DialogHeader>
-                                <CardContent className="flex flex-col gap-4">
+                                <CardContent className="flex flex-col gap-4 max-h-96 overflow-y-scroll">
                                     <div>
                                         <h2 className="text-sm font-bold">JJF</h2>
                                         <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap break-words">

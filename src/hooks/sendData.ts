@@ -184,7 +184,7 @@ export const sendResponse = async (formData: { title?: string, jjfDescription?: 
   return { ok: true }
 }
 
-export const updateResponse = async (formData: { id?: string | undefined, title: string | undefined, jjfDescription: string | undefined, gobDescription: string | undefined, selectedAreas: Option[] | undefined, selectedCategories: Option[] | undefined }) => {
+export const updateResponse = async (formData: { id?: string | undefined, title: string | undefined, jjfDescription: string | undefined, gobDescription: string | undefined, selectedAreas: Option[] | undefined }) => {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
@@ -194,8 +194,8 @@ export const updateResponse = async (formData: { id?: string | undefined, title:
     description_jjf: formData.jjfDescription,
     description_gob: formData.gobDescription,
     labels_areas: formData.selectedAreas,
-    labels_categories: formData.selectedCategories,
-    user_id: user.id
+    updated_at: new Date(),
+    latest_updated_user_id: user.id
   }
   const { error } = await supabase.from("respuestas").update(payload).eq("id", formData.id)
   if (error) {
