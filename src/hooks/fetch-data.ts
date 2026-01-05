@@ -33,7 +33,6 @@ export const fetchData = async (id?: string | null) => {
     query = query.eq("id", id)
   }
   const response = await query.order("created_at", { ascending: false })
-  console.log(response)
   return response
 }
 

@@ -249,7 +249,6 @@ export default function Home() {
 
   const handlePendientesTotal = async () => {
     const { counts, error } = await getPendientesTotal()
-    console.log(counts)
     if (error) {
       throw Error("Error fetching the data. Try again")
     }
@@ -301,6 +300,7 @@ export default function Home() {
 
   useEffect(() => {
     const col = table.getColumn("date");
+
     if (col) {
       if (!dateRange || (!dateRange.from && !dateRange.to)) {
         col.setFilterValue(undefined);
@@ -418,7 +418,7 @@ export default function Home() {
                 </div>
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-center mx-auto w-full font-black">Reportes de áreas municipales</CardTitle>
+                    <CardTitle className="text-center mx-auto w-full font-black">Solicitudes de áreas municipales</CardTitle>
                     <CardDescription className="flex gap-2 w-full justify-center">
                       <span>{formatDataFrom()}</span>
                       <span>-</span>

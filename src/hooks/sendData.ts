@@ -41,8 +41,6 @@ export const updateDataSupabase = async (formData: Inputs) => {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("User not founded")
 
-  console.log(formData)
-
   const payload = {
     latest_updated_user_id: user.id,
     account_id: mustMap(accountMap, formData.account, 'account'),
