@@ -143,6 +143,21 @@ export const getResponses = async () => {
   if (error) {
     console.log(error)
   }
-  console.log(data)
+  return data
+}
+
+export const getUsersFilter = async () => {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error("User not founded")
+  const { data, error } = await supabase
+    .from("users")
+    .select(`
+      id,
+      full_name
+      `)
+  if (error) {
+    console.log(error)
+  }
   return data
 }

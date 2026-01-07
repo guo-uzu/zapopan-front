@@ -40,7 +40,7 @@ interface ColumnFilter {
 }
 type ColumnFilterState = ColumnFilter[]
 
-import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns"
+import { ColumnsBitacoraOpts, UsersFormatFilterBitacora } from "@/hooks/dataBitacoraColumns"
 
 import { type DateRange } from "react-day-picker"
 import { Calendar } from "@/components/ui/calendar"
@@ -60,6 +60,7 @@ export function DataTable<TData, TValue>({
   const [open, setOpen] = useState(false)
   const [defaultData, setDefaultData] = useState({})
   const [toEdit, setToEdit] = useState<boolean>(false)
+  const [usersToFilter, setUsersToFilter] = useState<{ id: string, label: string, value: string }[]>([])
 
 
   const handleOpenForm = () => {
@@ -270,6 +271,21 @@ export function DataTable<TData, TValue>({
 
   useEffect(() => {
     try {
+      const localStorageData = localStorage.getItem("user name")
+      if (localStorageData) {
+        onChangeFilter("user name", localStorageData)
+      }
+      else {
+        throw Error("Account no se encontró")
+      }
+    } catch (error) {
+      onChangeFilter("user name", "all")
+    }
+
+  }, [])
+
+  useEffect(() => {
+    try {
       const storedDate = localStorage.getItem("bitacora_date_range")
 
       if (storedDate) {
@@ -295,6 +311,13 @@ export function DataTable<TData, TValue>({
     }
   }, []) // Empty dependency array = runs once on mount
 
+  useEffect(() => {
+    const handlerUsersFilter = async () => {
+      setUsersToFilter(await UsersFormatFilterBitacora())
+    }
+    handlerUsersFilter()
+  }, [])
+
   return (
     <>
       <Card>
@@ -310,6 +333,29 @@ export function DataTable<TData, TValue>({
                   onChange={e => table.setGlobalFilter(String(e.target.value))}
                   className="max-w-sm"
                 />
+              </div>
+              <div className="flex items-center py-4">
+                <Select
+                  value={
+                    getValueFilter("user name")
+                  }
+                  onValueChange={(value: string) => {
+                    localStorage.setItem("user name", value)
+                    onChangeFilter("user name", value)
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Usuarios" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {
+                      usersToFilter.map((e) => (
+                        <SelectItem key={e.id} value={e.value}>{e.value}</SelectItem>
+                      ))
+                    }
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex items-center py-4">
                 <Select
@@ -334,7 +380,6 @@ export function DataTable<TData, TValue>({
                   </SelectContent>
                 </Select>
               </div>
-
               <div className="flex items-center py-4">
                 <Select
                   value={getValueFilter("area")}

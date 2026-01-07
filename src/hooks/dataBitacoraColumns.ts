@@ -1,3 +1,17 @@
+import { getUsersFilter } from "./fetch-data";
+import { formatData } from "./formatData";
+
+export const UsersFormatFilterBitacora = async () => {
+    const users = await getUsersFilter()
+    if (!users) {
+        return []
+    }
+    return users.map(user => {
+        return { id: formatData(user.full_name), value: user.full_name, label: formatData(user.full_name) }
+    })
+}
+
+
 export const ColumnsBitacoraOpts = {
     account: [
         { id: "jjf", value: "JJF" },
