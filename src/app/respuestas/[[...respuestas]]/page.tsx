@@ -159,6 +159,11 @@ export default function Respuestas() {
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
+        if (formDefaultData.selectedAreas.length === 0) {
+            toast.error("Error. Verifica los datos ingresados", { position: "top-center" })
+            setLoading(false)
+            return
+        }
         if (!isEditing) {
             const formData: DefaultForm = {
                 title: formDefaultData.title,
@@ -336,7 +341,7 @@ export default function Respuestas() {
                                                         <FieldLegend>Etiquetas</FieldLegend>
                                                         <FieldGroup>
                                                             <Field orientation="vertical">
-                                                                <FieldLabel>Áreas responsables</FieldLabel>
+                                                                <FieldLabel>Áreas responsables <span className="text-red-500">*</span></FieldLabel>
                                                                 <MultipleSelector
                                                                     commandProps={{
                                                                         label: 'Selecciona un área'
