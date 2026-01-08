@@ -61,7 +61,7 @@ export default function FormBitacora({ defaultData, toEdit, setOpen, open, handl
       })
       return
     }
-    toast.promise(updateDataSupabase(dataForm), {
+    toast.promise(updateDataSupabase(dataForm, defaultData), {
       loading: "Actualizando datos...",
       success: () => {
         reset()

@@ -36,9 +36,10 @@ export type Inputs = {
   responsable_area_bitacora?: {
     name: string
   }
+  snapshot_before_edit?: Inputs
 
   // --- 3. SHARED FIELDS ---
-  colonia: string
+  colonia?: string
   description: string
   link: string
   observations: string

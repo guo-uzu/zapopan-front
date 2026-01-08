@@ -25,7 +25,8 @@ export const fetchData = async (id?: string | null) => {
       channel_bitacora:channel_id(name),
       social_network_bitacora:social_network_id(name),
       updated_at,
-      latest_updated_user_id(full_name)
+      latest_updated_user_id(full_name),
+      snapshot_before_edit(*)
     `)
     .eq("available", true)
 
