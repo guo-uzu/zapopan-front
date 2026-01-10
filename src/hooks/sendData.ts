@@ -55,27 +55,12 @@ export const updateDataSupabase = async (formData: Inputs, defaultData: Partial<
     observations: formData.observations || null,
     updated_at: new Date().toISOString(),
     folio: formData.folio || null,
-    username: formData.username 
-    social_network_id: mustMap(socialNetworkMap, formData.social_network, 'social_network'),
+    username: formData.username,
   }
   const { error } = await supabase.from("bitacora").update(payload).eq("id", formData.id)
   if (error) {
     console.log("error bitacora updated", error)
     throw new Error("DB insert failed")
-  }
-  const payloadBeforeEdit = {
-    created_at: new Date().toISOString(),
-    area_id: defaultData.area_responsable,
-    category_id: defaultData.category,
-    channel_id: defaultData.channel,
-    description: defaultData.description,
-    folio: defaultData.folio,
-    link: defaultData.link,
-    observations: defaultData.observations,
-    priority_id: defaultData.priority,
-    status_id: defaultData.status,
-    username: defaultData.username
-
   }
   return { ok: true }
 }

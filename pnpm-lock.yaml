@@ -104,6 +104,9 @@ importers:
       recharts:
         specifier: 2.15.4
         version: 2.15.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      sharp:
+        specifier: ^0.34.5
+        version: 0.34.5
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -198,9 +201,6 @@ packages:
 
   '@emnapi/core@1.5.0':
     resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
-
-  '@emnapi/runtime@1.5.0':
-    resolution: {integrity: sha512-97/BJ3iXHww3djw6hYIfErCZFee7qCtrneuLa20UXFCOTCfBM2cvQHjWJ2EG0s0MtdNwInarqCTz35i4wWXHsQ==}
 
   '@emnapi/runtime@1.7.1':
     resolution: {integrity: sha512-PVtJr5CmLwYAU9PZDMITZoR5iAOShYREoR45EyyLrbntV50mdePTgUn4AmOw90Ifcj+x2kRjdzr1HP3RrNiHGA==}
@@ -2865,11 +2865,6 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@emnapi/runtime@1.5.0':
-    dependencies:
-      tslib: 2.8.1
-    optional: true
-
   '@emnapi/runtime@1.7.1':
     dependencies:
       tslib: 2.8.1
@@ -2957,8 +2952,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@img/colour@1.0.0':
-    optional: true
+  '@img/colour@1.0.0': {}
 
   '@img/sharp-darwin-arm64@0.34.5':
     optionalDependencies:
@@ -3080,7 +3074,7 @@ snapshots:
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
       '@emnapi/core': 1.5.0
-      '@emnapi/runtime': 1.5.0
+      '@emnapi/runtime': 1.7.1
       '@tybys/wasm-util': 0.10.0
     optional: true
 
@@ -4198,8 +4192,7 @@ snapshots:
 
   detect-libc@2.0.4: {}
 
-  detect-libc@2.1.2:
-    optional: true
+  detect-libc@2.1.2: {}
 
   detect-node-es@1.1.0: {}
 
@@ -5270,8 +5263,7 @@ snapshots:
 
   semver@7.7.2: {}
 
-  semver@7.7.3:
-    optional: true
+  semver@7.7.3: {}
 
   server-only@0.0.1: {}
 
@@ -5327,7 +5319,6 @@ snapshots:
       '@img/sharp-win32-arm64': 0.34.5
       '@img/sharp-win32-ia32': 0.34.5
       '@img/sharp-win32-x64': 0.34.5
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:

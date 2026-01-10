@@ -30,10 +30,12 @@ export const fetchData = async (id?: string | null) => {
     `)
     .eq("available", true)
 
+
   if (id) {
     query = query.eq("id", id)
   }
   const response = await query.order("created_at", { ascending: false })
+  console.log(response)
   return response
 }
 
