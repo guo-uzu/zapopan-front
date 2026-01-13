@@ -24,10 +24,9 @@ export default function LoginPage() {
         <Image
           width={1920}
           height={1080}
-          src="/bg-zapopan.png"
+          src="https://rpbkprzjlgbjqwgxrdqr.supabase.co/storage/v1/object/public/static-images/bg-zapopan.png"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-
         />
       </div>
     </div>
