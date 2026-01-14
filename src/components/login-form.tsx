@@ -44,13 +44,10 @@ export function LoginForm({
     }
 
     const handleSignInWithGoogle = async () => {
+        const origin = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
         setError(null);
         try {
             // Determinamos la URL base manualmente para estar seguros
-            const origin = (typeof window !== 'undefined' && window.location.origin)
-                ? window.location.origin
-                : '';
-
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {

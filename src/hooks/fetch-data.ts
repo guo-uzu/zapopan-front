@@ -159,6 +159,7 @@ export const getUsersFilter = async () => {
       id,
       full_name
       `)
+  console.log(data)
   if (error) {
     console.log(error)
   }
