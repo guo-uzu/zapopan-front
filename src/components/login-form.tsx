@@ -46,15 +46,24 @@ export function LoginForm({
     const handleSignInWithGoogle = async () => {
         setError(null);
         try {
+            // Determinamos la URL base manualmente para estar seguros
+            const origin = (typeof window !== 'undefined' && window.location.origin)
+                ? window.location.origin
+                : '';
+
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `/auth/callback`,
+                    // Forzamos que vaya a la ruta que procesa el código
+                    redirectTo: `${origin}/auth/callback`,
+                    // Opcional: Forzamos que Google siempre pida cuenta (ayuda a depurar)
+                    queryParams: {
+                        access_type: 'offline',
+                        prompt: 'consent',
+                    },
                 },
             });
             if (error) throw error;
-            // Note: We don't redirect here. Supabase handles the
-            // redirect *to* Google.
         } catch (error) {
             console.error('Google Sign-in error:', (error as Error).message);
             setError((error as Error).message);
