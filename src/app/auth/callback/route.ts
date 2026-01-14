@@ -3,22 +3,34 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
-  // 1. Get the URL from the incoming request
-  const { searchParams } = new URL(request.url)
-  const code = searchParams.get('code')
+  // 1. Obtenemos los parámetros
+  const requestUrl = new URL(request.url)
+  const code = requestUrl.searchParams.get('code')
 
-  // 2. If there's a 'code' in the URL...
+  // Opcional: Si mandaste un parámetro "next" desde el login, lo recuperamos
+  const next = requestUrl.searchParams.get('next') ?? '/'
+
   if (code) {
-    // 3. Create a Supabase client that can run on the server
+    // 2. Creamos el cliente e intercambiamos el código
     const cookieStore = await cookies()
+    // Nota: Asegúrate de que tu createClient soporte recibir cookieStore, 
+    // si no, úsalo sin argumentos según tu configuración.
     const supabase = createClient(cookieStore)
 
-    // 4. Exchange the 'code' for a real user session
-    //    This also automatically sets the auth cookie for us!
     await supabase.auth.exchangeCodeForSession(code)
   }
 
-  // 5. Send the user back to the main page (your dashboard)
-  //    They are now logged in!
-  return NextResponse.redirect(new URL('/', request.url))
+  // --- AQUÍ ESTÁ EL ARREGLO ---
+
+  // 3. Obtenemos la URL base segura
+  // En Producción (Cloud Run) esto leerá "https://atencion-al-usuario.uzu.digital"
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+
+  if (siteUrl) {
+    // Si estamos en producción, forzamos la redirección al dominio correcto
+    return NextResponse.redirect(new URL(next, siteUrl))
+  } else {
+    // Si estamos en local (no existe la variable), usamos el request original
+    return NextResponse.redirect(new URL(next, request.url))
+  }
 }
