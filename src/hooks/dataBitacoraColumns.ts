@@ -59,7 +59,7 @@ export const ColumnsBitacoraOpts = {
         { id: "canalización_a_dependencia", value: "Canalización a dependencia", label: "canalización_a_dependencia" },
         { id: "solicitudes_nuevas", value: "Solicitudes nuevas", label: "solicitudes_nuevas" },
         { id: "reportes_de_servicios", value: "Reportes de servicios", label: "reportes_de_servicios" },
-        { id: "reportes_de_obra", value: "Reportes de obra", label: "reportes_de_obra" },
+        { id: "reportes_de_obras", value: "Reportes de obras", label: "reportes_de_obras" },
         { id: "reportes_externos", value: "Reportes externos", label: "reportes_externos" },
         { id: "solicitudes_especiales", value: "Solicitudes especiales", label: "solicitudes_especiales" },
         { id: "reporte_de_inspección_y_vigilancia", value: "Reporte de inspección y vigilancia", label: "reporte_de_inspección_y_vigilancia" },
