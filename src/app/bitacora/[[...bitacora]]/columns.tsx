@@ -15,8 +15,6 @@ import { formatData } from "@/hooks/formatData";
 import { toast } from 'sonner'
 import Share from "@/components/columns/share-btn";
 
-
-
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
 const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
 
@@ -847,7 +845,6 @@ export const columns: ColumnDef<Inputs>[] = [
       }
       const handleClick = () => {
         const data = row.original
-
         // 1. Cast the meta to your custom interface
         const meta = table.options.meta as BitacoraTableMeta | undefined
         // 2. Now TypeScript knows these functions exist!

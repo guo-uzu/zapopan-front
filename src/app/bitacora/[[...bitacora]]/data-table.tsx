@@ -62,13 +62,17 @@ export function DataTable<TData, TValue>({
   const [toEdit, setToEdit] = useState<boolean>(false)
   const [usersToFilter, setUsersToFilter] = useState<{ id: string, label: string, value: string }[]>([])
 
-
   const handleOpenForm = () => {
     setOpen(true)
   }
+
   const handleToEdit = () => {
     setToEdit(!toEdit)
   }
+
+  useEffect(() => {
+    console.log(toEdit)
+  }, [toEdit])
 
   const table = useReactTable({
     data: dataFetch,

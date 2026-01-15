@@ -65,6 +65,7 @@ export default function FormBitacora({ defaultData, toEdit, setOpen, open, handl
       loading: "Actualizando datos...",
       success: () => {
         reset()
+        handleToEdit()
         return "Datos actualizados correctamente!"
       },
       error: "Error actualizando datos, intente nuevamente",
