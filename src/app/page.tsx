@@ -13,7 +13,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLe
 import { useEffect, useState } from "react"
 import { getDataChartsAreaEstatal, getDataChartsGeneral, getPendientesTotal, getPendientesUser } from "@/hooks/fetch-data"
 import { Skeleton } from "@/components/ui/skeleton"
-import { addDays, subDays } from "date-fns"
+import { setHours, subDays } from "date-fns"
 
 import { Pie, PieChart } from "recharts"
 
@@ -70,21 +70,39 @@ export function dateRangeFilterFn<TData>(
   columnId: string,
   range: DateRange | undefined
 ) {
-  // 1. If no range selected, show everything
+  // 1. Si no hay rango seleccionado, mostrar todo
   if (!range || (!range.from && !range.to)) return true
 
-  // 2. Get the RAW string value from the row (Supabase ISO string)
-  const val = row.getValue(columnId) as string
-  if (!val) return false
+  // 2. SOLUCIÓN A "WHOLE DATA":
+  // En lugar de usar row.getValue(columnId), usamos row.original
+  // para acceder al string exacto que viene de Supabase.
+  // Nota: Asegúrate que 'date' sea el nombre real de tu campo en la BD.
+  const rawDateString = (row.original as any).date
 
-  // 3. Convert that string to a Timestamp Number (ms)
-  const rowTime = new Date(val).getTime()
+  if (!rawDateString) return false
 
-  // 4. Calculate your Min/Max bounds
-  const min = range.from ? startOfDay(range.from).getTime() : -Infinity
-  const max = range.to ? endOfDay(range.to).getTime() : Infinity
+  // 3. SOLUCIÓN AL "DÍA ANTERIOR":
+  // Creamos la fecha, pero forzamos la interpretación "Local" de los componentes UTC.
+  // Esto evita que JS le reste las 6 horas de México.
+  const dateParts = new Date(rawDateString)
 
-  // 5. Compare numbers
+  // Creamos una nueva fecha usando getUTCFullYear, etc.
+  // Esto crea una fecha "Local" que coincide numéricamente con la fecha UTC.
+  const rowDate = new Date(
+    dateParts.getUTCFullYear(),
+    dateParts.getUTCMonth(),
+    dateParts.getUTCDate(),
+    0, 0, 0, 0
+  )
+
+  const rowTime = rowDate.getTime()
+
+  // 4. Calcular límites (Normalizando horas para evitar errores de precisión)
+  // Usamos setHours(0,0,0,0) para comparar manzanas con manzanas (días completos)
+  const min = range.from ? new Date(range.from).setHours(0, 0, 0, 0) : -Infinity
+  const max = range.to ? new Date(range.to).setHours(23, 59, 59, 999) : Infinity
+
+  // 5. Comparar
   return rowTime >= min && rowTime <= max
 }
 
@@ -300,7 +318,6 @@ export default function Home() {
 
   useEffect(() => {
     const col = table.getColumn("date");
-
     if (col) {
       if (!dateRange || (!dateRange.from && !dateRange.to)) {
         col.setFilterValue(undefined);
@@ -314,6 +331,12 @@ export default function Home() {
   const totalReportes = filteredRows.reduce((acc, row) => {
     return acc + (Number(row.original.count) || 0)
   }, 0)
+
+  useEffect(() => {
+    console.log(columnFilters)
+    console.log(filteredRows)
+  }, [columnFilters])
+
   const chartData = filteredRows.map(row => row.original)
 
   const filteredRowsEstatales = tableEstatales.getFilteredRowModel().rows;
