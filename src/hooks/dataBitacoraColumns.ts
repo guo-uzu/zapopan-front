@@ -42,7 +42,7 @@ export const ColumnsBitacoraOpts = {
         { id: "comude", value: "COMUDE", label: "comude" },
         { id: "caec_(boletos_charros)", value: "CAEC (Boletos Charros)", label: "caec_(boletos_charros)" },
         { id: "sindicatura", value: "Sindicatura", label: "sindicatura" },
-        { id: "administración_e_inovación_gubernamental", value: "Administración e Innovación Gubernamental", label: "administración_inovación_gubernamental" },
+        { id: "administración_e_innovación_gubernamental", value: "Administración e Innovación Gubernamental", label: "administración_e_innovación_gubernamental" },
         { id: "amim", value: "AMIM", label: "amim" },
         { id: "cursos_en_el_parque_de_las_niñas_y_niños", value: "Cursos en el Parque de las niñas y niños", label: "cursos_en_el_parque_de_las_niñas_y_niños" },
         { id: "romeria", value: "Romería", label: "romeria" },

@@ -53,7 +53,9 @@ export default function FormBitacora({ defaultData, toEdit, setOpen, open, handl
       toast.promise(sendDataSupabase(dataForm), {
         loading: "Enviando datos...",
         success: () => {
-          reset()
+          setDefaultData({})
+          setOpen(false)
+          reset(emptyValues)
           return "Datos enviados correctamente!"
         },
         error: "Error enviando datos, intente nuevamente",
@@ -64,8 +66,10 @@ export default function FormBitacora({ defaultData, toEdit, setOpen, open, handl
     toast.promise(updateDataSupabase(dataForm, defaultData), {
       loading: "Actualizando datos...",
       success: () => {
-        reset()
+        setDefaultData({})
+        setOpen(false)
         handleToEdit()
+        reset(emptyValues)
         return "Datos actualizados correctamente!"
       },
       error: "Error actualizando datos, intente nuevamente",
@@ -80,8 +84,9 @@ export default function FormBitacora({ defaultData, toEdit, setOpen, open, handl
         (isOpen) => {
           setOpen(isOpen)
           if (!isOpen && toEdit) {
-            handleToEdit()
             setDefaultData({})
+            setOpen(false)
+            handleToEdit()
             reset(emptyValues)
           }
         }
@@ -142,15 +147,13 @@ export default function FormBitacora({ defaultData, toEdit, setOpen, open, handl
                     <Textarea {...register("observations")} id='observations' name='observations' placeholder='Escribe las observaciones y comentarios aquí...' />
                   </Field>
                 </FieldGroup>
-                <FieldGroup >
-                  {
-                    toEdit ?
-                      <Button onClick={() => setOpen(!open)} type='submit' className='w-full'>Actualizar</Button>
-                      :
-                      <Button onClick={() => setOpen(!open)} type='submit' className='w-full'>Guardar</Button>
-                  }
-                  <Button type='reset' onClick={() => reset(emptyValues)} variant="secondary">Borrar</Button>
-                </FieldGroup>
+                {
+                  toEdit ?
+                    <Button onClick={() => setOpen(!open)} type='submit' className='w-full'>Actualizar</Button>
+                    :
+                    <Button onClick={() => setOpen(!open)} type='submit' className='w-full'>Guardar</Button>
+                }
+                <Button type='reset' onClick={() => reset(emptyValues)} variant="secondary">Borrar</Button>
               </FieldSet>
             </FieldGroup>
           </form>

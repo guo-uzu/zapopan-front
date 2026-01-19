@@ -70,10 +70,6 @@ export function DataTable<TData, TValue>({
     setToEdit(!toEdit)
   }
 
-  useEffect(() => {
-    console.log(toEdit)
-  }, [toEdit])
-
   const table = useReactTable({
     data: dataFetch,
     columns,
