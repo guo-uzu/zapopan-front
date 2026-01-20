@@ -13,7 +13,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLe
 import { useEffect, useState } from "react"
 import { getDataChartsAreaEstatal, getDataChartsGeneral, getPendientesTotal, getPendientesUser } from "@/hooks/fetch-data"
 import { Skeleton } from "@/components/ui/skeleton"
-import { setHours, subDays } from "date-fns"
+import { subDays } from "date-fns"
 
 import { Pie, PieChart } from "recharts"
 

@@ -74,7 +74,7 @@ export const columns: ColumnDef<Inputs>[] = [
     accessorFn: (row) => row.social_network_bitacora?.name ?? "",
     id: "redes sociales",
     header: "Redes Sociales",
-    cell: ({ getValue }) => {
+    cell: ({ getValue, row }) => {
       switch (getValue()) {
         case "facebook":
           return (

@@ -5,11 +5,11 @@ import { PopoverContent } from '@/components/ui/popover'
 import { Inputs } from '@/hooks/types'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverTrigger } from '@radix-ui/react-popover'
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronsUpDown, CircleSmall } from 'lucide-react'
 import { useState } from 'react'
 import { Control, Controller, Path } from 'react-hook-form'
 
-export default function FilterSelector({ control, column, name, label }: { control: Control<Inputs>, column: { id: string, value: string }[], name: Path<Inputs>, label: string }) {
+export default function FilterSelector({ control, column, name, label }: { control: Control<Inputs>, column: { id: string, value: string, color: string }[], name: Path<Inputs>, label: string }) {
     const [open, setOpen] = useState(false)
 
     return (
@@ -46,22 +46,25 @@ export default function FilterSelector({ control, column, name, label }: { contr
                                     <CommandGroup>
                                         {
                                             column.map((data) => (
-                                                <CommandItem
-                                                    key={data.id}
-                                                    value={data.id}
-                                                    onSelect={() => {
-                                                        field.onChange(data.id === field.value ? "" : data.id)
-                                                        setOpen(false)
-                                                    }}
-                                                >
-                                                    {data.value}
-                                                    <Check
-                                                        className={cn(
-                                                            "ml-auto",
-                                                            field.value === data.id ? "opacity-100" : "opacity-0"
-                                                        )}
-                                                    />
-                                                </CommandItem>
+                                                <div className="flex items-center">
+                                                    <CircleSmall color={data.color || "oklch(43.9% 0 0)"} />
+                                                    <CommandItem
+                                                        key={data.id}
+                                                        value={data.id}
+                                                        onSelect={() => {
+                                                            field.onChange(data.id === field.value ? "" : data.id)
+                                                            setOpen(false)
+                                                        }}
+                                                    >
+                                                        {data.value}
+                                                        <Check
+                                                            className={cn(
+                                                                "ml-auto",
+                                                                field.value === data.id ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                    </CommandItem>
+                                                </div>
                                             ))}
                                     </CommandGroup>
                                 </CommandList>
