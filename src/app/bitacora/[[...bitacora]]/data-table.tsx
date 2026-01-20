@@ -325,7 +325,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <Card className="max-h-[calc(98vh-64px)]">
+      <Card className="flex flex-col h-[calc(98vh-64px)]">
         <CardHeader className="flex flex-row justify-between">
           <div className="flex flex-row gap-2">
             <div className="flex items-center">
@@ -566,69 +566,71 @@ export function DataTable<TData, TValue>({
             </div>
           </div>
         </CardHeader>
-        <CardContent className="overflow-y-scroll">
-          <Table className="table-fixed" style={{ width: table.getCenterTotalSize() }}>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead
-                        key={header.id}
-                        className="group/head relative h-10 select-none last:[&>.cursor-col-resize]:opacity-0 text-sm bg-zinc-50"
-                        {...{
-                          colSpan: header.colSpan,
-                          style: {
-                            width: header.getSize()
-                          }
-                        }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
+        <CardContent className="flex-1 overflow-hidden relative">
+          <div className="flex h-full w-full overflow-auto">
+            <Table className="table-fixed" style={{ width: table.getCenterTotalSize() }}>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead
+                          key={header.id}
+                          className="group/head relative h-10 select-none last:[&>.cursor-col-resize]:opacity-0 text-sm bg-zinc-50"
+                          {...{
+                            colSpan: header.colSpan,
+                            style: {
+                              width: header.getSize()
+                            }
+                          }}
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                          {header.column.getCanResize() && (
+                            <div
+                              {...{
+                                onDoubleClick: () => header.column.resetSize(),
+                                onMouseDown: header.getResizeHandler(),
+                                onTouchStart: header.getResizeHandler(),
+                                className:
+                                  'group-last/head:hidden absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:translate-x-px'
+                              }}
+                            />
                           )}
-                        {header.column.getCanResize() && (
-                          <div
-                            {...{
-                              onDoubleClick: () => header.column.resetSize(),
-                              onMouseDown: header.getResizeHandler(),
-                              onTouchStart: header.getResizeHandler(),
-                              className:
-                                'group-last/head:hidden absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:translate-x-px'
-                            }}
-                          />
-                        )}
-                      </TableHead>
-                    )
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      < TableCell key={cell.id} className="text-md whitespace-normal" style={{ width: cell.column.getSize() }}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
+                        </TableHead>
+                      )
+                    })}
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center" >
-                    Cargando datos...
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        < TableCell key={cell.id} className="text-md whitespace-normal" style={{ width: cell.column.getSize() }}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="text-center" >
+                      Cargando datos...
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
         <CardFooter>
           {
