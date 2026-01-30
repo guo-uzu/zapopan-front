@@ -10,69 +10,76 @@ import { useState } from 'react'
 import { Control, Controller, Path } from 'react-hook-form'
 
 export default function FilterSelector({ control, column, name, label }: { control: Control<Inputs>, column: { id: string, value: string, color: string }[], name: Path<Inputs>, label: string }) {
-    const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false)
 
-    return (
-        <Field>
-            <FieldLabel htmlFor={name}>{label}</FieldLabel>
-            <Controller
-                name={name}
-                control={control}
-                render={({ field }) => (
-                    <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger>
-                            <Button
-                                variant="outline"
-                                role='combobox'
-                                type='button'
-                                aria-expanded={open}
-                                className='w-full'
-                            >
-                                <span className='truncate'>
-                                    {
-                                        field.value
-                                            ? column.find((data) => data.id === field.value)?.value
-                                            : "Selecciona una opción..."
-                                    }
-                                </span>
-                                <ChevronsUpDown className="opacity-50" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
-                            <Command>
-                                <CommandInput placeholder="Busca alguna opción..." className="h-9" />
-                                <CommandList>
-                                    <CommandEmpty>No se encontró esa opción.</CommandEmpty>
-                                    <CommandGroup>
-                                        {
-                                            column.map((data) => (
-                                                <div className="flex items-center">
-                                                    <CircleSmall color={data.color || "oklch(43.9% 0 0)"} />
-                                                    <CommandItem
-                                                        key={data.id}
-                                                        value={data.id}
-                                                        onSelect={() => {
-                                                            field.onChange(data.id === field.value ? "" : data.id)
-                                                            setOpen(false)
-                                                        }}
-                                                    >
-                                                        {data.value}
-                                                        <Check
-                                                            className={cn(
-                                                                "ml-auto",
-                                                                field.value === data.id ? "opacity-100" : "opacity-0"
-                                                            )}
-                                                        />
-                                                    </CommandItem>
-                                                </div>
-                                            ))}
-                                    </CommandGroup>
-                                </CommandList>
-                            </Command>
-                        </PopoverContent>
-                    </Popover>
-                )}
-            />
-        </Field>
-    )
+  return (
+    <Field>
+      <FieldLabel htmlFor={name}>{label}</FieldLabel>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger>
+              <Button
+                variant="outline"
+                role='combobox'
+                type='button'
+                aria-expanded={open}
+                className='w-full flex items-center justify-between'
+              >
+                <span className='truncate flex items-center gap-2'>
+                  {
+
+                  }
+                  {
+                    field.value
+                      ? (
+                        <>
+                          <CircleSmall color={column.find((data) => data.id === field.value)?.color ? column.find((data) => data.id === field.value)?.color : "oklch(43.9% 0 0)"} />
+                          {column.find((data) => data.id === field.value)?.value}
+                        </>
+                      )
+                      : "Selecciona una opción..."
+                  }
+                </span>
+                <ChevronsUpDown className="opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0">
+              <Command>
+                <CommandInput placeholder="Busca alguna opción..." className="h-9" />
+                <CommandList className='max-h-[300px] overflow-y-auto overflow-x-hidden'>
+                  <CommandEmpty>No se encontró esa opción.</CommandEmpty>
+                  <CommandGroup>
+                    {
+                      column.map((data) => (
+                        <CommandItem
+                          key={data.id}
+                          value={data.id}
+                          onSelect={() => {
+                            field.onChange(data.id === field.value ? "" : data.id)
+                            setOpen(false)
+                          }}
+                          className='w-full cursor-pointer'
+                        >
+                          <CircleSmall color={data.color || "oklch(43.9% 0 0)"} />
+                          {data.value}
+                          <Check
+                            className={cn(
+                              "ml-auto",
+                              field.value === data.id ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        )}
+      />
+    </Field>
+  )
 }
