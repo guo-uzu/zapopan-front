@@ -30,9 +30,6 @@ export default function FilterSelector({ control, column, name, label }: { contr
               >
                 <span className='truncate flex items-center gap-2'>
                   {
-
-                  }
-                  {
                     field.value
                       ? (
                         <>
