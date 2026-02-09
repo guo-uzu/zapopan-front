@@ -127,7 +127,7 @@ export const columns: ColumnDef<Inputs>[] = [
                         ) : (
                             <Shield />
                         )}
-                        {props.getValue().toLowerCase() as string}
+                        {props.getValue() as string}
                     </Badge>
                 </div>
             );
