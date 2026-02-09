@@ -20,6 +20,7 @@ import {
 import { useEffect, useState } from "react";
 import {
     getDataChartsAreaEstatal,
+    getDataChartsGeneral,
     getPendientesTotal,
     getPendientesUser,
 } from "@/hooks/fetch-data";
@@ -78,6 +79,9 @@ interface PendientesTotal {
 
 export default function Home() {
     const [chartAreaEstatal, setChartAreaEstatal] = useState<
+        AreaResponsableTable[]
+    >([]);
+    const [generalChartData, setGeneralChartData] = useState<
         AreaResponsableTable[]
     >([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -183,6 +187,7 @@ export default function Home() {
     };
 
     useEffect(() => {
+        handleFetchData();
         handleFetchChartAreaEstatal();
         handleUserData();
         handlePendientes();
@@ -220,17 +225,7 @@ export default function Home() {
     } satisfies ChartConfig;
 
     const filteredRows = table.getFilteredRowModel().rows;
-    const totalReportes = filteredRows.reduce((acc, row) => {
-        return acc + (Number(row.original.count) || 0);
-    }, 0);
-
     const chartData = filteredRows.map((row) => row.original);
-
-    const filteredRowsEstatales = table.getFilteredRowModel().rows;
-    const totalReportesEstatales = filteredRowsEstatales.reduce((acc, row) => {
-        return acc + (Number(row.original.count) || 0);
-    }, 0);
-    const chartDataEstatales = filteredRowsEstatales.map((row) => row.original);
 
     const chartPieData = [
         {
@@ -281,6 +276,12 @@ export default function Home() {
         from: subDays(new Date(), 7), // 7 days ago
         to: new Date(), // Today
     });
+
+    const handleFetchData = async () => {
+        const data = await getDataChartsGeneral();
+        if (data) setGeneralChartData(data);
+    };
+
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -397,12 +398,14 @@ export default function Home() {
                                         </PopoverContent>
                                     </Popover>
                                 </div>
-                                <TableDashboard dateRange={dateRange} />
+                                <TableDashboard
+                                    generalChartData={generalChartData}
+                                    dateRange={dateRange}
+                                />
                             </div>
                             {
                                 // graph
-                            }
-                            <div className="col-span-8 flex">
+                                //<div className="col-span-8 flex">
                                 <ChartContainer
                                     config={chartConfig}
                                     className="max-h-[500px] w-full"
@@ -437,7 +440,8 @@ export default function Home() {
                                         />
                                     </BarChart>
                                 </ChartContainer>
-                            </div>
+                                //</div>
+                            }
                         </div>
                     </div>
                 </div>

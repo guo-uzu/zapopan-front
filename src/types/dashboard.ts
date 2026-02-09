@@ -1,5 +1,5 @@
 export type AreaResponsableTable = {
-    date: string;
-    count: number;
-    area_name: string;
+    category_id: string;
+    category_name: string;
+    n_reports: string;
 };

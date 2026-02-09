@@ -55,34 +55,18 @@ export function dateRangeFilterFn<TData>(
 
 export const columns: ColumnDef<AreaResponsableTable>[] = [
     {
-        accessorKey: "area_name",
-        header: "Área responsable",
+        accessorKey: "category_name",
+        header: "Categoría",
         cell: ({ row }) => {
             return (
                 <div className="w-full whitespace-nowrap overflow-hidden truncate">
-                    {row.original.area_name}
+                    {row.original.category_name}
                 </div>
             );
         },
     },
     {
-        accessorKey: "count",
+        accessorKey: "n_reports",
         header: "Reportes",
-    },
-    {
-        accessorKey: "date",
-        accessorFn: (row) => toTimestamp(row.date),
-        header: "Date",
-        filterFn: dateRangeFilterFn,
-        cell: ({ row }) => {
-            const rawDate = new Date(row.getValue("date"));
-            const day = ("0" + rawDate.getDate()).slice(-2);
-            const month = ("0" + (rawDate.getMonth() + 1)).slice(-2);
-            return (
-                <div className="text-center">
-                    {day} / {month} / {rawDate.getFullYear()}
-                </div>
-            );
-        },
     },
 ];

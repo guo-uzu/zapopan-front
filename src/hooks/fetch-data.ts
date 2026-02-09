@@ -47,12 +47,14 @@ export const getDataChartsGeneral = async () => {
         data: { user },
     } = await supabase.auth.getUser();
     if (!user) throw new Error("User not founded");
-    const { data } = await supabase
-        .from("bitacora")
-        .select("category_id")
-        .select("*", { count: "exact", head: true })
-        .eq("municipal", true)
-        .order("date", { ascending: true });
+    const { data, error } = await supabase.rpc("getcategorycount", {
+        data_from: "2026-02-01:00:00:00",
+        data_to: "2026-02-09:23:59:59",
+    });
+    if (error) {
+        console.log("Error", error);
+    }
+    console.log(data);
     return data;
 };
 

@@ -28,14 +28,16 @@ import { columns } from "../columns/dashboard";
 import { useState, useEffect } from "react";
 import { AreaResponsableTable } from "@/types/dashboard";
 import { DateRange } from "react-day-picker";
-import { subDays } from "date-fns";
-import { getDataChartsGeneral } from "@/hooks/fetch-data";
 
-const TableDashboard = ({ dateRange }) => {
+const TableDashboard = ({
+    generalChartData,
+    dateRange,
+}: {
+    generalChartData: AreaResponsableTable[];
+    dateRange: DateRange | undefined;
+}) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [generalChartData, setGeneralChartData] = useState<
-        AreaResponsableTable[]
-    >([]);
+
     const table = useReactTable({
         data: generalChartData,
         columns,
@@ -52,10 +54,6 @@ const TableDashboard = ({ dateRange }) => {
         },
     });
 
-    const handleFetchData = async () => {
-        const data = await getDataChartsGeneral();
-        if (data) setGeneralChartData(data);
-    };
     useEffect(() => {
         const col = table.getColumn("date");
         if (col) {
@@ -71,7 +69,7 @@ const TableDashboard = ({ dateRange }) => {
         <Card>
             <CardHeader>
                 <CardTitle className="text-center mx-auto w-full font-black">
-                    Solicitudes de áreas municipales
+                    Solicitudes recibidas
                 </CardTitle>
                 <CardDescription className="flex gap-2 w-full justify-center">
                     <span>-</span>
@@ -79,7 +77,7 @@ const TableDashboard = ({ dateRange }) => {
             </CardHeader>
             <CardContent className="flex-1">
                 <div className="max-h-[400px] overflow-y-auto">
-                    <Table className="">
+                    <Table>
                         <TableHeader className="sticky h-10 top-0 z-20">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
