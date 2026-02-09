@@ -33,9 +33,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteRowBitacora } from "@/hooks/deleteRow";
 import { Badge } from "@/components/ui/badge";
-import { FaFacebookSquare } from "react-icons/fa";
-import { FaSquareXTwitter, FaSquareInstagram } from "react-icons/fa6";
-import { AiFillTikTok } from "react-icons/ai";
 import { formatData } from "@/hooks/formatData";
 import { toast } from "sonner";
 import Share from "@/components/columns/share-btn";
@@ -56,6 +53,7 @@ const toTimestamp = (v: unknown): number | null => {
 
 import { Row } from "@tanstack/react-table";
 import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
+import SocialNetwork from "@/components/columns/social-network";
 
 // Define the custom filter function
 export const dateRangeFilterFn = (
@@ -103,33 +101,7 @@ export const columns: ColumnDef<Inputs>[] = [
         accessorFn: (row) => row.social_network_bitacora?.name ?? "",
         id: "redes sociales",
         header: "Redes Sociales",
-        cell: (props) => {
-            const color: string | undefined =
-                ColumnsBitacoraOpts.social_network.find(
-                    (e) => e.id === props.getValue(),
-                )?.color;
-            return (
-                <div className="w-full flex items-center justify-center">
-                    <Badge
-                        style={{ color: color }}
-                        className="capitalize w-full rounded-full bg-current/10 border-none focus-visible:ring-amber-600/20 focus-visible:outline-none"
-                    >
-                        {props.getValue() === "facebook" ? (
-                            <FaFacebookSquare />
-                        ) : props.getValue() === "x" ? (
-                            <FaSquareXTwitter />
-                        ) : props.getValue() === "instagram" ? (
-                            <FaSquareInstagram />
-                        ) : props.getValue() === "tiktok" ? (
-                            <AiFillTikTok />
-                        ) : (
-                            ""
-                        )}
-                        {props.getValue() as string}
-                    </Badge>
-                </div>
-            );
-        },
+        cell: (props) => <SocialNetwork props={props} />,
         size: 150,
         minSize: 150,
         maxSize: 150,
@@ -406,9 +378,11 @@ export const columns: ColumnDef<Inputs>[] = [
     {
         accessorFn: (row) => row.latest_updated_user_id?.full_name ?? "N/A",
         header: "Ultimo en actualizar",
-        cell: ({ getValue }) => {
-            return <p className="overflow-hidden">{getValue() as string}</p>;
-        },
+        cell: (props) => (
+            <span className="overflow-hidden">
+                {props.getValue() as string}
+            </span>
+        ),
         size: 200,
     },
     {
