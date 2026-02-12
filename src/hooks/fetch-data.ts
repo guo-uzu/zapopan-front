@@ -1,4 +1,5 @@
 import { Option } from "@/app/respuestas/[[...respuestas]]/multi-select";
+import { formatDataDate } from "@/lib/formatters/date";
 import { createClient } from "@/utils/supabase/client";
 
 export const fetchData = async (id?: string | null) => {
@@ -41,20 +42,23 @@ export const fetchData = async (id?: string | null) => {
     return response;
 };
 
-export const getDataChartsGeneral = async () => {
+export const getDashboardCategory = async (data_from: Date, data_to: Date) => {
     const supabase = createClient();
     const {
         data: { user },
     } = await supabase.auth.getUser();
     if (!user) throw new Error("User not founded");
+    if (!data_from && !data_to) {
+        return;
+    }
+    console.log(`${formatDataDate(data_from)}`);
     const { data, error } = await supabase.rpc("getcategorycount", {
-        data_from: "2026-02-01:00:00:00",
-        data_to: "2026-02-09:23:59:59",
+        data_from: `${formatDataDate(data_from)}:00:00:00`,
+        data_to: `${formatDataDate(data_to)}:23:59:59`,
     });
     if (error) {
         console.log("Error", error);
     }
-    console.log(data);
     return data;
 };
 

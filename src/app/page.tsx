@@ -1,6 +1,7 @@
 "use client";
 import { columns } from "@/components/columns/dashboard";
-import { AreaResponsableTable } from "@/types/dashboard";
+import useDashboardTable from "@/hooks/dashboard/useDashboardTable";
+
 import {
     SidebarInset,
     SidebarProvider,
@@ -20,7 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import {
     getDataChartsAreaEstatal,
-    getDataChartsGeneral,
+    getDashboardCategory,
     getPendientesTotal,
     getPendientesUser,
 } from "@/hooks/fetch-data";
@@ -69,6 +70,10 @@ import { CalendarDays } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import TableDashboard from "@/components/dashboard/table";
 import { DateRange } from "react-day-picker";
+import { DashBoardTable } from "@/types/dashboardTable";
+import totalDashboard from "@/lib/toReturn/totalDashboard";
+import ChartDashboard from "@/components/dashboard/chart";
+import categoryChart from "@/lib/configs/dashboard";
 
 interface PendientesTotal {
     pendientesT: number | null;
@@ -77,13 +82,19 @@ interface PendientesTotal {
     direccionT: number | null;
 }
 
+import { formatDateUI } from "@/lib/formatters/date";
+
 export default function Home() {
-    const [chartAreaEstatal, setChartAreaEstatal] = useState<
-        AreaResponsableTable[]
-    >([]);
-    const [generalChartData, setGeneralChartData] = useState<
-        AreaResponsableTable[]
-    >([]);
+    const [chartAreaEstatal, setChartAreaEstatal] = useState<DashBoardTable[]>(
+        [],
+    );
+    const [categoryDashboard, setCategoryDashboard] = useState<{
+        data: DashBoardTable[];
+        total: number;
+    }>({
+        data: [],
+        total: 0,
+    });
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [userData, setUserData] = useState<UserProfile | null>(null);
     const [pendientes, setPendientes] = useState<number | null>(null);
@@ -97,14 +108,6 @@ export default function Home() {
         direccionT: null,
     });
 
-    const formatDataFrom = () => {
-        const day = String(dateRange?.from?.getDate()).padStart(2, "0");
-        const month = dateRange?.from?.toLocaleDateString("es-MX", {
-            month: "short",
-        });
-        return `${day}/${month}/${dateRange?.from?.getFullYear()}`;
-    };
-
     const formatDataTo = () => {
         const day = String(dateRange?.to?.getDate()).padStart(2, "0");
         const month = dateRange?.to?.toLocaleDateString("es-MX", {
@@ -112,22 +115,6 @@ export default function Home() {
         });
         return `${day}/${month}/${dateRange?.to?.getFullYear()}`;
     };
-
-    const table = useReactTable({
-        data: chartAreaEstatal,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        state: {
-            columnFilters,
-        },
-        onColumnFiltersChange: setColumnFilters,
-        initialState: {
-            columnVisibility: {
-                date: false,
-            },
-        },
-    });
 
     const supabase = createClient();
 
@@ -143,7 +130,7 @@ export default function Home() {
         } = await supabase.auth.getUser();
 
         if (authError) throw authError;
-        if (!user) return; // User is not logged in
+        if (!user) return;
 
         const { data: profile, error: profileError } = await supabase
             .from("users")
@@ -223,7 +210,9 @@ export default function Home() {
             color: "var(--chart-5)",
         },
     } satisfies ChartConfig;
-
+    // Here is the modularized data
+    const table = useDashboardTable(categoryDashboard.data, columns);
+    // Here ends
     const filteredRows = table.getFilteredRowModel().rows;
     const chartData = filteredRows.map((row) => row.original);
 
@@ -278,9 +267,20 @@ export default function Home() {
     });
 
     const handleFetchData = async () => {
-        const data = await getDataChartsGeneral();
-        if (data) setGeneralChartData(data);
+        if (dateRange?.from && dateRange.to) {
+            const data = await getDashboardCategory(
+                dateRange?.from,
+                dateRange?.to,
+            );
+            if (data) {
+                setCategoryDashboard({ data, total: totalDashboard(data) });
+            }
+        }
     };
+
+    useEffect(() => {
+        handleFetchData();
+    }, [dateRange]);
 
     return (
         <SidebarProvider>
@@ -370,78 +370,43 @@ export default function Home() {
                     {
                         // Content
                     }
-                    <div className="bg-muted/50 min-h-[100vh] flex-1 flex flex-col gap-4 p-4 rounded-xl">
-                        <div className="grid grid-cols-12 gap-2">
-                            {
-                                // first part
-                            }
-                            <div className="col-span-4 flex flex-col">
-                                <div className="flex items-center py-4">
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                            >
-                                                <CalendarDays />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-full">
-                                            <Calendar
-                                                mode="range"
-                                                defaultMonth={dateRange?.from}
-                                                selected={dateRange}
-                                                onSelect={setDateRange} // Just update state, useEffect handles the rest
-                                                numberOfMonths={2}
-                                                className="rounded-lg border shadow-sm"
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
+                    <div className="bg-muted/50 flex-1 flex flex-col gap-4 p-4 rounded-xl">
+                        {
+                            // first part
+                        }
+                        <div className="flex flex-col">
+                            <div className="flex items-center py-4">
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="outline" size="icon">
+                                            <CalendarDays />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full">
+                                        <Calendar
+                                            mode="range"
+                                            defaultMonth={dateRange?.from}
+                                            selected={dateRange}
+                                            onSelect={setDateRange} // Just update state, useEffect handles the rest
+                                            numberOfMonths={2}
+                                            className="rounded-lg border shadow-sm"
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                            <div className="flex flex-row max-h-[481px]">
                                 <TableDashboard
-                                    generalChartData={generalChartData}
-                                    dateRange={dateRange}
+                                    title="Solicitudes recibidas"
+                                    table={table}
+                                    dateFrom={formatDateUI(dateRange?.from)}
+                                    dateTo={formatDateUI(dateRange?.to)}
+                                    total={categoryDashboard.total}
+                                />
+                                <ChartDashboard
+                                    config={categoryChart}
+                                    data={categoryDashboard.data}
                                 />
                             </div>
-                            {
-                                // graph
-                                //<div className="col-span-8 flex">
-                                <ChartContainer
-                                    config={chartConfig}
-                                    className="max-h-[500px] w-full"
-                                >
-                                    <BarChart
-                                        accessibilityLayer
-                                        data={chartData}
-                                    >
-                                        <CartesianGrid vertical={true} />
-                                        <XAxis
-                                            dataKey="area_name"
-                                            tickLine={true}
-                                            tickMargin={10}
-                                            axisLine={false}
-                                            tickFormatter={(value) =>
-                                                value.slice(0, 10)
-                                            }
-                                        />
-                                        <ChartTooltip
-                                            cursor={false}
-                                            content={
-                                                <ChartTooltipContent
-                                                    hideLabel={false}
-                                                    indicator="dot"
-                                                />
-                                            }
-                                        />
-                                        <Bar
-                                            dataKey="count"
-                                            fill="oklch(70.7% 0.165 254.624)"
-                                            radius={4}
-                                        />
-                                    </BarChart>
-                                </ChartContainer>
-                                //</div>
-                            }
                         </div>
                     </div>
                 </div>

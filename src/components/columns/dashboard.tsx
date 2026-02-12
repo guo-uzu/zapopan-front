@@ -1,6 +1,6 @@
 import { Row, ColumnDef } from "@tanstack/react-table";
-import { AreaResponsableTable } from "@/types/dashboard";
 import { type DateRange } from "react-day-picker";
+import { DashBoardTable } from "@/types/dashboardTable";
 
 const toTimestamp = (v: unknown): number | null => {
     if (v == null) return null;
@@ -53,7 +53,7 @@ export function dateRangeFilterFn<TData>(
     return rowTime >= min && rowTime <= max;
 }
 
-export const columns: ColumnDef<AreaResponsableTable>[] = [
+export const columns: ColumnDef<DashBoardTable>[] = [
     {
         accessorKey: "category_name",
         header: "Categoría",

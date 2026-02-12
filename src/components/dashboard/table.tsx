@@ -16,69 +16,40 @@ import {
     TableFooter,
 } from "../ui/table";
 
-import {
-    useReactTable,
-    ColumnFiltersState,
-    getCoreRowModel,
-    getFilteredRowModel,
-    flexRender,
-} from "@tanstack/react-table";
-
+import { flexRender } from "@tanstack/react-table";
+import type { Table as ReactTable } from "@tanstack/react-table";
 import { columns } from "../columns/dashboard";
-import { useState, useEffect } from "react";
-import { AreaResponsableTable } from "@/types/dashboard";
-import { DateRange } from "react-day-picker";
+import { DashBoardTable } from "@/types/dashboardTable";
 
 const TableDashboard = ({
-    generalChartData,
-    dateRange,
+    table,
+    title,
+    total,
+    dateFrom,
+    dateTo,
 }: {
-    generalChartData: AreaResponsableTable[];
-    dateRange: DateRange | undefined;
+    table: ReactTable<DashBoardTable>;
+    title: string;
+    total: number;
+    dateFrom: string | undefined;
+    dateTo: string | undefined;
 }) => {
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
-    const table = useReactTable({
-        data: generalChartData,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        state: {
-            columnFilters,
-        },
-        onColumnFiltersChange: setColumnFilters,
-        initialState: {
-            columnVisibility: {
-                date: false,
-            },
-        },
-    });
-
-    useEffect(() => {
-        const col = table.getColumn("date");
-        if (col) {
-            if (!dateRange || (!dateRange.from && !dateRange.to)) {
-                col.setFilterValue(undefined);
-            } else {
-                col.setFilterValue(dateRange);
-            }
-        }
-    }, [dateRange, table]);
-
     return (
         <Card>
             <CardHeader>
                 <CardTitle className="text-center mx-auto w-full font-black">
-                    Solicitudes recibidas
+                    {title}
                 </CardTitle>
                 <CardDescription className="flex gap-2 w-full justify-center">
-                    <span>-</span>
+                    <span>
+                        {dateFrom || "Not date"} - {dateTo || "Not date"}
+                    </span>
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
-                <div className="max-h-[400px] overflow-y-auto">
+                <div className="[&>div]:max-h-96 scroll-auto">
                     <Table>
-                        <TableHeader className="sticky h-10 top-0 z-20">
+                        <TableHeader className="bg-background sticky top-0">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => {
@@ -128,12 +99,14 @@ const TableDashboard = ({
                                 </TableRow>
                             )}
                         </TableBody>
-                        <TableFooter>
+                        <TableFooter className="bg-background sticky bottom-0">
                             <TableRow>
-                                <TableCell className="font-bold ">
+                                <TableCell className="font-bold">
                                     Total
                                 </TableCell>
-                                <TableCell className="font-bold"></TableCell>
+                                <TableCell className="font-bold">
+                                    {total}
+                                </TableCell>
                             </TableRow>
                         </TableFooter>
                     </Table>
