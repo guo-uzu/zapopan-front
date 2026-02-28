@@ -23,12 +23,12 @@ import {
   getDashboardCategory,
   getPendientesTotal,
   getPendientesUser,
+  getDashboardAreaEstatal,
+  getDashboardReportesPorDependencias,
 } from "@/hooks/fetch-data";
 import { Skeleton } from "@/components/ui/skeleton";
 import { subDays } from "date-fns";
-
 import { Pie, PieChart } from "recharts";
-
 
 type UserProfile = {
   id: string;
@@ -36,12 +36,6 @@ type UserProfile = {
   email?: string;
 };
 
-interface ColumnFilter {
-  id: string;
-  value: unknown;
-}
-
-type ColumnFiltersState = ColumnFilter[];
 import {
   Popover,
   PopoverContent,
@@ -67,9 +61,8 @@ interface PendientesTotal {
 import { formatDateUI } from "@/lib/formatters/date";
 
 export default function Home() {
-  const [chartAreaEstatal, setChartAreaEstatal] = useState<DashBoardTable[]>(
-    [],
-  );
+  const supabase = createClient();
+
   const [categoryDashboard, setCategoryDashboard] = useState<{
     data: DashBoardTable[];
     total: number;
@@ -77,7 +70,21 @@ export default function Home() {
     data: [],
     total: 0,
   });
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [areaEstatalDashboard, setAreaEstatalDashboard] = useState<{
+    data: DashBoardTable[];
+    total: number;
+  }>({
+    data: [],
+    total: 0,
+  });
+  const [reportesPorDependenciasDashboard, setReportesPorDependenciasDashboard] = useState<{
+    data: DashBoardTable[];
+    total: number;
+  }>({
+    data: [],
+    total: 0,
+  });
+
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [pendientes, setPendientes] = useState<number | null>(null);
   const [resueltos, setResueltos] = useState<number | null>(null);
@@ -89,21 +96,6 @@ export default function Home() {
     enProcesoT: null,
     direccionT: null,
   });
-
-  const formatDataTo = () => {
-    const day = String(dateRange?.to?.getDate()).padStart(2, "0");
-    const month = dateRange?.to?.toLocaleDateString("es-MX", {
-      month: "short",
-    });
-    return `${day}/${month}/${dateRange?.to?.getFullYear()}`;
-  };
-
-  const supabase = createClient();
-
-  const handleFetchChartAreaEstatal = async () => {
-    const data = await getDataChartsAreaEstatal();
-    if (data) setChartAreaEstatal(data);
-  };
 
   const handleUserData = async () => {
     const {
@@ -157,7 +149,6 @@ export default function Home() {
 
   useEffect(() => {
     handleFetchData();
-    handleFetchChartAreaEstatal();
     handleUserData();
     handlePendientes();
     handlePendientesTotal();
@@ -187,7 +178,9 @@ export default function Home() {
     },
   } satisfies ChartConfig;
   // Here is the modularized data
-  const table = useDashboardTable(categoryDashboard.data, columns);
+  const tableCategories = useDashboardTable(categoryDashboard.data, columns);
+  const tableEstatal = useDashboardTable(areaEstatalDashboard.data, columns);
+  const tableReportesPorDependencias = useDashboardTable(reportesPorDependenciasDashboard.data, columns);
   // Here ends
 
   const chartPieData = [
@@ -252,8 +245,34 @@ export default function Home() {
     }
   };
 
+  const handleFetchAreaEstatalData = async () => {
+    if (dateRange?.from && dateRange.to) {
+      const data = await getDashboardAreaEstatal(
+        dateRange?.from,
+        dateRange?.to,
+      );
+      if (data) {
+        setAreaEstatalDashboard({ data, total: totalDashboard(data) });
+      }
+    }
+  };
+
+  const handleFetchReportesPorDependencia = async () => {
+    if (dateRange?.from && dateRange.to) {
+      const data = await getDashboardReportesPorDependencias(
+        dateRange?.from,
+        dateRange?.to,
+      );
+      if (data) {
+        setReportesPorDependenciasDashboard({ data, total: totalDashboard(data) });
+      }
+    }
+  };
+
   useEffect(() => {
     handleFetchData();
+    handleFetchAreaEstatalData()
+    handleFetchReportesPorDependencia()
   }, [dateRange]);
 
   return (
@@ -345,11 +364,8 @@ export default function Home() {
             // Content
           }
           <div className="bg-muted/50 flex-1 flex flex-col gap-4 p-4 rounded-xl">
-            {
-              // first part
-            }
-            <div className="flex flex-col">
-              <div className="flex items-center py-4">
+            <div className="flex flex-col gap-10">
+              <div className="flex flex-col gap-4">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" size="icon">
@@ -367,18 +383,44 @@ export default function Home() {
                     />
                   </PopoverContent>
                 </Popover>
+                <div className="flex flex-row max-h-[481px]">
+                  <TableDashboard
+                    title="Solicitudes recibidas"
+                    table={tableCategories}
+                    dateFrom={formatDateUI(dateRange?.from)}
+                    dateTo={formatDateUI(dateRange?.to)}
+                    total={categoryDashboard.total}
+                  />
+                  <ChartDashboard
+                    config={categoryChart}
+                    data={categoryDashboard.data}
+                  />
+                </div>
               </div>
               <div className="flex flex-row max-h-[481px]">
                 <TableDashboard
-                  title="Solicitudes recibidas"
-                  table={table}
+                  title="Reportes por dependencias"
+                  table={tableReportesPorDependencias}
                   dateFrom={formatDateUI(dateRange?.from)}
                   dateTo={formatDateUI(dateRange?.to)}
-                  total={categoryDashboard.total}
+                  total={reportesPorDependenciasDashboard.total}
                 />
                 <ChartDashboard
                   config={categoryChart}
-                  data={categoryDashboard.data}
+                  data={reportesPorDependenciasDashboard.data}
+                />
+              </div>
+              <div className="flex flex-row max-h-[481px]">
+                <TableDashboard
+                  title="Reportes externos"
+                  table={tableEstatal}
+                  dateFrom={formatDateUI(dateRange?.from)}
+                  dateTo={formatDateUI(dateRange?.to)}
+                  total={areaEstatalDashboard.total}
+                />
+                <ChartDashboard
+                  config={categoryChart}
+                  data={areaEstatalDashboard.data}
                 />
               </div>
             </div>

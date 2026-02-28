@@ -59,23 +59,25 @@ import SocialNetwork from "@/components/columns/social-network";
 export const dateRangeFilterFn = (
   row: Row<Inputs>,
   columnId: string,
-  range: DateRange | undefined, // This matches the dateRange state from your picker
+  filterValue: DateRange | undefined
 ) => {
-  // 1. If no range selected, show everything
-  if (!range || (!range.from && !range.to)) return true;
-  // 2. Get the RAW string value from the row (Supabase ISO string)
-  const val = row.getValue(columnId) as string;
-  if (!val) return false;
+  // 1. Si no hay rango seleccionado, mostramos todo
+  if (!filterValue || (!filterValue.from && !filterValue.to)) return true;
 
-  // 3. Convert that string to a Timestamp Number (ms)
-  const rowTime = new Date(val).getTime()
+  // 2. Obtener el valor de la celda (gracias a tu accessorFn, ESTO YA ES UN NÚMERO en ms)
+  const rowTime = row.getValue(columnId) as number | null;
+  if (!rowTime) return false;
 
-  // 4. Calculate your Min/Max bounds
-  //    We use startOfDay/endOfDay to ensure we cover the full selected dates
-  const min = range.from ? startOfDay(range.from).getTime() : -Infinity;
-  const max = range.to ? endOfDay(range.to).getTime() : Infinity;
+  // 3. Calcular límites
+  const min = filterValue.from
+    ? new Date(filterValue.from).setHours(0, 0, 0, 0)
+    : -Infinity;
+  const max = filterValue.to
+    ? new Date(filterValue.to).setHours(23, 59, 59, 999)
+    : Infinity;
 
-  // 5. Compare numbers
+  console.log(new Date(min), new Date(max))
+  // 4. Comparar
   return rowTime >= min && rowTime <= max;
 };
 
@@ -191,11 +193,12 @@ export const columns: ColumnDef<Inputs>[] = [
     accessorKey: "created_at",
     accessorFn: (row) => toTimestamp(row.created_at),
     filterFn: dateRangeFilterFn,
+    enableColumnFilter: true,
     header: "Fecha de la solicitud",
     cell: ({ getValue }) => {
       const rawDate: Date = new Date(getValue());
-      const day = ("0" + rawDate.getUTCDate()).slice(-2);
-      const month = ("0" + (rawDate.getUTCMonth() + 1)).slice(-2);
+      const day = ("0" + rawDate.getDate()).slice(-2);
+      const month = ("0" + (rawDate.getMonth() + 1)).slice(-2);
       return (
         <div className="text-center">
           {day} / {month} / {rawDate.getFullYear()}
