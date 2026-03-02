@@ -1,6 +1,7 @@
 "use client";
 import { columns } from "@/components/columns/dashboard";
 import useDashboardTable from "@/hooks/dashboard/useDashboardTable";
+import { handleFetchPng } from "@/hooks/fetch-data";
 
 import {
   SidebarInset,
@@ -19,7 +20,6 @@ import {
 } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
 import {
-  getDataChartsAreaEstatal,
   getDashboardCategory,
   getPendientesTotal,
   getPendientesUser,
@@ -59,6 +59,7 @@ interface PendientesTotal {
 }
 
 import { formatDateUI } from "@/lib/formatters/date";
+import useExportPng from "@/hooks/dashboard/useExportPng";
 
 export default function Home() {
   const supabase = createClient();
@@ -275,6 +276,12 @@ export default function Home() {
     handleFetchReportesPorDependencia()
   }, [dateRange]);
 
+
+  const handlerFetchPng = async () => {
+    await handleFetchPng(categoryDashboard.data)
+  }
+
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -366,23 +373,27 @@ export default function Home() {
           <div className="bg-muted/50 flex-1 flex flex-col gap-4 p-4 rounded-xl">
             <div className="flex flex-col gap-10">
               <div className="flex flex-col gap-4">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <CalendarDays />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full">
-                    <Calendar
-                      mode="range"
-                      defaultMonth={dateRange?.from}
-                      selected={dateRange}
-                      onSelect={setDateRange} // Just update state, useEffect handles the rest
-                      numberOfMonths={2}
-                      className="rounded-lg border shadow-sm"
-                    />
-                  </PopoverContent>
-                </Popover>
+                <div className="flex flex-row gap-x-4">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <CalendarDays />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full">
+                      <Calendar
+                        mode="range"
+                        defaultMonth={dateRange?.from}
+                        selected={dateRange}
+                        onSelect={setDateRange} // Just update state, useEffect handles the rest
+                        numberOfMonths={2}
+                        className="rounded-lg border shadow-sm"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <Button onClick={handlerFetchPng} variant="outline" className="cursor-pointer">Exportar</Button>
+                </div>
+
                 <div className="flex flex-row max-h-[481px]">
                   <TableDashboard
                     title="Solicitudes recibidas"
