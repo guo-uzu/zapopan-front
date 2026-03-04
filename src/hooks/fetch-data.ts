@@ -253,6 +253,13 @@ export const handleFetchPng = async (data: DashBoardTable[]) => {
   if (!response.ok) {
     throw new Error(`Response status`);
   }
+  const blob = await response.blob()
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', "reporte")
+  link.click();
+  window.URL.revokeObjectURL(url);
   return response
 
 }
