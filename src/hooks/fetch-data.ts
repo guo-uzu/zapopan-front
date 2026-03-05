@@ -2,6 +2,7 @@ import { Option } from "@/app/respuestas/[[...respuestas]]/multi-select";
 import { formatDataDate } from "@/lib/formatters/date";
 import { DashBoardTable } from "@/types/dashboardTable";
 import { createClient } from "@/utils/supabase/client";
+import { formatData } from "./formatData";
 
 export const fetchData = async (id?: string | null) => {
   const supabase = createClient();
@@ -225,15 +226,13 @@ export const getUsersFilter = async () => {
       id,
       full_name
       `);
-  console.log(data);
   if (error) {
     console.log(error);
   }
   return data;
 };
 
-export const handleFetchPng = async (data: DashBoardTable[]) => {
-  console.log(data)
+export const handleFetchPng = async (data: DashBoardTable[], title: string, dateFrom?: string, dateTo?: string) => {
   const supabase = createClient();
   const {
     data: { user },
@@ -245,9 +244,12 @@ export const handleFetchPng = async (data: DashBoardTable[]) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(
+    body: JSON.stringify({
       data,
-    ),
+      title,
+      dateFrom,
+      dateTo,
+    }),
   })
 
   if (!response.ok) {
@@ -257,7 +259,7 @@ export const handleFetchPng = async (data: DashBoardTable[]) => {
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', "reporte")
+  link.setAttribute('download', formatData(title))
   link.click();
   window.URL.revokeObjectURL(url);
   return response

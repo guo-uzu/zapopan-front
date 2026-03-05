@@ -60,6 +60,7 @@ interface PendientesTotal {
 
 import { formatDateUI } from "@/lib/formatters/date";
 import useExportPng from "@/hooks/dashboard/useExportPng";
+import DownloadChartBtn from "@/components/dashboard/download-chart-btn";
 
 export default function Home() {
   const supabase = createClient();
@@ -277,9 +278,7 @@ export default function Home() {
   }, [dateRange]);
 
 
-  const handlerFetchPng = async () => {
-    await handleFetchPng(categoryDashboard.data)
-  }
+
 
 
   return (
@@ -391,9 +390,8 @@ export default function Home() {
                       />
                     </PopoverContent>
                   </Popover>
-                  <Button onClick={handlerFetchPng} variant="outline" className="cursor-pointer">Exportar</Button>
+                  <DownloadChartBtn data={categoryDashboard.data} title="Solicitudes recibidas" dateFrom={formatDateUI(dateRange?.from)} dateTo={formatDateUI(dateRange?.to)} />
                 </div>
-
                 <div className="flex flex-row max-h-[481px]">
                   <TableDashboard
                     title="Solicitudes recibidas"
@@ -408,31 +406,41 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <div className="flex flex-row max-h-[481px]">
-                <TableDashboard
-                  title="Reportes por dependencias"
-                  table={tableReportesPorDependencias}
-                  dateFrom={formatDateUI(dateRange?.from)}
-                  dateTo={formatDateUI(dateRange?.to)}
-                  total={reportesPorDependenciasDashboard.total}
-                />
-                <ChartDashboard
-                  config={categoryChart}
-                  data={reportesPorDependenciasDashboard.data}
-                />
+              <div className="flex flex-col gap-4">
+                <div>
+                  <DownloadChartBtn data={reportesPorDependenciasDashboard.data} title="Reportes por dependencias" />
+                </div>
+                <div className="flex flex-row max-h-[481px]">
+                  <TableDashboard
+                    title="Reportes por dependencias"
+                    table={tableReportesPorDependencias}
+                    dateFrom={formatDateUI(dateRange?.from)}
+                    dateTo={formatDateUI(dateRange?.to)}
+                    total={reportesPorDependenciasDashboard.total}
+                  />
+                  <ChartDashboard
+                    config={categoryChart}
+                    data={reportesPorDependenciasDashboard.data}
+                  />
+                </div>
               </div>
-              <div className="flex flex-row max-h-[481px]">
-                <TableDashboard
-                  title="Reportes externos"
-                  table={tableEstatal}
-                  dateFrom={formatDateUI(dateRange?.from)}
-                  dateTo={formatDateUI(dateRange?.to)}
-                  total={areaEstatalDashboard.total}
-                />
-                <ChartDashboard
-                  config={categoryChart}
-                  data={areaEstatalDashboard.data}
-                />
+              <div className="flex flex-col gap-41">
+                <div>
+                  <DownloadChartBtn data={areaEstatalDashboard.data} title="Reportes externos" />
+                </div>
+                <div className="flex flex-row max-h-[481px]">
+                  <TableDashboard
+                    title="Reportes externos"
+                    table={tableEstatal}
+                    dateFrom={formatDateUI(dateRange?.from)}
+                    dateTo={formatDateUI(dateRange?.to)}
+                    total={areaEstatalDashboard.total}
+                  />
+                  <ChartDashboard
+                    config={categoryChart}
+                    data={areaEstatalDashboard.data}
+                  />
+                </div>
               </div>
             </div>
           </div>
