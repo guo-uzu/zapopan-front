@@ -424,7 +424,7 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <div className="flex flex-col gap-41">
+              <div className="flex flex-col gap-4">
                 <div>
                   <DownloadChartBtn data={areaEstatalDashboard.data} title="Reportes externos" />
                 </div>

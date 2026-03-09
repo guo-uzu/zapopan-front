@@ -239,7 +239,7 @@ export const handleFetchPng = async (data: DashBoardTable[], title: string, date
   } = await supabase.auth.getUser();
   if (!user) throw new Error("User not founded");
 
-  const response = await fetch("http://localhost:8080/api/export-png", {
+  const response = await fetch("http://localhost:8000/api/create-chart", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -255,6 +255,8 @@ export const handleFetchPng = async (data: DashBoardTable[], title: string, date
   if (!response.ok) {
     throw new Error(`Response status`);
   }
+  console.log(await response.arrayBuffer())
+  /*
   const blob = await response.blob()
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a');
@@ -262,6 +264,7 @@ export const handleFetchPng = async (data: DashBoardTable[], title: string, date
   link.setAttribute('download', formatData(title))
   link.click();
   window.URL.revokeObjectURL(url);
+  */
   return response
 
 }
