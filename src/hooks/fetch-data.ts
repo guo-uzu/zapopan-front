@@ -239,7 +239,7 @@ export const handleFetchPng = async (data: DashBoardTable[], title: string, date
   } = await supabase.auth.getUser();
   if (!user) throw new Error("User not founded");
 
-  const response = await fetch("http://localhost:8000/api/create-chart", {
+  const response = await fetch("https://zapopan-back-932072646227.us-central1.run.app/api/create-chart", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
