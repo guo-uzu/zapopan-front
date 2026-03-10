@@ -195,8 +195,8 @@ export const columns: ColumnDef<Inputs>[] = [
     filterFn: dateRangeFilterFn,
     enableColumnFilter: true,
     header: "Fecha de la solicitud",
-    cell: ({ getValue }) => {
-      const rawDate: Date = new Date(getValue());
+    cell: ({ row }) => {
+      const rawDate: Date = new Date(row.getValue("created_at"));
       const day = ("0" + rawDate.getDate()).slice(-2);
       const month = ("0" + (rawDate.getMonth() + 1)).slice(-2);
       return (
