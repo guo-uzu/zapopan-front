@@ -232,7 +232,7 @@ export const getUsersFilter = async () => {
   return data;
 };
 
-export const handleFetchPng = async (data: DashBoardTable[], title: string, dateFrom?: string, dateTo?: string, formatFile: string) => {
+export const handleFetchPng = async (data: DashBoardTable[], title: string, dateFrom?: string, dateTo?: string, formatFile?: string) => {
   const supabase = createClient();
   const {
     data: { user },
