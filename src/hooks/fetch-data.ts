@@ -232,7 +232,7 @@ export const getUsersFilter = async () => {
   return data;
 };
 
-export const handleFetchPng = async (data: DashBoardTable[], title: string, dateFrom?: string, dateTo?: string) => {
+export const handleFetchPng = async (data: DashBoardTable[], title: string, dateFrom?: string, dateTo?: string, formatFile: string) => {
   const supabase = createClient();
   const {
     data: { user },
@@ -249,14 +249,13 @@ export const handleFetchPng = async (data: DashBoardTable[], title: string, date
       title,
       dateFrom,
       dateTo,
+      formatFile,
     }),
   })
 
   if (!response.ok) {
     throw new Error(`Response status`);
   }
-  console.log(await response.arrayBuffer())
-  /*
   const blob = await response.blob()
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a');
@@ -264,7 +263,6 @@ export const handleFetchPng = async (data: DashBoardTable[], title: string, date
   link.setAttribute('download', formatData(title))
   link.click();
   window.URL.revokeObjectURL(url);
-  */
   return response
 
 }

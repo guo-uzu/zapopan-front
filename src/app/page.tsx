@@ -408,7 +408,7 @@ export default function Home() {
               </div>
               <div className="flex flex-col gap-4">
                 <div>
-                  <DownloadChartBtn data={reportesPorDependenciasDashboard.data} title="Reportes por dependencias" />
+                  <DownloadChartBtn data={reportesPorDependenciasDashboard.data} title="Reportes por dependencias" dateFrom={formatDateUI(dateRange?.from)} dateTo={formatDateUI(dateRange?.to)} />
                 </div>
                 <div className="flex flex-row max-h-[481px]">
                   <TableDashboard
@@ -426,7 +426,7 @@ export default function Home() {
               </div>
               <div className="flex flex-col gap-4">
                 <div>
-                  <DownloadChartBtn data={areaEstatalDashboard.data} title="Reportes externos" />
+                  <DownloadChartBtn data={areaEstatalDashboard.data} title="Reportes externos" dateFrom={formatDateUI(dateRange?.from)} dateTo={formatDateUI(dateRange?.to)} />
                 </div>
                 <div className="flex flex-row max-h-[481px]">
                   <TableDashboard
