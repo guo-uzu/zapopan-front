@@ -48,10 +48,10 @@ export const columns: ColumnDef<DashBoardTable>[] = [
   {
     accessorKey: "name",
     header: "Categoría",
-    cell: ({ getValue }) => {
+    cell: ({ row }) => {
       return (
         <div className="max-w-50 w-full whitespace-nowrap overflow-hidden truncate">
-          {getValue()}
+          {row.getValue("name")}
         </div>
       );
     },
