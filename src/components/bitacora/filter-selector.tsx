@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/command";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { PopoverContent } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Inputs } from "@/hooks/types";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
