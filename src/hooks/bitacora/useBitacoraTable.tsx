@@ -13,8 +13,6 @@ import {
     useReactTable,
     ColumnDef,
     getCoreRowModel,
-    getPaginationRowModel,
-    getFilteredRowModel,
     VisibilityState,
 } from "@tanstack/react-table";
 
@@ -31,40 +29,36 @@ const useBitacoraTable = (
         handleOpenForm: () => void;
         setDefaultData: Dispatch<SetStateAction<{}>>;
     },
+    rowCount,
+    pagination,
 ) => {
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {},
     );
-    const [globalFilter, setGlobalFilter] = useState<unknown>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFilterState>([]);
 
     const table = useReactTable({
         data: data,
         columns,
+        rowCount,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
-        getFilteredRowModel: getFilteredRowModel(),
         globalFilterFn: "includesString",
         columnResizeMode: "onChange",
         debugTable: true,
         debugHeaders: true,
         debugColumns: true,
-        onGlobalFilterChange: setGlobalFilter,
         onColumnFiltersChange: setColumnFilters,
-        initialState: {
-            pagination: {
-                pageSize: 50,
-            },
-        },
         state: {
             columnVisibility,
-            globalFilter,
             columnFilters,
+            pagination,
         },
         meta,
+        manualPagination: true,
+        manualFiltering: true,
     });
-    return { table, setGlobalFilter };
+    return { table };
 };
 
 export default useBitacoraTable;
