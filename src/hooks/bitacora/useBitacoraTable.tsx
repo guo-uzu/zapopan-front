@@ -10,55 +10,51 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { BitacoraTable } from "@/types/bitacoraTable";
 import {
-    useReactTable,
-    ColumnDef,
-    getCoreRowModel,
-    VisibilityState,
+  useReactTable,
+  ColumnDef,
+  getCoreRowModel,
+  VisibilityState,
 } from "@tanstack/react-table";
 
 interface ColumnFilter {
-    id: string;
-    value: unknown;
+  id: string;
+  value: unknown;
 }
 type ColumnFilterState = ColumnFilter[];
 const useBitacoraTable = (
-    data: BitacoraTable[],
-    columns: ColumnDef<BitacoraTable>[],
-    meta: {
-        handleToEdit: () => void;
-        handleOpenForm: () => void;
-        setDefaultData: Dispatch<SetStateAction<{}>>;
-    },
-    rowCount,
-    pagination,
+  data: BitacoraTable[],
+  columns: ColumnDef<BitacoraTable>[],
+  meta: {
+    handleToEdit: () => void;
+    handleOpenForm: () => void;
+    setDefaultData: Dispatch<SetStateAction<{}>>;
+  },
 ) => {
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-        {},
-    );
-    const [columnFilters, setColumnFilters] = useState<ColumnFilterState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    {},
+  );
+  const [columnFilters, setColumnFilters] = useState<ColumnFilterState>([]);
 
-    const table = useReactTable({
-        data: data,
-        columns,
-        rowCount,
-        getCoreRowModel: getCoreRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        globalFilterFn: "includesString",
-        columnResizeMode: "onChange",
-        debugTable: true,
-        debugHeaders: true,
-        debugColumns: true,
-        onColumnFiltersChange: setColumnFilters,
-        state: {
-            columnVisibility,
-            columnFilters,
-            pagination,
-        },
-        meta,
-        manualPagination: true,
-        manualFiltering: true,
-    });
-    return { table };
+  const table = useReactTable({
+    data: data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    globalFilterFn: "includesString",
+    columnResizeMode: "onChange",
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: true,
+    onColumnFiltersChange: setColumnFilters,
+    state: {
+      columnVisibility,
+      columnFilters,
+    },
+    meta,
+    manualPagination: true,
+    manualFiltering: true,
+  });
+  return { table };
 };
 
 export default useBitacoraTable;
