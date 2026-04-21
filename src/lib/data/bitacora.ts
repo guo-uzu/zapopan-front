@@ -26,17 +26,20 @@ export const fetchBitacora = async ({
       { count: "exact" },
     )
     .range(from, to);
-  console.log(filters);
+  console.log(query)
   if (idFilter) query = query.eq("id", idFilter);
-  if (filters.area !== "all") query = query.eq("area", filters.area);
-  if (filters.status !== "all") query = query.eq("status", filters.status);
-  if (filters.channel !== "all") query = query.eq("channel", filters.channel);
-  if (filters.category !== "all")
-    query = query.eq("category", filters.category);
-  if (filters.priority !== "all")
-    query = query.eq("priority", filters.priority);
-  if (filters.userName !== "all")
-    query = query.eq("user_name", filters.userName);
+  // if (filters.area !== "all") query = query.eq("area", filters.area);
+  // if (filters.status !== "all") query = query.eq("status", filters.status);
+  // if (filters.channel !== "all") query = query.eq("channel", filters.channel);
+  // if (filters.category !== "all")
+  //   query = query.eq("category", filters.category);
+  // if (filters.priority !== "all")
+  //   query = query.eq("priority", filters.priority);
+  if (filters.userName === "N/A") {
+    query = query.is("user_id", null);
+  } else if (filters.userName && filters.userName !== "all") {
+    query = query.eq("user_id", filters.userName);
+  }
   if (dateRange?.from)
     query = query.gte("created_at", dateRange.from.toISOString());
   if (dateRange?.to)

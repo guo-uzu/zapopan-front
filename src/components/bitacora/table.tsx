@@ -57,6 +57,9 @@ import FormBitacora from "./form";
 import useBitacoraTable from "@/hooks/bitacora/useBitacoraTable";
 import { BitacoraTable } from "@/types/bitacoraTable";
 import useDebouncedValue from "@/hooks/bitacora/useDebounce";
+import { fetchUsersFilterBitacora } from "@/lib/data/usersFilter";
+import goNextPage from "@/utils/bitacora/goNextPage";
+import goPreviousPage from "@/utils/bitacora/goPreviousPage";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -73,10 +76,8 @@ export function DataTable<TData extends BitacoraTable, TValue>({
   const [open, setOpen] = useState(false);
   const [defaultData, setDefaultData] = useState({});
   const [toEdit, setToEdit] = useState<boolean>(false);
-  const [usersToFilter, setUsersToFilter] = useState<
-    { id: string; label: string; value: string }[]
-  >([]);
   const handleOpenForm = () => setOpen(true);
+  const [usersToFilter, setUsersToFilter] = useState<{ id: string; full_name: string }[]>([]);
   const handleToEdit = () => setToEdit(!toEdit);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -94,16 +95,23 @@ export function DataTable<TData extends BitacoraTable, TValue>({
       setDefaultData,
     },
   );
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const data = await fetchUsersFilterBitacora()
+      if (data) setUsersToFilter(data)
+    }
+    fetchUsers()
+  }, [])
 
   const [filters, setFilters] = useState(() => ({
-    account: localStorage.getItem("account name") ?? "all",
-    area: localStorage.getItem("area") ?? "all",
-    status: localStorage.getItem("status") ?? "all",
-    channel: localStorage.getItem("channel") ?? "all",
-    category: localStorage.getItem("category") ?? "all",
-    priority: localStorage.getItem("priority") ?? "all",
-    userName: localStorage.getItem("user name") ?? "all",
-    redes: localStorage.getItem("redes sociales") ?? "all",
+    account: localStorage.getItem("account name") ?? "",
+    area: localStorage.getItem("area") ?? "",
+    status: localStorage.getItem("status") ?? "",
+    channel: localStorage.getItem("channel") ?? "",
+    category: localStorage.getItem("category") ?? "",
+    priority: localStorage.getItem("priority") ?? "",
+    userName: localStorage.getItem("userName") ?? "all",
+    redes: localStorage.getItem("redes sociales") ?? "",
   }));
 
   const debouncedGlobal = useDebouncedValue(globalFilter, 300);
@@ -146,25 +154,6 @@ export function DataTable<TData extends BitacoraTable, TValue>({
     localStorage.setItem(key, value);
     setFilters((prev) => ({ ...prev, [key]: value }));
     setPagination((prev) => ({ ...prev, pageIndex: 0 })); // ← critical
-    /*
-    const columnId = filterName;
-
-    if (!value || value === "all") {
-        table.setColumnFilters((old) =>
-            old.filter((f) => f.id !== columnId),
-        );
-    } else if (value === "N/A") {
-        table.setColumnFilters((old) => {
-            const others = old.filter((f) => f.id !== columnId);
-            return [...others, { id: columnId, value }];
-        });
-    } else {
-        table.setColumnFilters((old) => {
-            const others = old.filter((f) => f.id !== columnId);
-            return [...others, { id: columnId, value }];
-        });
-    }
-     */
   };
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
@@ -228,7 +217,7 @@ export function DataTable<TData extends BitacoraTable, TValue>({
             </div>
             <div className="flex items-center">
               <Select
-                value={getValueFilter("userName", table)}
+                value={filters.userName !== "all" ? filters.userName : ""}
                 onValueChange={(value: string) => {
                   localStorage.setItem("userName", value);
                   onChangeFilter("userName", value);
@@ -240,8 +229,8 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
                   {usersToFilter.map((e) => (
-                    <SelectItem key={e.id} value={e.value}>
-                      {e.value}
+                    <SelectItem key={`u-${e.full_name}`} value={e.id}>
+                      {e.full_name}
                     </SelectItem>
                   ))}
                   <SelectItem value="N/A">N/A</SelectItem>
@@ -560,16 +549,18 @@ export function DataTable<TData extends BitacoraTable, TValue>({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              onClick={() => goPreviousPage(setPagination, pagination)}
+              disabled={pagination.pageIndex === 0}
             >
               Anterior
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              onClick={() => goNextPage(setPagination, pagination)}
+              disabled={
+                (pagination.pageIndex + 1) * pagination.pageSize >= rowCount
+              }
             >
               Siguiente
             </Button>
