@@ -1,5 +1,8 @@
+import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
 import type { FetchData } from "@/types/fetchData";
 import { createClient } from "@/utils/supabase/client";
+import { accountMap, areaMap, mustMap } from "../bitacora/maps";
+import { formatData } from "../formatters/formatData";
 const supabase = createClient();
 
 export const fetchBitacora = async ({
@@ -21,12 +24,13 @@ export const fetchBitacora = async ({
     .select(
       `
           user_id(full_name),
-          created_by_name
+          created_by_name,
+          account_id(name),
+          area_id(name)
           `,
       { count: "exact" },
     )
     .range(from, to);
-  console.log(query)
   if (idFilter) query = query.eq("id", idFilter);
   // if (filters.area !== "all") query = query.eq("area", filters.area);
   // if (filters.status !== "all") query = query.eq("status", filters.status);
@@ -35,6 +39,16 @@ export const fetchBitacora = async ({
   //   query = query.eq("category", filters.category);
   // if (filters.priority !== "all")
   //   query = query.eq("priority", filters.priority);
+  if (filters.area === "N/A") {
+    query = query.is("area_id", null);
+  } else if (filters.area && filters.area !== "all") {
+    query = query.eq("area_id", mustMap(areaMap, formatData(filters.area), "area_responsable"));
+  }
+  if (filters.account === "N/A") {
+    query = query.is("account_id", null);
+  } else if (filters.account && filters.account !== "all") {
+    query = query.eq("account_id", mustMap(accountMap, filters.account, "account"));
+  }
   if (filters.userName === "N/A") {
     query = query.is("user_id", null);
   } else if (filters.userName && filters.userName !== "all") {
@@ -44,5 +58,16 @@ export const fetchBitacora = async ({
     query = query.gte("created_at", dateRange.from.toISOString());
   if (dateRange?.to)
     query = query.lte("created_at", dateRange.to.toISOString());
-  return query;
+  const { data, error, count } = await query
+  if (error) throw error
+
+  console.log(await query)
+
+  return {
+    data,
+    count,
+    from: from + 1,
+    to: Math.min(to + 1, count ?? 0)
+  }
+
 };

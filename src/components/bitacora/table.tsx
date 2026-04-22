@@ -104,7 +104,7 @@ export function DataTable<TData extends BitacoraTable, TValue>({
   }, [])
 
   const [filters, setFilters] = useState(() => ({
-    account: localStorage.getItem("account name") ?? "",
+    account: localStorage.getItem("account") ?? "all",
     area: localStorage.getItem("area") ?? "",
     status: localStorage.getItem("status") ?? "",
     channel: localStorage.getItem("channel") ?? "",
@@ -115,6 +115,10 @@ export function DataTable<TData extends BitacoraTable, TValue>({
   }));
 
   const debouncedGlobal = useDebouncedValue(globalFilter, 300);
+  const [uiPagination, setUIPagination] = useState<{ from: number | undefined, to: number | undefined }>({
+    from: undefined,
+    to: undefined
+  })
 
   // handler Command Form
   useEffect(() => {
@@ -188,17 +192,20 @@ export function DataTable<TData extends BitacoraTable, TValue>({
   }, []); // Empty dependency array = runs once on mount
 
   useEffect(() => {
-    fetchBitacora({
-      pageIndex: pagination.pageIndex,
-      pageSize: pagination.pageSize,
-      idFilter,
-      filters,
-      globalFilter: debouncedGlobal,
-      dateRange,
-    }).then(({ data, count }) => {
+    const fetchBitacoraData = async () => {
+      const { data, count, from, to } = await fetchBitacora({
+        pageIndex: pagination.pageIndex,
+        pageSize: pagination.pageSize,
+        idFilter,
+        filters,
+        globalFilter: debouncedGlobal,
+        dateRange,
+      })
       if (data) setDataBitacora(data as TData[]);
       setRowCount(count ?? 0);
-    });
+      setUIPagination({ from, to })
+    }
+    fetchBitacoraData()
   }, [pagination, filters, debouncedGlobal, dateRange, idFilter]);
 
   return (
@@ -239,10 +246,10 @@ export function DataTable<TData extends BitacoraTable, TValue>({
             </div>
             <div className="flex items-center">
               <Select
-                value={getValueFilter("account name", table)}
+                value={filters.account !== "all" ? filters.account : ""}
                 onValueChange={(value: string) => {
-                  localStorage.setItem("account name", value);
-                  onChangeFilter("account name", value);
+                  localStorage.setItem("account", value);
+                  onChangeFilter("account", value);
                 }}
               >
                 <SelectTrigger>
@@ -250,17 +257,18 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
-                  {ColumnsBitacoraOpts.account.map((e) => (
-                    <SelectItem key={e.id} value={e.value}>
+                  {ColumnsBitacoraOpts.account_id.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>
                       {e.value}
                     </SelectItem>
                   ))}
+                  <SelectItem value="N/A">N/A</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex items-center">
               <Select
-                value={getValueFilter("area", table)}
+                value={filters.area !== "all" ? filters.area : ""}
                 onValueChange={(value: string) => {
                   localStorage.setItem("area", value);
                   onChangeFilter("area", value);
@@ -271,7 +279,7 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
-                  {ColumnsBitacoraOpts.area_responsable.map(
+                  {ColumnsBitacoraOpts.area_id.map(
                     (e) => (
                       <SelectItem
                         key={e.id}
@@ -281,6 +289,7 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                       </SelectItem>
                     ),
                   )}
+                  <SelectItem value="N/A">N/A</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -541,7 +550,7 @@ export function DataTable<TData extends BitacoraTable, TValue>({
             </Table>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-row justify-between">
           {
             // Control pagination btns
           }
@@ -564,6 +573,9 @@ export function DataTable<TData extends BitacoraTable, TValue>({
             >
               Siguiente
             </Button>
+          </div>
+          <div>
+            <span className="text-sm font-bold text-zinc-500">{uiPagination.from}-{uiPagination.to} de {rowCount}</span>
           </div>
         </CardFooter>
       </Card>

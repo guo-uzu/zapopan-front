@@ -10,14 +10,14 @@ export type BitacoraTable = {
     id: string;
     user_id?: NestedUser;
     social_network_bitacora?: NestedName;
-    account_bitacora?: NestedName;
+    account_id?: NestedName;
     channel_bitacora?: NestedName;
     username?: string;
     link?: string;
     created_at: string;
     category_bitacora?: NestedName;
     description?: string;
-    area_bitacora?: NestedName;
+    area_id?: NestedName;
     colonia?: string;
     priority?: string;
     status?: string;

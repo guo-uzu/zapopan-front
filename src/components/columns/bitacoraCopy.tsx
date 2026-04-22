@@ -22,7 +22,7 @@ import {
     TriangleAlert,
 } from "lucide-react";
 import { deleteRowBitacora } from "@/hooks/deleteRow";
-import { formatData } from "@/hooks/formatData";
+import { formatData } from "@/lib/formatters/formatData";
 
 import {
     AlertDialog,

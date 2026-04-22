@@ -1,5 +1,5 @@
 import { getUsersFilter } from "./fetch-data";
-import { formatData } from "./formatData";
+import { formatData } from "../lib/formatters/formatData";
 
 export const UsersFormatFilterBitacora = async () => {
     const users = await getUsersFilter()
@@ -13,12 +13,12 @@ export const UsersFormatFilterBitacora = async () => {
 
 
 export const ColumnsBitacoraOpts = {
-    account: [
+    account_id: [
         { id: "jjf", value: "JJF", color: "oklch(75% 0.183 55.934)" },
         { id: "zapopan", value: "Zapopan", color: "oklch(67.3% 0.182 276.935)" },
     ],
 
-    area_responsable: [
+    area_id: [
         { id: "infraestructura_de_comercio", value: "Infraestructura de comercio", label: "infraestructura_de_comercio", color: "oklch(40.8% 0.123 38.172)" },
         { id: "servicios_municipales", value: "Servicios municipales", label: "servicios_municipales", color: "oklch(70.4% 0.14 182.503)" },
         { id: "gestión_integral", value: "Gestión integral", label: "gestión_integral", color: "oklch(62.7% 0.194 149.214)" },
