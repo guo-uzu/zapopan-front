@@ -8,6 +8,15 @@ import { BitacoraTable } from "@/types/bitacoraTable";
 import { ColumnDef } from "@tanstack/react-table";
 import CellAcount from "../bitacora/cells/account";
 import CellArea from "../bitacora/cells/area";
+import CellCategory from "../bitacora/cells/category";
+import CellSocialMedia from "../bitacora/cells/social_media";
+import CellChannel from "../bitacora/cells/channel";
+import CellStatus from "../bitacora/cells/status";
+import CellPriority from "../bitacora/cells/priority";
+import { Ban, Link } from "lucide-react";
+import { Badge } from "../ui/badge";
+import CellLink from "../bitacora/cells/link";
+import CellUsername from "../bitacora/cells/username";
 
 export const columns: ColumnDef<BitacoraTable>[] = [
     {
@@ -17,7 +26,7 @@ export const columns: ColumnDef<BitacoraTable>[] = [
         header: "Nombre",
         cell: (props) => (
             <span className="overflow-hidden w-full h-full">
-                {props.getValue() as string}
+                {String(props.getValue())}
             </span>
         ),
         size: 200,
@@ -31,6 +40,57 @@ export const columns: ColumnDef<BitacoraTable>[] = [
     {
         accessorFn: (row) => `${row.area_id?.name ? row.area_id?.name : "N/A"}`,
         header: "Area",
-        cell: (props) => CellArea(props)
+        cell: (props) => CellArea(props),
+        size: 200
+    },
+    {
+        accessorFn: (row) => `${row.channel_id?.name ? row.channel_id?.name : "N/A"}`,
+        header: "Canal",
+        cell: (props) => CellChannel(props),
+        size: 200
+    },
+    {
+        accessorFn: (row) => `${row.category_id?.name ? row.category_id?.name : "N/A"}`,
+        header: "Categoría",
+        cell: (props) => CellCategory(props),
+        size: 200
+    },
+    {
+        accessorFn: (row) => `${row.social_network_id?.name ? row.social_network_id?.name : "N/A"}`,
+        header: "Red social",
+        cell: (props) => CellSocialMedia(props),
+        size: 150
+    },
+    {
+        accessorFn: (row) => `${row.priority_id?.name ? row.priority_id?.name : "N/A"}`,
+        header: "Prioridad",
+        cell: (props) => CellPriority(props),
+        size: 150
+    },
+    {
+        accessorFn: (row) => `${row.status_id?.name ? row.status_id?.name : "N/A"}`,
+        header: "Estatus",
+        cell: (props) => CellStatus(props),
+        size: 150
+    },
+    {
+        accessorFn: (row) => `${row.username ? row.username : "N/A"}`,
+        header: "Usuario",
+        cell: (props) => CellUsername(props),
+        size: 200
+    },
+    {
+        accessorFn: (row) => `${row.description ? row.description : "N/A"}`,
+        header: "Descripción",
+        cell: (props) => (
+            <p>{String(props.getValue())}</p>
+        ),
+        size: 200
+    },
+    {
+        accessorFn: (row) => `${row.link ? row.link : "N/A"}`,
+        header: "Enlace",
+        cell: (props) => CellLink(props),
+        size: 130
     }
 ];

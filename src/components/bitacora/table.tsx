@@ -104,14 +104,14 @@ export function DataTable<TData extends BitacoraTable, TValue>({
   }, [])
 
   const [filters, setFilters] = useState(() => ({
-    account: localStorage.getItem("account") ?? "all",
+    account: localStorage.getItem("account") ?? "",
     area: localStorage.getItem("area") ?? "",
     status: localStorage.getItem("status") ?? "",
     channel: localStorage.getItem("channel") ?? "",
     category: localStorage.getItem("category") ?? "",
     priority: localStorage.getItem("priority") ?? "",
-    userName: localStorage.getItem("userName") ?? "all",
-    redes: localStorage.getItem("redes sociales") ?? "",
+    userName: localStorage.getItem("userName") ?? "",
+    socialNetwork: localStorage.getItem("socialNetwork") ?? "",
   }));
 
   const debouncedGlobal = useDebouncedValue(globalFilter, 300);
@@ -295,7 +295,7 @@ export function DataTable<TData extends BitacoraTable, TValue>({
             </div>
             <div className="flex items-center">
               <Select
-                value={getValueFilter("channel", table)}
+                value={filters.channel !== "all" ? filters.channel : ""}
                 onValueChange={(value: string) => {
                   localStorage.setItem("channel", value);
                   onChangeFilter("channel", value);
@@ -311,12 +311,13 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                       {e.value}
                     </SelectItem>
                   ))}
+                  <SelectItem value="N/A">N/A</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex items-center">
               <Select
-                value={getValueFilter("category", table)}
+                value={filters.category !== "all" ? filters.category : ""}
                 onValueChange={(value: string) => {
                   localStorage.setItem("category", value);
                   onChangeFilter("category", value);
@@ -332,18 +333,19 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                       {e.value}
                     </SelectItem>
                   ))}
+                  <SelectItem value="N/A">N/A</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex items-center">
               <Select
-                value={getValueFilter("redes sociales", table)}
+                value={filters.socialNetwork !== "all" ? filters.socialNetwork : ""}
                 onValueChange={(value: string) => {
                   localStorage.setItem(
-                    "redes sociales",
+                    "socialNetwork",
                     value,
                   );
-                  onChangeFilter("redes sociales", value);
+                  onChangeFilter("socialNetwork", value);
                 }}
               >
                 <SelectTrigger>
@@ -361,12 +363,13 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                       </SelectItem>
                     ),
                   )}
+                  <SelectItem value="N/A">N/A</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex items-center">
               <Select
-                value={getValueFilter("priority", table)}
+                value={filters.priority !== "all" ? filters.priority : ""}
                 onValueChange={(value: string) => {
                   localStorage.setItem("priority", value);
                   onChangeFilter("priority", value);
@@ -382,12 +385,13 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                       {e.value}
                     </SelectItem>
                   ))}
+                  <SelectItem value="N/A">N/A</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex items-center">
               <Select
-                value={getValueFilter("status", table)}
+                value={filters.status !== "all" ? filters.status : ""}
                 onValueChange={(value: string) => {
                   localStorage.setItem("status", value);
                   onChangeFilter("status", value);
@@ -403,6 +407,7 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                       {e.value}
                     </SelectItem>
                   ))}
+                  <SelectItem value="N/A">N/A</SelectItem>
                 </SelectContent>
               </Select>
             </div>

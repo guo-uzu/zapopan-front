@@ -1,7 +1,7 @@
 import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
 import type { FetchData } from "@/types/fetchData";
 import { createClient } from "@/utils/supabase/client";
-import { accountMap, areaMap, mustMap } from "../bitacora/maps";
+import { accountMap, areaMap, categoryMap, channelMap, mustMap, priorityMap, socialNetworkMap, statusMap } from "../bitacora/maps";
 import { formatData } from "../formatters/formatData";
 const supabase = createClient();
 
@@ -26,19 +26,45 @@ export const fetchBitacora = async ({
           user_id(full_name),
           created_by_name,
           account_id(name),
-          area_id(name)
+          area_id(name),
+          category_id(name),
+          social_network_id(name),
+          channel_id(name),
+          priority_id(name),
+          status_id(name),
+          description,
+          link,
+          username
           `,
       { count: "exact" },
     )
     .range(from, to);
   if (idFilter) query = query.eq("id", idFilter);
-  // if (filters.area !== "all") query = query.eq("area", filters.area);
-  // if (filters.status !== "all") query = query.eq("status", filters.status);
-  // if (filters.channel !== "all") query = query.eq("channel", filters.channel);
-  // if (filters.category !== "all")
-  //   query = query.eq("category", filters.category);
-  // if (filters.priority !== "all")
-  //   query = query.eq("priority", filters.priority);
+  if (filters.status === "N/A") {
+    query = query.is("status_id", null);
+  } else if (filters.status && filters.status !== "all") {
+    query = query.eq("status_id", mustMap(statusMap, formatData(filters.status), "status"));
+  }
+  if (filters.priority === "N/A") {
+    query = query.is("priority_id", null);
+  } else if (filters.priority && filters.priority !== "all") {
+    query = query.eq("priority_id", mustMap(priorityMap, formatData(filters.priority), "priority"));
+  }
+  if (filters.channel === "N/A") {
+    query = query.is("channel_id", null);
+  } else if (filters.channel && filters.channel !== "all") {
+    query = query.eq("channel_id", mustMap(channelMap, formatData(filters.channel), "channel"));
+  }
+  if (filters.socialNetwork === "N/A") {
+    query = query.is("social_network_id", null);
+  } else if (filters.socialNetwork && filters.socialNetwork !== "all") {
+    query = query.eq("social_network_id", mustMap(socialNetworkMap, formatData(filters.socialNetwork), "social_network"));
+  }
+  if (filters.category === "N/A") {
+    query = query.is("category_id", null);
+  } else if (filters.category && filters.category !== "all") {
+    query = query.eq("category_id", mustMap(categoryMap, formatData(filters.category), "category"));
+  }
   if (filters.area === "N/A") {
     query = query.is("area_id", null);
   } else if (filters.area && filters.area !== "all") {

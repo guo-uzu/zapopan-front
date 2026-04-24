@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Inputs } from "@/hooks/types";
 import { cookies } from "next/headers";
 import { Option } from "@/app/respuestas/[[...respuestas]]/multi-select";
-import {mustMap, accountMap, areaMap, categoryMap, chanelMap, priorityMap, statusMap, socialNetworkMap} from "@/lib/bitacora/maps";
+import { mustMap, accountMap, areaMap, categoryMap, channelMap, priorityMap, statusMap, socialNetworkMap } from "@/lib/bitacora/maps";
 
 export const sendDataSupabase = async (formData: Inputs) => {
     const cookieStore = await cookies();
@@ -21,7 +21,7 @@ export const sendDataSupabase = async (formData: Inputs) => {
             "area_responsable",
         ),
         category_id: mustMap(categoryMap, formData.category, "category"),
-        channel_id: mustMap(chanelMap, formData.channel, "channel"),
+        channel_id: mustMap(channelMap, formData.channel, "channel"),
         priority_id: mustMap(priorityMap, formData.priority, "priority"),
         status_id: mustMap(statusMap, formData.status, "status"),
         colonia: formData.colonia || null,
@@ -64,7 +64,7 @@ export const updateDataSupabase = async (
             "area_responsable",
         ),
         category_id: mustMap(categoryMap, formData.category, "category"),
-        channel_id: mustMap(chanelMap, formData.channel, "channel"),
+        channel_id: mustMap(channelMap, formData.channel, "channel"),
         priority_id: mustMap(priorityMap, formData.priority, "priority"),
         status_id: mustMap(statusMap, formData.status, "status"),
         colonia: formData.colonia || null,

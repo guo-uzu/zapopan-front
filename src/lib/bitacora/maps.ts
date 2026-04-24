@@ -85,7 +85,7 @@ export const categoryMap: Record<NonNullable<Inputs["category"]>, number> = {
     otros: 13,
 };
 
-export const chanelMap: Record<NonNullable<Inputs["channel"]>, number> = {
+export const channelMap: Record<NonNullable<Inputs["channel"]>, number> = {
     comentarios: 0,
     inbox: 1,
 };

@@ -9,13 +9,13 @@ type NestedUser = {
 export type BitacoraTable = {
     id: string;
     user_id?: NestedUser;
-    social_network_bitacora?: NestedName;
+    social_network_id?: NestedName;
     account_id?: NestedName;
-    channel_bitacora?: NestedName;
+    channel_id?: NestedName;
     username?: string;
     link?: string;
     created_at: string;
-    category_bitacora?: NestedName;
+    category_id?: NestedName;
     description?: string;
     area_id?: NestedName;
     colonia?: string;
@@ -27,8 +27,8 @@ export type BitacoraTable = {
     latest_updated_user_id?: NestedUser;
     created_by_name?: string;
 
-    priority_bitacora?: NestedName;
-    status_bitacora?: NestedName;
+    priority_id: NestedName;
+    status_id: NestedName;
 
     shared?: boolean;
 };
