@@ -1,0 +1,42 @@
+import { Badge } from "@/components/ui/badge";
+import { BitacoraTable } from "@/types/bitacoraTable";
+import type { CellContext } from "@tanstack/react-table";
+import { Ban, Link } from "lucide-react";
+
+const CellObservations = (props: CellContext<BitacoraTable, unknown>) => {
+
+    const value = String(props.getValue())
+    const color = "oklch(57.7% 0.245 27.325)"
+    const splitedText = value.split(/(https?:\/\/[^\s]+)/g);
+
+    if (value === "N/A") {
+        return (
+            <Badge
+                style={{ color: color }}
+                className="w-full capitalize rounded-full border-none shadow-xl bg-current/10 focus-visible:outline-none"
+            >
+                <Ban />
+                <span className="max-w-30 truncate hover:whitespace-normal hover:text-clip hover:max-w-full">N/A</span>
+            </Badge>
+        )
+    }
+    return splitedText.map((text, index) => {
+        if (text.match(/https?:\/\/[^\s]+/)) {
+            return (
+                <a
+                    key={index}
+                    href={text}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-2 items-center underline hover:text-blue-700 transition-colors duration-300"
+                >
+                    <Link className="shrink-0" size={12} />
+                    Click al enlace
+                </a>
+            );
+        }
+        return <span>{text}</span>;
+    })
+}
+
+export default CellObservations

@@ -23,6 +23,7 @@ export const fetchBitacora = async ({
     .from("bitacora")
     .select(
       `
+          id,
           user_id(full_name),
           created_by_name,
           account_id(name),
@@ -34,11 +35,17 @@ export const fetchBitacora = async ({
           status_id(name),
           description,
           link,
-          username
+          username,
+          created_at,
+          updated_at,
+          latest_updated_user_id(full_name),
+          colonia,
+          folio,
+          observations
           `,
       { count: "exact" },
     )
-    .range(from, to);
+    .range(from, to).eq("available", true)
   if (idFilter) query = query.eq("id", idFilter);
   if (filters.status === "N/A") {
     query = query.is("status_id", null);
@@ -95,5 +102,4 @@ export const fetchBitacora = async ({
     from: from + 1,
     to: Math.min(to + 1, count ?? 0)
   }
-
 };

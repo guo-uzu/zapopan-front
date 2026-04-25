@@ -16,7 +16,7 @@ const CellUsername = (props: CellContext<BitacoraTable, unknown>) => {
                 <p className="max-w-30 truncate hover:whitespace-normal hover:text-clip hover:max-w-full">{value ? value : "N/A"}</p>
             </Badge>
         ) :
-            <p className="flex items-center gap-2 justify-center w-fit mx-auto"><CircleUser size={18} /> {value}</p>
+            <p className="flex items-center gap-2"><CircleUser className="shrink-0" size={18} /> {value}</p>
     )
 }
 

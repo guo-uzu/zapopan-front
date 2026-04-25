@@ -13,10 +13,13 @@ import CellSocialMedia from "../bitacora/cells/social_media";
 import CellChannel from "../bitacora/cells/channel";
 import CellStatus from "../bitacora/cells/status";
 import CellPriority from "../bitacora/cells/priority";
-import { Ban, Link } from "lucide-react";
-import { Badge } from "../ui/badge";
 import CellLink from "../bitacora/cells/link";
 import CellUsername from "../bitacora/cells/username";
+import CellDate from "../bitacora/cells/date";
+import CellUserUpdated from "../bitacora/cells/userUpdated";
+import CellValue from "../bitacora/cells/value";
+import CellObservations from "../bitacora/cells/obervations";
+import CellFunctions from "../bitacora/cells/functions";
 
 export const columns: ColumnDef<BitacoraTable>[] = [
     {
@@ -80,6 +83,12 @@ export const columns: ColumnDef<BitacoraTable>[] = [
         size: 200
     },
     {
+        accessorFn: (row) => `${row.link ? row.link : "N/A"}`,
+        header: "Enlace",
+        cell: (props) => CellLink(props),
+        size: 130
+    },
+    {
         accessorFn: (row) => `${row.description ? row.description : "N/A"}`,
         header: "Descripción",
         cell: (props) => (
@@ -88,9 +97,44 @@ export const columns: ColumnDef<BitacoraTable>[] = [
         size: 200
     },
     {
-        accessorFn: (row) => `${row.link ? row.link : "N/A"}`,
-        header: "Enlace",
-        cell: (props) => CellLink(props),
-        size: 130
+        accessorFn: (row) => `${row.colonia ? row.colonia : "N/A"}`,
+        header: "Colonia",
+        cell: (props) => CellValue(props),
+        size: 150
+    },
+    {
+        accessorFn: (row) => `${row.created_at ? row.created_at : "N/A"}`,
+        header: "Creado",
+        cell: (props) => CellDate(props),
+        size: 100
+    },
+    {
+        accessorFn: (row) => `${row.updated_at ? row.updated_at : "N/A"}`,
+        header: "Actualizado",
+        cell: (props) => CellDate(props),
+        size: 100
+    },
+    {
+        accessorFn: (row) => `${row.latest_updated_user_id ? row.latest_updated_user_id : "N/A"}`,
+        header: "Usuario que actualizó",
+        cell: (props) => CellUserUpdated(props),
+        size: 150
+    },
+    {
+        accessorFn: (row) => `${row.folio ? row.folio : "N/A"}`,
+        header: "Folio",
+        cell: (props) => CellValue(props),
+        size: 150
+    },
+    {
+        accessorFn: (row) => `${row.observations ? row.observations : "N/A"}`,
+        header: "Observaciones",
+        cell: (props) => CellObservations(props),
+        size: 200
+    },
+    {
+        header: "Edita / Elimina",
+        maxSize: 100,
+        cell: (props) => CellFunctions(props),
     }
 ];

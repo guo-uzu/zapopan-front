@@ -38,11 +38,7 @@ import { AlertDialogHeader, AlertDialogFooter } from "../ui/alert-dialog";
 import { toTimestamp } from "@/lib/timestamp";
 import { dateRangeFilterFn } from "@/lib/filterDate";
 
-type BitacoraTableMeta = {
-    setDefaultData: (data: BitacoraTable) => void;
-    handleToEdit: () => void;
-    handleOpenForm: () => void;
-};
+
 
 /**
  * Columns of the table Bitacora. All of these columns format the data comming from the array of info with the objects

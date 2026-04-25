@@ -113,7 +113,9 @@ export function DataTable<TData extends BitacoraTable, TValue>({
     userName: localStorage.getItem("userName") ?? "",
     socialNetwork: localStorage.getItem("socialNetwork") ?? "",
   }));
-
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    undefined,
+  );
   const debouncedGlobal = useDebouncedValue(globalFilter, 300);
   const [uiPagination, setUIPagination] = useState<{ from: number | undefined, to: number | undefined }>({
     from: undefined,
@@ -144,7 +146,20 @@ export function DataTable<TData extends BitacoraTable, TValue>({
           table: "bitacora",
         },
         () => {
-          handleFechBitacora();
+          const fetchBitacoraData = async () => {
+            const { data, count, from, to } = await fetchBitacora({
+              pageIndex: pagination.pageIndex,
+              pageSize: pagination.pageSize,
+              idFilter,
+              filters,
+              globalFilter: debouncedGlobal,
+              dateRange,
+            })
+            if (data) setDataBitacora(data as TData[]);
+            setRowCount(count ?? 0);
+            setUIPagination({ from, to })
+          }
+          fetchBitacoraData()
         },
       )
       .subscribe();
@@ -152,17 +167,13 @@ export function DataTable<TData extends BitacoraTable, TValue>({
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, []);
+  }, [pagination, filters, debouncedGlobal, dateRange, idFilter]);
 
   const onChangeFilter = (key: string, value: string) => {
     localStorage.setItem(key, value);
     setFilters((prev) => ({ ...prev, [key]: value }));
     setPagination((prev) => ({ ...prev, pageIndex: 0 })); // ← critical
   };
-
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    undefined,
-  );
 
   useEffect(() => {
     try {
