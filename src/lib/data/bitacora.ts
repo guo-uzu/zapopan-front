@@ -1,8 +1,9 @@
-import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
 import type { FetchData } from "@/types/fetchData";
 import { createClient } from "@/utils/supabase/client";
 import { accountMap, areaMap, categoryMap, channelMap, mustMap, priorityMap, socialNetworkMap, statusMap } from "../bitacora/maps";
 import { formatData } from "../formatters/formatData";
+import { formatDate } from "@/utils/bitacora/formatDate";
+
 const supabase = createClient();
 
 export const fetchBitacora = async ({
@@ -87,10 +88,17 @@ export const fetchBitacora = async ({
   } else if (filters.userName && filters.userName !== "all") {
     query = query.eq("user_id", filters.userName);
   }
-  if (dateRange?.from)
-    query = query.gte("created_at", dateRange.from.toISOString());
-  if (dateRange?.to)
-    query = query.lte("created_at", dateRange.to.toISOString());
+
+  if (dateRange?.from) {
+    const date = new Date(dateRange.from)
+    query = query.gte("created_at", formatDate(date));
+  }
+  if (dateRange?.to) {
+    let date = new Date(dateRange.to)
+    date.setHours(23, 59, 59)
+    query = query.lte("created_at", formatDate(date));
+  }
+
   const { data, error, count } = await query
   if (error) throw error
 

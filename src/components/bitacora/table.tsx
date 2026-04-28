@@ -112,10 +112,9 @@ export function DataTable<TData extends BitacoraTable, TValue>({
     priority: localStorage.getItem("priority") ?? "",
     userName: localStorage.getItem("userName") ?? "",
     socialNetwork: localStorage.getItem("socialNetwork") ?? "",
+    dateRange: localStorage.getItem("bitacora_date_range") ?? ""
   }));
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    undefined,
-  );
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const debouncedGlobal = useDebouncedValue(globalFilter, 300);
   const [uiPagination, setUIPagination] = useState<{ from: number | undefined, to: number | undefined }>({
     from: undefined,
@@ -437,17 +436,12 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                     onSelect={(range) => {
                       // 1. Actualiza tu estado local para la UI
                       setDateRange(range);
-
-                      // 2. ¡Dile a la tabla que filtre!
-                      table
-                        .getColumn("created_at")
-                        ?.setFilterValue(range);
-
                       // Opcional: Guardarlo en local storage para que persista
                       localStorage.setItem(
                         "bitacora_date_range",
                         JSON.stringify(range),
                       );
+                      onChangeFilter("bitacora_date_range", JSON.stringify(range))
                     }}
                     numberOfMonths={2}
                     className="rounded-lg border shadow-sm"

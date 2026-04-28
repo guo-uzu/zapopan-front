@@ -8,7 +8,7 @@ const CellDate = (props: CellContext<BitacoraTable, unknown>) => {
         day: '2-digit',
         month: '2-digit',
         year: '2-digit'
-    };
+    } as const;
     const date = new Date(String(props.getValue()))
     const formatDate = new Intl.DateTimeFormat("en-GB", options).format(date).replace(/\//g, "-")
     const color = "oklch(57.7% 0.245 27.325)"

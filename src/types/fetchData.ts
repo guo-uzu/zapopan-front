@@ -1,7 +1,5 @@
-interface DateRange {
-    from: Date;
-    to: Date;
-}
+import { Dispatch, SetStateAction } from "react";
+import { DateRange } from "react-day-picker";
 
 interface FetchData {
     pageIndex: number;
@@ -9,7 +7,7 @@ interface FetchData {
     idFilter: string;
     filters: string[];
     globalFilter: string;
-    dateRange: DateRange;
+    dateRange: Dispatch<SetStateAction<DateRange | undefined>>;
 }
 
 export type { FetchData };
