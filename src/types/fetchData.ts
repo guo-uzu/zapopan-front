@@ -4,7 +4,7 @@ import { DateRange } from "react-day-picker";
 interface FetchData {
     pageIndex: number;
     pageSize: number;
-    idFilter: string;
+    idFilter?: string;
     filters: string[];
     globalFilter: string;
     dateRange: Dispatch<SetStateAction<DateRange | undefined>>;
