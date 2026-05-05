@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
+import { BADGE_FALLBACK_COLOR } from "@/lib/bitacora/constants";
 import { BitacoraTable } from "@/types/bitacoraTable";
 import type { CellContext } from "@tanstack/react-table";
 import { Ban } from "lucide-react";
@@ -12,12 +13,9 @@ const CellSocialMedia = (props: CellContext<BitacoraTable, unknown>) => {
     let color: string | undefined = ColumnsBitacoraOpts.social_network.find(
         (e) => e.id === value,
     )?.color;
-    if (!color) {
-        color = "oklch(57.7% 0.245 27.325)"
-    }
     return (
         <Badge
-            style={{ color: color }}
+            style={{ color: color ?? BADGE_FALLBACK_COLOR }}
             className="capitalize w-full rounded-full bg-current/10 border-none focus-visible:ring-amber-600/20 focus-visible:outline-none"
         >
             {value === "facebook" ? (

@@ -28,7 +28,6 @@ export default function FilterSelector({
     label: string;
 }) {
     const [open, setOpen] = useState(false);
-
     return (
         <Field>
             <FieldLabel htmlFor={name}>{label}</FieldLabel>
@@ -56,10 +55,10 @@ export default function FilterSelector({
                                                             field.value,
                                                     )?.color
                                                         ? column.find(
-                                                              (data) =>
-                                                                  data.id ===
-                                                                  field.value,
-                                                          )?.color
+                                                            (data) =>
+                                                                data.id ===
+                                                                field.value,
+                                                        )?.color
                                                         : "oklch(43.9% 0 0)"
                                                 }
                                             />

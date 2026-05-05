@@ -55,7 +55,7 @@ import {
 } from "@/components/ui/popover";
 import FormBitacora from "./form";
 import useBitacoraTable from "@/hooks/bitacora/useBitacoraTable";
-import { BitacoraTable } from "@/types/bitacoraTable";
+import { BitacoraRecord } from "@/types/bitacoraTable";
 import useDebouncedValue from "@/hooks/bitacora/useDebounce";
 import { fetchUsersFilterBitacora } from "@/lib/data/usersFilter";
 import goNextPage from "@/utils/bitacora/goNextPage";
@@ -67,10 +67,10 @@ import goPreviousPage from "@/utils/bitacora/goPreviousPage";
  * @returns DataTable is the function that prints the table in the DOM and shows all of the rows or individually
  */
 
-export function DataTable<TData extends BitacoraTable, TValue>({
+export function DataTable<TData extends BitacoraRecord, TValue>({
   columns,
   idFilter,
-}: DataTableProps<TData, TValue>) {
+}: { columns: ColumnDef<BitacoraRecord, unknown>[], idFilter: string | null }) {
   const supabase = createClient();
   const [dataBitacora, setDataBitacora] = useState<TData[]>([]);
   const [open, setOpen] = useState(false);
@@ -78,7 +78,7 @@ export function DataTable<TData extends BitacoraTable, TValue>({
   const [toEdit, setToEdit] = useState<boolean>(false);
   const handleOpenForm = () => setOpen(true);
   const [usersToFilter, setUsersToFilter] = useState<{ id: string; full_name: string }[]>([]);
-  const handleToEdit = () => setToEdit(!toEdit);
+  const handleToEdit = () => setToEdit(prev => !prev);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 50,
@@ -498,6 +498,7 @@ export function DataTable<TData extends BitacoraTable, TValue>({
                             )}
                           {header.column.getCanResize() && (
                             <div
+                              key={header.id}
                               {...{
                                 onDoubleClick:
                                   () =>

@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
+import { BADGE_FALLBACK_COLOR } from "@/lib/bitacora/constants";
 import { formatData } from "@/lib/formatters/formatData";
 import { BitacoraTable } from "@/types/bitacoraTable";
 import type { CellContext } from "@tanstack/react-table";
@@ -10,12 +11,10 @@ const CellChannel = (props: CellContext<BitacoraTable, unknown>) => {
     let color: string | undefined = ColumnsBitacoraOpts.channel.find(
         (e) => e.id === formatData(value),
     )?.color;
-    if (!color) {
-        color = "oklch(57.7% 0.245 27.325)"
-    }
+
     return (
         <Badge
-            style={{ color: color }}
+            style={{ color: color ?? BADGE_FALLBACK_COLOR }}
             className="w-full capitalize rounded-full border-none shadow-xl bg-current/10 focus-visible:outline-none"
         >
             {value === "comentarios" ? (

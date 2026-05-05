@@ -3,9 +3,9 @@ import { BitacoraTable } from "@/types/bitacoraTable";
 import type { CellContext } from "@tanstack/react-table";
 import { Ban, Link } from "lucide-react";
 
+const color = "oklch(57.7% 0.245 27.325)"
 const CellLink = (props: CellContext<BitacoraTable, unknown>) => {
     const value = String(props.getValue()).trim()
-    const color = "oklch(57.7% 0.245 27.325)"
     return (
         value === "N/A" ? (
             <Badge
@@ -16,7 +16,7 @@ const CellLink = (props: CellContext<BitacoraTable, unknown>) => {
                 <p className="max-w-30 truncate hover:whitespace-normal hover:text-clip hover:max-w-full">{value ? value : "N/A"}</p>
             </Badge>
         ) :
-            <a target="_blank" className="flex items-center gap-2 justify-center cursor-pointer w-fit mx-auto hover:text-blue-500 transition-colors duration-300" href={`${String(props.getValue())}`}><Link size={18} /> Enlace</a>
+            <a target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 justify-center cursor-pointer w-fit mx-auto hover:text-blue-500 transition-colors duration-300" href={`${String(props.getValue())}`}><Link size={18} /> Enlace</a>
     )
 }
 

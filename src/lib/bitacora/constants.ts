@@ -1,0 +1,1 @@
+export const BADGE_FALLBACK_COLOR = "oklch(57.7% 0.245 27.325)";

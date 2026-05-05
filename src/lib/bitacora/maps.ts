@@ -1,6 +1,5 @@
 import { Inputs } from "@/hooks/types";
 
-
 export function mustMap<T extends string>(
     map: Record<T, number>,
     key: T | undefined,

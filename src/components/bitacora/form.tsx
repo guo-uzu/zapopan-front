@@ -5,7 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Inputs } from "@/hooks/types";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { sendDataSupabase, updateDataSupabase } from "@/hooks/sendData";
+import { sendDataSupabase } from "@/hooks/sendData";
+import { updateDataSupabase } from "@/lib/data/updateRowBitacora";
 import { toast } from "sonner";
 import FilterSelector from "./filter-selector";
 import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
@@ -50,6 +51,7 @@ export default function FormBitacora({
     handleToEdit,
     setDefaultData,
 }: FormProps) {
+    console.log(defaultData)
     const { register, handleSubmit, control, reset } = useForm<Inputs>({
         defaultValues: defaultData,
     });
@@ -129,7 +131,7 @@ export default function FormBitacora({
                             <div className="grid grid-cols-2 gap-4">
                                 <FilterSelector
                                     control={control}
-                                    column={ColumnsBitacoraOpts.account}
+                                    column={ColumnsBitacoraOpts.account_id}
                                     name="account"
                                     label="Cuenta"
                                 />
@@ -164,7 +166,7 @@ export default function FormBitacora({
                                 <FilterSelector
                                     control={control}
                                     column={
-                                        ColumnsBitacoraOpts.area_responsable
+                                        ColumnsBitacoraOpts.area_id
                                     }
                                     name="area_responsable"
                                     label="Área responable"

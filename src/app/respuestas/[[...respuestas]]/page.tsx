@@ -346,7 +346,7 @@ export default function Respuestas() {
                                                                     commandProps={{
                                                                         label: 'Selecciona un área'
                                                                     }}
-                                                                    defaultOptions={ColumnsBitacoraOpts.area_responsable}
+                                                                    defaultOptions={ColumnsBitacoraOpts.area_id}
                                                                     placeholder='Selecciona un área'
                                                                     hidePlaceholderWhenSelected
                                                                     emptyIndicator={<p className='text-center text-sm'>No se encontraron resultados</p>}
@@ -393,7 +393,7 @@ export default function Respuestas() {
                             <div className="scroller w-full flex flex-row gap-x-2 overflow-x-scroll text-xs py-2 px-8">
                                 <Badge>Áreas responsables</Badge>
                                 {
-                                    ColumnsBitacoraOpts.area_responsable.map((area, index) => (
+                                    ColumnsBitacoraOpts.area_id.map((area, index) => (
                                         <Badge key={index} variant="outline" onClick={() => handleTagClick(area.label)} className="cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal">
                                             {area.value}
                                         </Badge>
@@ -415,7 +415,7 @@ export default function Respuestas() {
                                         <h2 className="text-xl font-bold">Área responsable</h2>
                                         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                             {
-                                                ColumnsBitacoraOpts.area_responsable
+                                                ColumnsBitacoraOpts.area_id
                                                     // 1. FILTER: Keep only the items that are NOT in the excluded_view list
                                                     .filter((area) => !ColumnsBitacoraOpts.excluded_view.find((data) => area.id === data.id))
                                                     // 2. MAP: Render the remaining items

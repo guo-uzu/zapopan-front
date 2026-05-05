@@ -1,5 +1,5 @@
 "use client";
-import { columns } from "@/components/columns/bitacora";
+import { columns } from "@/components/bitacora/bitacora";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   SidebarProvider,
