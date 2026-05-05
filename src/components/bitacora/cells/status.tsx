@@ -2,11 +2,11 @@ import { Badge } from "@/components/ui/badge";
 import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
 import { BADGE_FALLBACK_COLOR } from "@/lib/bitacora/constants";
 import { formatData } from "@/lib/formatters/formatData";
-import { BitacoraTable } from "@/types/bitacoraTable";
+import { BitacoraRecord } from "@/types/bitacoraTable";
 import type { CellContext } from "@tanstack/react-table";
 import { Ban, Compass, ListRestart, SquareCheckBig, TriangleAlert } from "lucide-react";
 
-const CellStatus = (props: CellContext<BitacoraTable, unknown>) => {
+const CellStatus = (props: CellContext<BitacoraRecord, unknown>) => {
     const value = String(props.getValue()).trim()
     let color: string | undefined = ColumnsBitacoraOpts.status.find(
         (e) => e.id === formatData(value),

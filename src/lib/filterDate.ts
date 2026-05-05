@@ -1,9 +1,9 @@
-import { BitacoraTable } from "@/types/bitacoraTable";
+import { BitacoraRecord } from "@/types/bitacoraTable";
 import type { DateRange } from "react-day-picker";
 import { Row } from "@tanstack/react-table";
 
 export const dateRangeFilterFn = (
-    row: Row<BitacoraTable>,
+    row: Row<BitacoraRecord>,
     columnId: string,
     filterValue: DateRange | undefined,
 ) => {

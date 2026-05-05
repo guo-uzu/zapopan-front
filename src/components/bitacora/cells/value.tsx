@@ -1,9 +1,9 @@
 import { Badge } from "@/components/ui/badge";
-import { BitacoraTable } from "@/types/bitacoraTable";
+import { BitacoraRecord } from "@/types/bitacoraTable";
 import type { CellContext } from "@tanstack/react-table";
 import { Ban } from "lucide-react";
 
-const CellValue = (props: CellContext<BitacoraTable, unknown>) => {
+const CellValue = (props: CellContext<BitacoraRecord, unknown>) => {
 
     const value = String(props.getValue())
     const color = "oklch(57.7% 0.245 27.325)"

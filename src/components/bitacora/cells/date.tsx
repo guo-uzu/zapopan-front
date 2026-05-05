@@ -1,10 +1,10 @@
 import { Badge } from "@/components/ui/badge";
-import { BitacoraTable } from "@/types/bitacoraTable";
+import { BitacoraRecord } from "@/types/bitacoraTable";
 import type { CellContext } from "@tanstack/react-table";
 import { Ban } from "lucide-react";
 const color = "oklch(57.7% 0.245 27.325)"
 
-const CellDate = (props: CellContext<BitacoraTable, unknown>) => {
+const CellDate = (props: CellContext<BitacoraRecord, unknown>) => {
     const options = {
         day: '2-digit',
         month: '2-digit',

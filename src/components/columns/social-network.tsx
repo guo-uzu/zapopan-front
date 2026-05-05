@@ -4,9 +4,9 @@ import { FaSquareXTwitter, FaSquareInstagram } from "react-icons/fa6";
 import { AiFillTikTok } from "react-icons/ai";
 import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
 import { CellContext } from "@tanstack/react-table";
-import { BitacoraTable } from "@/types/bitacoraTable";
+import { BitacoraRecord } from "@/types/bitacoraTable";
 
-const SocialNetwork = ({ props }: { props: CellContext<BitacoraTable, unknown> }) => {
+const SocialNetwork = ({ props }: { props: CellContext<BitacoraRecord, unknown> }) => {
   const color: string | undefined = ColumnsBitacoraOpts.social_network.find(
     (e) => e.id === props.getValue(),
   )?.color;

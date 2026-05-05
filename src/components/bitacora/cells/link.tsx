@@ -1,10 +1,10 @@
 import { Badge } from "@/components/ui/badge";
-import { BitacoraTable } from "@/types/bitacoraTable";
+import { BitacoraRecord } from "@/types/bitacoraTable";
 import type { CellContext } from "@tanstack/react-table";
 import { Ban, Link } from "lucide-react";
 
 const color = "oklch(57.7% 0.245 27.325)"
-const CellLink = (props: CellContext<BitacoraTable, unknown>) => {
+const CellLink = (props: CellContext<BitacoraRecord, unknown>) => {
     const value = String(props.getValue()).trim()
     return (
         value === "N/A" ? (
