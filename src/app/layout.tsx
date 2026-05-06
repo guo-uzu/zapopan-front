@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zapopan Platform",
-  description: "Una plataforma para el manejo de bitácora del gobierno de Zapopan."
+  title: "Atención Ciudadana",
+  description: "Una plataforma para el manejo de bitácora del equipo de Atención Ciudadana."
 };
 
 export default function RootLayout({
