@@ -10,7 +10,7 @@ function formatDate(date: Date) {
     }).formatToParts(date).reduce((acc, part) => {
         acc[part.type] = part.value;
         return acc;
-    }, {});
+    }, {} as Record<string,string>);
 
     return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}:${p.second}`;
 }
