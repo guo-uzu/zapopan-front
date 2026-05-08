@@ -31,6 +31,7 @@ type BitacoraRecord = {
 type BitacoraFormState = {
     id: string;
     username?: string;
+    created_at: string
     account: string;
     channel: string;
     link?: string;

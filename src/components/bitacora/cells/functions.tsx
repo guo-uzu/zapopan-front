@@ -29,6 +29,7 @@ const CellFunctions = (props: CellContext<BitacoraRecord, unknown>) => {
         meta?.setDefaultData({
             id: data.id,
             username: data.username,
+            created_at: new Date(data.created_at).toISOString().substr(0, 10),
             account: formatData(data.account_id?.name ?? ""),
             channel: formatData(data.channel_id?.name ?? ""),
             link: data.link,

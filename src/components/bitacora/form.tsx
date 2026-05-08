@@ -29,7 +29,7 @@ interface FormProps {
 
 const emptyValues: Inputs = {
     username: "",
-    account: "", // O el valor por defecto que use tu select
+    account: "",
     channel: "",
     link: "",
     category: "",
@@ -41,6 +41,8 @@ const emptyValues: Inputs = {
     status: "",
     folio: "",
     observations: "",
+    created_at: new Date().toISOString().substr(0, 10)
+
 };
 
 export default function FormBitacora({
@@ -51,10 +53,10 @@ export default function FormBitacora({
     handleToEdit,
     setDefaultData,
 }: FormProps) {
-    console.log(defaultData)
     const { register, handleSubmit, control, reset } = useForm<Inputs>({
-        defaultValues: defaultData,
+        defaultValues: Object.keys(defaultData).length > 0 ? defaultData : emptyValues
     });
+
 
     useEffect(() => {
         if (defaultData) {
@@ -77,7 +79,7 @@ export default function FormBitacora({
             });
             return;
         }
-        toast.promise(updateDataSupabase(dataForm, defaultData), {
+        toast.promise(updateDataSupabase(dataForm), {
             loading: "Actualizando datos...",
             success: () => {
                 setDefaultData({});
@@ -125,6 +127,19 @@ export default function FormBitacora({
                                         id="username"
                                         type="text"
                                         name="username"
+                                    />
+                                </Field>
+                            </FieldGroup>
+                            <FieldGroup>
+                                <Field>
+                                    <FieldLabel htmlFor="created_at">
+                                        Fecha
+                                    </FieldLabel>
+                                    <Input
+                                        {...register("created_at")}
+                                        id="created_at"
+                                        type="date"
+                                        name="created_at"
                                     />
                                 </Field>
                             </FieldGroup>

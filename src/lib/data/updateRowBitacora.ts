@@ -7,7 +7,6 @@ import { accountMap, areaMap, categoryMap, channelMap, mustMap, priorityMap, soc
 
 export const updateDataSupabase = async (
     formData: Inputs,
-    defaultData: Partial<Inputs>,
 ) => {
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
@@ -15,8 +14,10 @@ export const updateDataSupabase = async (
         data: { user },
     } = await supabase.auth.getUser();
     if (!user) throw new Error("User not founded");
+    const [year, month, day] = String(formData.created_at).split("-").map(Number)
     const payload = {
         latest_updated_user_id: user.id,
+        created_at: new Date(year, month - 1, day).toISOString(),
         account_id: mustMap(accountMap, formData.account, "account"),
         area_id: mustMap(
             areaMap,

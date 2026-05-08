@@ -12,14 +12,11 @@ export const sendDataSupabase = async (formData: Inputs) => {
         data: { user },
     } = await supabase.auth.getUser();
     if (!user) throw new Error("User not founded");
+    const [year, month, day] = String(formData.created_at).split("-").map(Number)
     const payload = {
         user_id: user.id,
         account_id: mustMap(accountMap, formData.account, "account"),
-        area_id: mustMap(
-            areaMap,
-            formData.area_responsable,
-            "area_responsable",
-        ),
+        area_id: mustMap(areaMap, formData.area_responsable, "area_responsable"),
         category_id: mustMap(categoryMap, formData.category, "category"),
         channel_id: mustMap(channelMap, formData.channel, "channel"),
         priority_id: mustMap(priorityMap, formData.priority, "priority"),
@@ -28,7 +25,7 @@ export const sendDataSupabase = async (formData: Inputs) => {
         description: formData.description,
         link: formData.link || null,
         observations: formData.observations || null,
-        created_at: new Date().toISOString(),
+        created_at: new Date(year, month - 1, day).toISOString() ?? new Date().toISOString(),
         username: formData.username,
         folio: formData.folio || null,
         social_network_id: mustMap(

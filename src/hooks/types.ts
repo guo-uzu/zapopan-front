@@ -8,7 +8,7 @@ type NestedUser = {
 
 export type Inputs = {
     id?: string;
-    created_at?: string | Date;
+    created_at: string | Date;
     updated_at?: string | Date;
 
     // --- 1. NESTED OBJECTS (For the Table View) ---
