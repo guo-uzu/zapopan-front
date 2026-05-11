@@ -3,7 +3,6 @@ FROM node:lts-alpine AS base
 # Stage 1: Install dependencies
 FROM base AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN corepack enable pnpm && pnpm install --frozen-lockfile
 
@@ -18,7 +17,6 @@ ENV NEXT_PUBLIC_SUPABASE_URL=https://rpbkprzjlgbjqwgxrdqr.supabase.co
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJwYmtwcnpqbGdianF3Z3hyZHFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4NDI1NzgsImV4cCI6MjA3MjQxODU3OH0.sgO33HHNj5V_4_6QYXklvA0SHtMe9rHkwB-wsfR6_tE
 # (Nota: La PUBLISHABLE_KEY de Clerk u otros servicios también iría aquí si se usa en el build)
 
-RUN pnpm approve-builds --all
 RUN corepack enable pnpm && pnpm run build
 # -------------------------------------------------------------
 
