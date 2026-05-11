@@ -36,7 +36,6 @@ export const sendDataSupabase = async (formData: Inputs) => {
     };
     const { error } = await supabase.from("bitacora").insert(payload);
     if (error) {
-        console.log("error bitacora insert", error);
         throw new Error("DB insert failed");
     }
     return { ok: true };
@@ -67,8 +66,6 @@ export const sendResponse = async (formData: {
     };
     const { error } = await supabase.from("respuestas").insert(payload);
     if (error) {
-        console.log(payload);
-        console.log("error respuestas insert", error);
         throw new Error("DB insert failed");
     }
     return { ok: true };

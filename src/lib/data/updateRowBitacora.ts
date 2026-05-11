@@ -41,13 +41,11 @@ export const updateDataSupabase = async (
             "social_network",
         ),
     };
-    console.log("payload", payload);
     const { error } = await supabase
         .from("bitacora")
         .update(payload)
         .eq("id", formData.id);
     if (error) {
-        console.log("error bitacora updated", error);
         throw new Error("DB insert failed");
     }
     return { ok: true };

@@ -9,7 +9,6 @@ const deleteRowBitacora = async (id: string) => {
     if (!user) throw new Error("User not founded")
     const { error } = await supabase.from("bitacora").update({ available: false }).eq("id", id)
     if (error) {
-        console.log("error bitacora delete", error)
         throw new Error("Error delete")
     }
     return { ok: true }

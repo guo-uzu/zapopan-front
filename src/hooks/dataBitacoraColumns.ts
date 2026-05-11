@@ -66,7 +66,7 @@ export const ColumnsBitacoraOpts = {
         { id: "reportes_y_denuncias", value: "Reportes y denuncias", label: "reportes_y_denuncias", color: "oklch(76.8% 0.233 130.85)" },
         { id: "solicitud_de_empleo", value: "Solicitud de empleo", label: "solicitud_de_empleo", color: "oklch(39.1% 0.09 240.876)" },
         { id: "coyuntura", value: "Coyuntura", label: "coyuntura", color: "" },
-        { id: "participación_curso", value: "Participación en curso", label: "participación_curso", color: "oklch(71.8% 0.202 349.761)" },
+        { id: "participación_en_curso", value: "Participación en curso", label: "participación_en_curso", color: "oklch(71.8% 0.202 349.761)" },
         { id: "solicitud_de_obra", value: "Solicitud de obra", label: "solicitud_de_obra", color: "oklch(70.5% 0.213 47.604)" },
         { id: "otros", value: "Otros", label: "otros", color: "oklch(89.2% 0.058 10.001)" },
     ],

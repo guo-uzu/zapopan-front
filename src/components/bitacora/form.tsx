@@ -54,17 +54,45 @@ export default function FormBitacora({
     handleToEdit,
     setDefaultData,
 }: FormProps) {
-    const { register, handleSubmit, control, reset } = useForm<Inputs>({
+    const [requiredValue, setRequiredValue] = useState(true)
+    const { setValue, register, handleSubmit, control, reset, watch, formState: { errors } } = useForm<Inputs>({
         defaultValues: Object.keys(defaultData).length > 0 ? defaultData : emptyValues
     });
 
+    const selectedCategory = watch("category");
+    const selectedArea = watch("area_responsable")
+    useEffect(() => {
+        switch (selectedCategory) {
+            case "solicitud_de_información":
+                setValue("priority", "baja")
+                setRequiredValue(true)
+                break
+            case "reportes_de_servicios":
+                setValue("priority", "media")
+                setValue("area_responsable", "servicios_municipales")
+                setRequiredValue(true)
+                break
+            case "reportes_externos":
+                setValue("priority", "baja")
+                setRequiredValue(true)
+                break
+            case "participación_en_curso":
+                setRequiredValue(prev => !prev)
+                break
+            default:
+                setRequiredValue(true)
+                break
+        }
+    }, [selectedCategory, selectedArea, setValue])
 
     useEffect(() => {
         if (defaultData) {
             reset(defaultData);
         }
     }, [defaultData, reset]);
-
+    const onInvalid = () => {
+        toast.error("Error al enviar los datos, revisa los campos obligatorios");
+    };
     const saveData: SubmitHandler<Inputs> = async (dataForm) => {
         if (!toEdit) {
             toast.promise(sendDataSupabase(dataForm), {
@@ -113,34 +141,36 @@ export default function FormBitacora({
                     <SheetTitle>Formulario de bitácora</SheetTitle>
                 </SheetHeader>
                 <form
-                    onSubmit={handleSubmit(saveData)}
+                    onSubmit={handleSubmit(saveData, onInvalid)}
                     className="grid flex-1 auto-rows-min gap-6 px-4 pb-4"
                 >
                     <FieldGroup className="flex flex-col gap-6">
                         <FieldSet>
                             <FieldGroup>
                                 <Field>
-                                    <FieldLabel htmlFor="username" className="flex flex-row gap-2 items-center">                                    
-                                        Nombre de usuario <ObligatoryIcon/>
+                                    <FieldLabel htmlFor="username" className="flex flex-row gap-2 items-center">
+                                        Nombre de usuario <ObligatoryIcon />
                                     </FieldLabel>
                                     <Input
                                         {...register("username")}
                                         id="username"
                                         type="text"
                                         name="username"
+                                        required={true}
                                     />
                                 </Field>
                             </FieldGroup>
                             <FieldGroup>
                                 <Field>
                                     <FieldLabel htmlFor="created_at">
-                                        Fecha <ObligatoryIcon/>
+                                        Fecha <ObligatoryIcon />
                                     </FieldLabel>
                                     <Input
                                         {...register("created_at")}
                                         id="created_at"
                                         type="date"
                                         name="created_at"
+                                        required={true}
                                     />
                                 </Field>
                             </FieldGroup>
@@ -161,7 +191,7 @@ export default function FormBitacora({
                             <FieldGroup>
                                 <Field>
                                     <FieldLabel htmlFor="link">
-                                        Enlace a perfil/publicación 
+                                        Enlace a perfil/publicación
                                     </FieldLabel>
                                     <Input
                                         {...register("link")}
@@ -191,13 +221,14 @@ export default function FormBitacora({
                             <FieldGroup>
                                 <Field>
                                     <FieldLabel htmlFor="description">
-                                        Descripción <ObligatoryIcon/>
+                                        Descripción {requiredValue ? <ObligatoryIcon /> : null}
                                     </FieldLabel>
                                     <Textarea
                                         {...register("description")}
                                         id="description"
                                         name="description"
                                         placeholder="Escribe la descripción aquí..."
+                                        required={requiredValue}
                                     />
                                 </Field>
                             </FieldGroup>
@@ -262,7 +293,6 @@ export default function FormBitacora({
                             </FieldGroup>
                             {toEdit ? (
                                 <Button
-                                    onClick={() => setOpen(!open)}
                                     type="submit"
                                     className="w-full"
                                 >
@@ -270,7 +300,6 @@ export default function FormBitacora({
                                 </Button>
                             ) : (
                                 <Button
-                                    onClick={() => setOpen(!open)}
                                     type="submit"
                                     className="w-full"
                                 >

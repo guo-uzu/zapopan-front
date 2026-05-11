@@ -106,8 +106,6 @@ export const fetchBitacora = async ({
   const { data, error, count } = await query
   if (error) throw error
 
-  console.log(await query)
-
   return {
     data,
     count,
