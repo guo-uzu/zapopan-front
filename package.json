@@ -48,9 +48,6 @@
     "vaul": "^1.1.2",
     "zod": "^4.2.1"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["@tailwindcss/oxide", "sharp", "unrs-resolver"]
-  },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
