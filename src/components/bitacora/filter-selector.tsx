@@ -15,6 +15,7 @@ import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
 import { Check, ChevronsUpDown, CircleSmall } from "lucide-react";
 import { useState } from "react";
 import { Control, Controller, Path } from "react-hook-form";
+import ObligatoryIcon from "./obligatoryIcon";
 
 export default function FilterSelector({
     control,
@@ -30,7 +31,7 @@ export default function FilterSelector({
     const [open, setOpen] = useState(false);
     return (
         <Field>
-            <FieldLabel htmlFor={name}>{label}</FieldLabel>
+            <FieldLabel htmlFor={name}>{label} <ObligatoryIcon/></FieldLabel>
             <Controller
                 name={name}
                 control={control}

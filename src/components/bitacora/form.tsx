@@ -17,6 +17,7 @@ import {
     SheetTitle,
 } from "@/components/ui/sheet";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import ObligatoryIcon from "./obligatoryIcon";
 
 interface FormProps {
     defaultData: Partial<Inputs>;
@@ -119,8 +120,8 @@ export default function FormBitacora({
                         <FieldSet>
                             <FieldGroup>
                                 <Field>
-                                    <FieldLabel htmlFor="username">
-                                        Nombre de usuario
+                                    <FieldLabel htmlFor="username" className="flex flex-row gap-2 items-center">                                    
+                                        Nombre de usuario <ObligatoryIcon/>
                                     </FieldLabel>
                                     <Input
                                         {...register("username")}
@@ -133,7 +134,7 @@ export default function FormBitacora({
                             <FieldGroup>
                                 <Field>
                                     <FieldLabel htmlFor="created_at">
-                                        Fecha
+                                        Fecha <ObligatoryIcon/>
                                     </FieldLabel>
                                     <Input
                                         {...register("created_at")}
@@ -160,7 +161,7 @@ export default function FormBitacora({
                             <FieldGroup>
                                 <Field>
                                     <FieldLabel htmlFor="link">
-                                        Enlace a perfil/publicación
+                                        Enlace a perfil/publicación 
                                     </FieldLabel>
                                     <Input
                                         {...register("link")}
@@ -190,7 +191,7 @@ export default function FormBitacora({
                             <FieldGroup>
                                 <Field>
                                     <FieldLabel htmlFor="description">
-                                        Descripción
+                                        Descripción <ObligatoryIcon/>
                                     </FieldLabel>
                                     <Textarea
                                         {...register("description")}
