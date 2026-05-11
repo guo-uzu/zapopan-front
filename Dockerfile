@@ -18,6 +18,7 @@ ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 # (Nota: La PUBLISHABLE_KEY de Clerk u otros servicios también iría aquí si se usa en el build)
 
 RUN corepack enable pnpm && pnpm run build
+RUN pnpm approve-builds --all
 # -------------------------------------------------------------
 
 # Stage 3: Production server
