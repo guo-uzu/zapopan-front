@@ -65,6 +65,7 @@ export default function FormBitacora({
         switch (selectedCategory) {
             case "solicitud_de_información":
                 setValue("priority", "baja")
+                setValue("colonia", "N/A")
                 setRequiredValue(true)
                 break
             case "reportes_de_servicios":
@@ -78,6 +79,9 @@ export default function FormBitacora({
                 break
             case "participación_en_curso":
                 setRequiredValue(prev => !prev)
+                break
+            case "reporte_de_inspección_y_vigilancia":
+                setValue("area_responsable", "inspección_y_vigilancia")
                 break
             default:
                 setRequiredValue(true)
