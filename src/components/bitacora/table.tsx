@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { ColumnDef, flexRender } from "@tanstack/react-table";
-import { getValueFilter } from "@/utils/bitacora/bitacora";
 import { Input } from "@/components/ui/input";
 
 import {
@@ -102,17 +101,19 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
     }
     fetchUsers()
   }, [])
-
+  if (typeof window === "undefined") {
+    return
+  }
   const [filters, setFilters] = useState(() => ({
-    account: localStorage.getItem("account") ?? "",
-    area: localStorage.getItem("area") ?? "",
-    status: localStorage.getItem("status") ?? "",
-    channel: localStorage.getItem("channel") ?? "",
-    category: localStorage.getItem("category") ?? "",
-    priority: localStorage.getItem("priority") ?? "",
-    userName: localStorage.getItem("userName") ?? "",
-    socialNetwork: localStorage.getItem("socialNetwork") ?? "",
-    dateRange: localStorage.getItem("bitacora_date_range") ?? ""
+    account: window.localStorage.getItem("account") ?? "",
+    area: window.localStorage.getItem("area") ?? "",
+    status: window.localStorage.getItem("status") ?? "",
+    channel: window.localStorage.getItem("channel") ?? "",
+    category: window.localStorage.getItem("category") ?? "",
+    priority: window.localStorage.getItem("priority") ?? "",
+    userName: window.localStorage.getItem("userName") ?? "",
+    socialNetwork: window.localStorage.getItem("socialNetwork") ?? "",
+    dateRange: window.localStorage.getItem("bitacora_date_range") ?? ""
   }));
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const debouncedGlobal = useDebouncedValue(globalFilter, 300);
@@ -194,7 +195,6 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
         if (col) col.setFilterValue(restoredRange);
       }
     } catch (error) {
-      console.error("Error loading date from local storage", error);
       // Optional: clear invalid data
       localStorage.removeItem("bitacora_date_range");
     }
@@ -235,7 +235,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
               <Select
                 value={filters.userName !== "all" ? filters.userName : ""}
                 onValueChange={(value: string) => {
-                  localStorage.setItem("userName", value);
+                  window.localStorage.setItem("userName", value);
                   onChangeFilter("userName", value);
                 }}
               >
