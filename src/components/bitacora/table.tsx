@@ -84,6 +84,17 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
   });
   const [rowCount, setRowCount] = useState(0);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [filters, setFilters] = useState<{} | BitacoraRecord>({
+    account: "",
+    area: "",
+    status: "",
+    channel: "",
+    category: "",
+    priority: "",
+    userName: "",
+    socialNetwork: "",
+    dateRange: ""
+  })
 
   const { table } = useBitacoraTable(
     dataBitacora,
@@ -101,20 +112,21 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
     }
     fetchUsers()
   }, [])
-  if (typeof window === "undefined") {
-    return
-  }
-  const [filters, setFilters] = useState(() => ({
-    account: window.localStorage.getItem("account") ?? "",
-    area: window.localStorage.getItem("area") ?? "",
-    status: window.localStorage.getItem("status") ?? "",
-    channel: window.localStorage.getItem("channel") ?? "",
-    category: window.localStorage.getItem("category") ?? "",
-    priority: window.localStorage.getItem("priority") ?? "",
-    userName: window.localStorage.getItem("userName") ?? "",
-    socialNetwork: window.localStorage.getItem("socialNetwork") ?? "",
-    dateRange: window.localStorage.getItem("bitacora_date_range") ?? ""
-  }));
+  useEffect(() => {
+    const data = {
+      account: window.localStorage.getItem("account") ?? "",
+      area: window.localStorage.getItem("area") ?? "",
+      status: window.localStorage.getItem("status") ?? "",
+      channel: window.localStorage.getItem("channel") ?? "",
+      category: window.localStorage.getItem("category") ?? "",
+      priority: window.localStorage.getItem("priority") ?? "",
+      userName: window.localStorage.getItem("userName") ?? "",
+      socialNetwork: window.localStorage.getItem("socialNetwork") ?? "",
+      dateRange: window.localStorage.getItem("bitacora_date_range") ?? ""
+    };
+    setFilters(data)
+  }, [])
+
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const debouncedGlobal = useDebouncedValue(globalFilter, 300);
   const [uiPagination, setUIPagination] = useState<{ from: number | undefined, to: number | undefined }>({
