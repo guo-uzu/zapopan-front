@@ -180,7 +180,6 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
 
       if (storedDate) {
         const parsed = JSON.parse(storedDate);
-
         // ⚠️ CRITICAL STEP: Convert the strings back to Date objects
         const restoredRange = {
           from: parsed.from ? new Date(parsed.from) : undefined,
@@ -424,9 +423,9 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
             <div className="flex items-center">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <CalendarDays />
-                  </Button>
+                  <div className="border border-zinc-300 rounded-sm p-2 cursor-pointer">
+                    <CalendarDays size={20} />
+                  </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-full">
                   <Calendar
