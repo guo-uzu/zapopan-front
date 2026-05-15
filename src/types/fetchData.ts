@@ -11,4 +11,4 @@ interface FetchData {
     dateRange: DateRange | undefined;
 }
 
-export type { FetchData };
+export type { FetchData, Filters };

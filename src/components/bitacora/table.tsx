@@ -59,6 +59,7 @@ import useDebouncedValue from "@/hooks/bitacora/useDebounce";
 import { fetchUsersFilterBitacora } from "@/lib/data/usersFilter";
 import goNextPage from "@/utils/bitacora/goNextPage";
 import goPreviousPage from "@/utils/bitacora/goPreviousPage";
+import { Filters } from "@/types/fetchData";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -84,7 +85,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
   });
   const [rowCount, setRowCount] = useState(0);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [filters, setFilters] = useState<{} | BitacoraRecord>({
+  const [filters, setFilters] = useState<Filters>({
     account: "",
     area: "",
     status: "",
