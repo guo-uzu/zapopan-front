@@ -2,9 +2,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { Inputs } from "@/hooks/types";
 import { cookies } from "next/headers";
-import { Option } from "@/app/respuestas/[[...respuestas]]/multi-select";
 import { mustMap, accountMap, areaMap, categoryMap, channelMap, priorityMap, statusMap, socialNetworkMap } from "@/lib/bitacora/maps";
-import { FormData } from "@/types/respuestas";
 
 export const sendDataSupabase = async (formData: Inputs) => {
     const cookieStore = await cookies();
@@ -42,38 +40,3 @@ export const sendDataSupabase = async (formData: Inputs) => {
     return { ok: true };
 };
 
-
-
-
-
-export const updateResponse = async (formData: {
-    id?: string | undefined;
-    title: string | undefined;
-    jjfDescription: string | undefined;
-    gobDescription: string | undefined;
-    selectedAreas: Option[] | undefined;
-}) => {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) throw new Error("User not founded");
-    const payload = {
-        title: formData.title,
-        description_jjf: formData.jjfDescription,
-        description_gob: formData.gobDescription,
-        labels_areas: formData.selectedAreas,
-        updated_at: new Date(),
-        latest_updated_user_id: user.id,
-    };
-    const { error } = await supabase
-        .from("respuestas")
-        .update(payload)
-        .eq("id", formData.id);
-    if (error) {
-        console.log("error respuestas update", error);
-        throw new Error("DB insert failed");
-    }
-    return { ok: true };
-};

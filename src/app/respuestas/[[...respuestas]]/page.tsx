@@ -15,15 +15,16 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Label } from "@/components/ui/label"
 import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
-import { updateResponse } from "@/hooks/sendData"
 import { getResponses } from "@/hooks/fetch-data"
 import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns"
-import MultipleSelector, { Option } from "./multi-select"
+import MultipleSelector from "./multi-select"
 import { toast } from "sonner"
 import { AlertDialogFooter, AlertDialogHeader, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog"
 import { deleteRespuesta } from "@/hooks/deleteRow"
-import type { ResponseFromAPI, DefaultForm } from "@/types/respuestas"
+import type { ResponseFromAPI, DefaultForm, User } from "@/types/respuestas"
+import { sendResponse } from "@/lib/data/sendResponse"
+import { updateResponse } from "@/lib/data/updateResponse"
 
 export default function Respuestas() {
     const [formDefaultData, setFormDefaultData] = useState<DefaultForm>({
@@ -51,7 +52,6 @@ export default function Respuestas() {
             setResponses([])
             return
         }
-        console.log(data)
         const formattedData = data.map((item: ResponseFromAPI) => ({
             ...item,
 
@@ -168,7 +168,7 @@ export default function Respuestas() {
                 updateResponse(formData),
                 {
                     loading: "Cargando...",
-                    success: (response) => {
+                    success: (response: { ok: boolean }) => {
                         if (response.ok === true) {
                             setLoading(false)
                         }
@@ -214,7 +214,7 @@ export default function Respuestas() {
         })
     }
 
-    const handleViewDialog = (item: Response) => {
+    const handleViewDialog = (item: ResponseFromAPI) => {
         setSelectedResponse(item)
         setOpenDialog(!openDialog)
     }
@@ -244,6 +244,13 @@ export default function Respuestas() {
         return `${day}/${month}/${date?.getFullYear()}`
     }
 
+    const getUserFullName = (user: User | User[] | null | undefined): string => {
+        if (!user) return "Anónimo"
+        if (Array.isArray(user)) {
+            return user[0]?.full_name ?? "Anónimo"
+        }
+        return user.full_name
+    }
 
     return (
         <SidebarProvider >
@@ -326,10 +333,18 @@ export default function Respuestas() {
                                                                     placeholder='Selecciona un área'
                                                                     hidePlaceholderWhenSelected
                                                                     emptyIndicator={<p className='text-center text-sm'>No se encontraron resultados</p>}
-                                                                    value={formDefaultData.selectedAreas}
+                                                                    value={ColumnsBitacoraOpts.area_id.map(area => ({
+                                                                        value: area.value,
+                                                                        label: area.label,
+                                                                    }))}
                                                                     onChange={(data) => setFormDefaultData({
                                                                         ...formDefaultData,
-                                                                        selectedAreas: data
+                                                                        selectedAreas: data.map((item) => ({
+                                                                            id: item.value,
+                                                                            value: item.value,
+                                                                            label: item.label,
+                                                                            color: (item.color as string) || ""
+                                                                        }))
                                                                     })}
                                                                     className='w-full'
                                                                 />
@@ -428,7 +443,7 @@ export default function Respuestas() {
                                                 <CardTitle className="text-lg font-bold leading-tight truncate max-w-[300px]">{response.title}</CardTitle>
                                                 <CardDescription className="flex items-center justify-between text-xs mt-2">
                                                     <span className="font-medium text-zinc-700 truncate max-w-[120px]">
-                                                        {response.user_id?.full_name ?? "Anónimo"}
+                                                        {getUserFullName(response.user_id)}
                                                     </span>
                                                     <span>
                                                         {formatDataFrom(response.created_at)}
@@ -482,7 +497,7 @@ export default function Respuestas() {
                                     <DialogDescription className="flex flex-col gap-2 text-xs mt-2">
                                         <div className="flex items-center justify-between">
                                             <span className="flex flex-row items-center justify-between text-xs pt-2 w-full font-medium text-zinc-700">
-                                                {selectedResponse?.user_id?.full_name ?? "Anónimo"}
+                                                {getUserFullName(selectedResponse?.user_id)}
                                             </span>
                                             <span>
                                                 {formatDataFrom(selectedResponse?.created_at)}
@@ -490,7 +505,7 @@ export default function Respuestas() {
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="flex flex-row items-center justify-between text-xs pt-2 w-full font-medium text-zinc-700">
-                                                {selectedResponse?.latest_updated_user_id?.full_name ?? "Anónimo"}
+                                                {getUserFullName(selectedResponse?.latest_updated_user_id)}
                                             </span>
                                             <span>
                                                 {formatDataFrom(selectedResponse?.updated_at)}

@@ -1,6 +1,3 @@
-import { Option } from "@/app/respuestas/[[...respuestas]]/multi-select"
-
-
 interface Area {
     id: string
     color: string
@@ -9,8 +6,8 @@ interface Area {
 }
 
 interface User {
-    avatar_url: string
-    email: string
+    avatar_url?: string
+    email?: string
     full_name: string
 }
 
@@ -39,10 +36,11 @@ interface DefaultForm {
 }
 
 interface FormData {
+    id?: string
     title?: string;
     jjfDescription?: string;
     gobDescription?: string;
     selectedAreas?: Area[];
 }
 
-export type { ResponseFromAPI, DefaultForm, FormData }
+export type { ResponseFromAPI, DefaultForm, FormData, Area, User }
