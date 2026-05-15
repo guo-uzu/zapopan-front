@@ -35,7 +35,7 @@ const CellObservations = (props: CellContext<BitacoraRecord, unknown>) => {
                 </a>
             );
         }
-        return <span>{text}</span>;
+        return <span key={index}>{text}</span>;
     })
 }
 

@@ -15,7 +15,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Label } from "@/components/ui/label"
 import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
-import { sendResponse, updateResponse } from "@/hooks/sendData"
+import { updateResponse } from "@/hooks/sendData"
 import { getResponses } from "@/hooks/fetch-data"
 import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns"
 import MultipleSelector, { Option } from "./multi-select"
@@ -23,32 +23,7 @@ import { toast } from "sonner"
 import { AlertDialogFooter, AlertDialogHeader, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog"
 import { deleteRespuesta } from "@/hooks/deleteRow"
-
-interface Response {
-    id: string
-    labels_areas: Option[]
-    created_at: string
-    description_jjf: string
-    description_gob: string
-    title: string
-    updated_at: string
-    latest_updated_user_id?: {
-        full_name: string
-    }
-    user_id: {
-        full_name: string
-        email: string
-        avatar_url: string
-    }
-}
-
-interface DefaultForm {
-    id?: string
-    title: string
-    jjfDescription: string
-    gobDescription: string
-    selectedAreas: Option[]
-}
+import type { ResponseFromAPI, DefaultForm } from "@/types/respuestas"
 
 export default function Respuestas() {
     const [formDefaultData, setFormDefaultData] = useState<DefaultForm>({
@@ -57,14 +32,14 @@ export default function Respuestas() {
         gobDescription: "",
         selectedAreas: [],
     })
-    const [responses, setResponses] = useState<Response[]>([])
+    const [responses, setResponses] = useState<ResponseFromAPI[]>([])
     const [searchTerm, setSearchTerm] = useState("")
     const [openSheet, setOpenSheet] = useState(false)
     const [openDialog, setOpenDialog] = useState(false)
     const [isLoading, setLoading] = useState(false)
     const [isEditing, setEditing] = useState(false)
 
-    const [selectedResponse, setSelectedResponse] = useState<Response>()
+    const [selectedResponse, setSelectedResponse] = useState<ResponseFromAPI>()
 
     const [upperMenu, setUpperMenu] = useState(false)
 
@@ -76,7 +51,8 @@ export default function Respuestas() {
             setResponses([])
             return
         }
-        const formattedData = data.map((item: any) => ({
+        console.log(data)
+        const formattedData = data.map((item: ResponseFromAPI) => ({
             ...item,
 
             // REGLA: Si user_id es un array, extrae la posición [0]. Si ya es objeto o null, déjalo igual.
@@ -91,7 +67,7 @@ export default function Respuestas() {
         }))
 
         // Ahora sí, los datos coinciden perfectamente con tu interfaz Response[]
-        setResponses(formattedData as Response[])
+        setResponses(formattedData)
     }
 
     useEffect(() => {
@@ -393,8 +369,8 @@ export default function Respuestas() {
                             <div className="scroller w-full flex flex-row gap-x-2 overflow-x-scroll text-xs py-2 px-8">
                                 <Badge>Áreas responsables</Badge>
                                 {
-                                    ColumnsBitacoraOpts.area_id.map((area, index) => (
-                                        <Badge key={index} variant="outline" onClick={() => handleTagClick(area.label)} className="cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal">
+                                    ColumnsBitacoraOpts.area_id.map((area) => (
+                                        <Badge key={area.value} variant="outline" onClick={() => handleTagClick(area.label)} className="cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal">
                                             {area.value}
                                         </Badge>
                                     ))
@@ -419,9 +395,9 @@ export default function Respuestas() {
                                                     // 1. FILTER: Keep only the items that are NOT in the excluded_view list
                                                     .filter((area) => !ColumnsBitacoraOpts.excluded_view.find((data) => area.id === data.id))
                                                     // 2. MAP: Render the remaining items
-                                                    .map((area, index) => (
+                                                    .map((area) => (
                                                         <Card
-                                                            key={index}
+                                                            key={area.value}
                                                             onClick={() => {
                                                                 handleTagClick(area.label)
                                                                 setUpperMenu((prev) => !prev)
@@ -476,9 +452,9 @@ export default function Respuestas() {
                                             <CardFooter>
                                                 <div className="flex flex-wrap gap-1.5 mt-auto">
                                                     {
-                                                        response.labels_areas?.map((tag, i) => (
+                                                        response.labels_areas?.map((tag) => (
                                                             <Badge
-                                                                key={i}
+                                                                key={tag.value}
                                                                 variant="secondary"
                                                                 className='cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal'
                                                                 // 3. UPDATED CLICK HANDLER
@@ -540,9 +516,9 @@ export default function Respuestas() {
                                     <div className="flex flex-col w-full gap-8">
                                         <div className="flex flex-wrap gap-1.5 mt-auto w-full">
                                             {
-                                                selectedResponse?.labels_areas?.map((tag, i) => (
+                                                selectedResponse?.labels_areas?.map((tag) => (
                                                     <Badge
-                                                        key={i}
+                                                        key={tag.value}
                                                         variant="secondary"
                                                         className='cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal'
                                                         // 3. UPDATED CLICK HANDLER

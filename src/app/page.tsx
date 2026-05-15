@@ -403,6 +403,7 @@ export default function Home() {
                   <ChartDashboard
                     config={categoryChart}
                     data={categoryDashboard.data}
+                    title="Solicitudes recibidas"
                   />
                 </div>
               </div>
@@ -421,6 +422,7 @@ export default function Home() {
                   <ChartDashboard
                     config={categoryChart}
                     data={reportesPorDependenciasDashboard.data}
+                    title="Reportes por dependencias"
                   />
                 </div>
               </div>
@@ -439,6 +441,7 @@ export default function Home() {
                   <ChartDashboard
                     config={categoryChart}
                     data={areaEstatalDashboard.data}
+                    title="Reportes externos"
                   />
                 </div>
               </div>
