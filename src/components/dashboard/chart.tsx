@@ -18,8 +18,8 @@ const ChartDashboard = ({
 }) => {
   const keys = Object.keys(config);
   return (
-    <div className="w-full h-auto">
-      <ChartContainer config={config}>
+    <div className="w-full h-full flex flex-col">
+      <ChartContainer className="max-h-[481px]" config={config}>
         <BarChart accessibilityLayer data={data}>
           <CartesianGrid vertical={false} />
           <YAxis

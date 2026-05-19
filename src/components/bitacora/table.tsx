@@ -46,7 +46,7 @@ import {
 
 import { type DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Ellipsis } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -60,6 +60,7 @@ import { fetchUsersFilterBitacora } from "@/lib/data/usersFilter";
 import goNextPage from "@/utils/bitacora/goNextPage";
 import goPreviousPage from "@/utils/bitacora/goPreviousPage";
 import { Filters } from "@/types/fetchData";
+import FiltersResponsive from "./FiltersResponsive";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -113,6 +114,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
     }
     fetchUsers()
   }, [])
+
   useEffect(() => {
     const data = {
       account: window.localStorage.getItem("account") ?? "",
@@ -244,7 +246,8 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 className="max-w-sm"
               />
             </div>
-            <div className="flex items-center">
+            <FiltersResponsive usersToFilter={usersToFilter} filters={filters} onChangeFilter={onChangeFilter} />
+            <div className="2xl:flex items-center hidden">
               <Select
                 value={filters.userName !== "all" ? filters.userName : ""}
                 onValueChange={(value: string) => {

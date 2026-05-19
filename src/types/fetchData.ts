@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import { DateRange } from "react-day-picker";
 
 interface Filters { account: string; area: string; status: string; channel: string; category: string; priority: string; userName: string; socialNetwork: string; dateRange: string; }
