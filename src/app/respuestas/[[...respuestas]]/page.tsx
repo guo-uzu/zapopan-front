@@ -333,10 +333,7 @@ export default function Respuestas() {
                                                                     placeholder='Selecciona un área'
                                                                     hidePlaceholderWhenSelected
                                                                     emptyIndicator={<p className='text-center text-sm'>No se encontraron resultados</p>}
-                                                                    value={ColumnsBitacoraOpts.area_id.map(area => ({
-                                                                        value: area.value,
-                                                                        label: area.label,
-                                                                    }))}
+                                                                    value={formDefaultData.selectedAreas}
                                                                     onChange={(data) => setFormDefaultData({
                                                                         ...formDefaultData,
                                                                         selectedAreas: data.map((item) => ({
