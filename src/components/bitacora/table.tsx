@@ -436,7 +436,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 </SelectContent>
               </Select>
             </div>
-            <div className="2xl:flex items-center hidden">
+            <div className="flex items-center">
               <Popover>
                 <PopoverTrigger asChild>
                   <div className="border border-zinc-300 rounded-sm p-2 cursor-pointer">
