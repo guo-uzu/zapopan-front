@@ -94,18 +94,20 @@ export const fetchBitacora = async ({
 
   if (dateRange?.from) {
     const date = new Date(dateRange.from)
+    console.log(dateRange.from)
     query = query.gte("created_at", formatDate(date));
   }
 
   if (dateRange?.to) {
     let date = new Date(dateRange.to)
     date.setHours(23, 59, 59)
+    console.log(dateRange.to)
     query = query.lte("created_at", formatDate(date));
   }
 
   const { data, error, count } = await query
   if (error) throw error
-
+  console.log(data)
   return {
     data,
     count,

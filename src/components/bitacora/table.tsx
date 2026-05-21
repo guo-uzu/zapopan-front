@@ -86,17 +86,6 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
   });
   const [rowCount, setRowCount] = useState(0);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [filters, setFilters] = useState<Filters>({
-    account: "",
-    area: "",
-    status: "",
-    channel: "",
-    category: "",
-    priority: "",
-    userName: "",
-    socialNetwork: "",
-    dateRange: ""
-  })
 
   const { table } = useBitacoraTable(
     dataBitacora,
@@ -115,22 +104,23 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
     fetchUsers()
   }, [])
 
-  useEffect(() => {
-    const data = {
-      account: window.localStorage.getItem("account") ?? "",
-      area: window.localStorage.getItem("area") ?? "",
-      status: window.localStorage.getItem("status") ?? "",
-      channel: window.localStorage.getItem("channel") ?? "",
-      category: window.localStorage.getItem("category") ?? "",
-      priority: window.localStorage.getItem("priority") ?? "",
-      userName: window.localStorage.getItem("userName") ?? "",
-      socialNetwork: window.localStorage.getItem("socialNetwork") ?? "",
-      dateRange: window.localStorage.getItem("bitacora_date_range") ?? ""
+  const [filters, setFilters] = useState<Filters>(() => {
+    if (typeof window === "undefined") {
+      return { account: "", area: "", status: "", channel: "", category: "", priority: "", userName: "", socialNetwork: "", dateRange: "" };
+    }
+    return {
+      account: localStorage.getItem("account") ?? "",
+      area: localStorage.getItem("area") ?? "",
+      status: localStorage.getItem("status") ?? "",
+      channel: localStorage.getItem("channel") ?? "",
+      category: localStorage.getItem("category") ?? "",
+      priority: localStorage.getItem("priority") ?? "",
+      userName: localStorage.getItem("userName") ?? "",
+      socialNetwork: localStorage.getItem("socialNetwork") ?? "",
+      dateRange: localStorage.getItem("bitacora_date_range") ?? ""
     };
-    setFilters(data)
-  }, [])
+  })
 
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const debouncedGlobal = useDebouncedValue(globalFilter, 300);
   const [uiPagination, setUIPagination] = useState<{ from: number | undefined, to: number | undefined }>({
     from: undefined,
@@ -148,6 +138,21 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
+
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
+    if (typeof window === "undefined") return undefined;
+    const storedDate = localStorage.getItem("bitacora_date_range");
+    if (!storedDate) return;
+    try {
+      const parsed = JSON.parse(storedDate);
+      return {
+        from: parsed.from ? new Date(parsed.from) : undefined,
+        to: parsed.to ? new Date(parsed.to) : undefined,
+      };
+    } catch {
+      return undefined;
+    }
+  });
 
   // Realtime updates
   useEffect(() => {
@@ -190,30 +195,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
     setPagination((prev) => ({ ...prev, pageIndex: 0 })); // ← critical
   };
 
-  useEffect(() => {
-    try {
-      const storedDate = localStorage.getItem("bitacora_date_range");
 
-      if (storedDate) {
-        const parsed = JSON.parse(storedDate);
-        // ⚠️ CRITICAL STEP: Convert the strings back to Date objects
-        const restoredRange = {
-          from: parsed.from ? new Date(parsed.from) : undefined,
-          to: parsed.to ? new Date(parsed.to) : undefined,
-        };
-
-        // 1. Update State
-        setDateRange(restoredRange);
-
-        // 2. Update Table Filter immediately
-        const col = table.getColumn("created_at"); // Make sure this ID matches your column def
-        if (col) col.setFilterValue(restoredRange);
-      }
-    } catch (error) {
-      // Optional: clear invalid data
-      localStorage.removeItem("bitacora_date_range");
-    }
-  }, []); // Empty dependency array = runs once on mount
 
   useEffect(() => {
     const fetchBitacoraData = async () => {

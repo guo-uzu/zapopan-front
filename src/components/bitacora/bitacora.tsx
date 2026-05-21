@@ -102,6 +102,7 @@ export const columns: ColumnDef<BitacoraRecord>[] = [
   {
     accessorFn: (row) => `${row.created_at ?? "N/A"}`,
     header: "Creado",
+    id: "created_at",
     cell: CellDate,
     size: 100
   },
