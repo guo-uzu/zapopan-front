@@ -1,51 +1,32 @@
-import { CircleUserRound, Ellipsis } from "lucide-react"
-import { DropdownMenuLabel, DropdownMenuSubContent, DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "../ui/dropdown-menu"
+import { Shield, Ellipsis, Building, Inbox, Siren, CircleFadingPlus, Signal, SquareCheck } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Button } from "../ui/button"
 import { Filters } from "@/types/fetchData";
+import Users from "./filterMenuMobile/Users";
+import StaticFilters from "./filterMenuMobile/StaticFilters";
 
 const FiltersResponsive = ({ usersToFilter, filters, onChangeFilter }: { usersToFilter: { id: string; full_name: string }[], filters: Filters, onChangeFilter: (key: string, value: string) => void }) => {
-    return (
-        <div className="block 2xl:hidden">
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline"><Ellipsis /></Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuGroup>
-                        <DropdownMenuSub>
-                            <DropdownMenuSubTrigger className="flex gap-x-1">
-                                <CircleUserRound size={14} />
-                                Usuarios
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent>
-                                <DropdownMenuGroup>
-                                    <DropdownMenuLabel>Usuarios</DropdownMenuLabel>
-                                    <DropdownMenuRadioGroup
-                                        value={filters.userName !== "all" ? filters.userName : ""}
-                                        onValueChange={(value: string) => {
-                                            window.localStorage.setItem("userName", value);
-                                            onChangeFilter("userName", value);
-                                        }}
-                                    >
-                                        <DropdownMenuRadioItem value="all">Todos</DropdownMenuRadioItem>
-                                        {
-                                            usersToFilter.map(e => (
-                                                <DropdownMenuRadioItem value={e.id} key={e.id}>{e.full_name}</DropdownMenuRadioItem>
-                                            ))
-                                        }
-                                        <DropdownMenuRadioItem value="N/A">
-                                            N/A
-                                        </DropdownMenuRadioItem>
-                                    </DropdownMenuRadioGroup>
-
-                                </DropdownMenuGroup>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuSub>
-                    </DropdownMenuGroup>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-    )
+  return (
+    <div className="block 2xl:hidden">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline"><Ellipsis /></Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuGroup>
+            <Users filters={filters} usersToFilter={usersToFilter} onChangeFilter={onChangeFilter} />
+            <StaticFilters icon={<Shield size={14} />} title="Cuenta" column="account_id" valueFilter="account" filters={filters} onChangeFilter={onChangeFilter} />
+            <StaticFilters icon={<Building size={14} />} title="Area" column="area_id" valueFilter="area" filters={filters} onChangeFilter={onChangeFilter} />
+            <StaticFilters icon={<Inbox size={14} />} title="Canal" column="channel" valueFilter="channel" filters={filters} onChangeFilter={onChangeFilter} />
+            <StaticFilters icon={<Siren size={14} />} title="Categoría" column="category" valueFilter="category" filters={filters} onChangeFilter={onChangeFilter} />
+            <StaticFilters icon={<CircleFadingPlus size={14} />} title="Redes sociales" column="social_network" valueFilter="socialNetwork" filters={filters} onChangeFilter={onChangeFilter} />
+            <StaticFilters icon={<Signal size={14} />} title="Prioridad" column="priority" valueFilter="priority" filters={filters} onChangeFilter={onChangeFilter} />
+            <StaticFilters icon={<SquareCheck size={14} />} title="Status" column="status" valueFilter="status" filters={filters} onChangeFilter={onChangeFilter} />
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
 }
 
 export default FiltersResponsive

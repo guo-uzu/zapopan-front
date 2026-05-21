@@ -269,7 +269,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center">
+            <div className="2xl:flex items-center hidden">
               <Select
                 value={filters.account !== "all" ? filters.account : ""}
                 onValueChange={(value: string) => {
@@ -291,7 +291,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center">
+            <div className="2xl:flex items-center hidden">
               <Select
                 value={filters.area !== "all" ? filters.area : ""}
                 onValueChange={(value: string) => {
@@ -318,7 +318,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center">
+            <div className="2xl:flex items-center hidden">
               <Select
                 value={filters.channel !== "all" ? filters.channel : ""}
                 onValueChange={(value: string) => {
@@ -340,7 +340,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center">
+            <div className="2xl:flex items-center hidden">
               <Select
                 value={filters.category !== "all" ? filters.category : ""}
                 onValueChange={(value: string) => {
@@ -362,7 +362,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center">
+            <div className="2xl:flex items-center hidden">
               <Select
                 value={filters.socialNetwork !== "all" ? filters.socialNetwork : ""}
                 onValueChange={(value: string) => {
@@ -392,7 +392,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center">
+            <div className="2xl:flex items-center hidden">
               <Select
                 value={filters.priority !== "all" ? filters.priority : ""}
                 onValueChange={(value: string) => {
@@ -414,7 +414,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center">
+            <div className="2xl:flex items-center hidden">
               <Select
                 value={filters.status !== "all" ? filters.status : ""}
                 onValueChange={(value: string) => {
@@ -436,7 +436,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center">
+            <div className="2xl:flex items-center hidden">
               <Popover>
                 <PopoverTrigger asChild>
                   <div className="border border-zinc-300 rounded-sm p-2 cursor-pointer">
