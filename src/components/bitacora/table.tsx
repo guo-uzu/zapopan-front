@@ -1,8 +1,9 @@
-"use client";
+"use client"
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { ColumnDef, flexRender } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "../ui/skeleton";
 
 import {
   Table,
@@ -29,19 +30,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-interface ColumnFilter {
-  id: string;
-  value: unknown;
-}
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  idFilter?: string | null;
-}
-type ColumnFilterState = ColumnFilter[];
 
 import {
   ColumnsBitacoraOpts,
-  UsersFormatFilterBitacora,
 } from "@/hooks/dataBitacoraColumns";
 
 import { type DateRange } from "react-day-picker";
@@ -68,7 +59,7 @@ import FiltersResponsive from "./FiltersResponsive";
  * @returns DataTable is the function that prints the table in the DOM and shows all of the rows or individually
  */
 
-export function DataTable<TData extends BitacoraRecord, TValue>({
+export function DataTable<TData extends BitacoraRecord>({
   columns,
   idFilter,
 }: { columns: ColumnDef<BitacoraRecord, unknown>[], idFilter: string | null }) {
@@ -86,6 +77,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
   });
   const [rowCount, setRowCount] = useState(0);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [loading, setLoading] = useState(true)
 
   const { table } = useBitacoraTable(
     dataBitacora,
@@ -195,9 +187,8 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
     setPagination((prev) => ({ ...prev, pageIndex: 0 })); // ← critical
   };
 
-
-
   useEffect(() => {
+    setLoading(true)
     const fetchBitacoraData = async () => {
       const { data, count, from, to } = await fetchBitacora({
         pageIndex: pagination.pageIndex,
@@ -210,6 +201,7 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
       if (data) setDataBitacora(data as TData[]);
       setRowCount(count ?? 0);
       setUIPagination({ from, to })
+      setLoading(false)
     }
     fetchBitacoraData()
   }, [pagination, filters, debouncedGlobal, dateRange, idFilter]);
@@ -466,96 +458,101 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
         </CardHeader>
         <CardContent className="flex-1 overflow-hidden relative">
           <div className="flex h-full w-full overflow-x-auto">
-            <Table
-              className="table-fixed"
-              style={{ width: table.getCenterTotalSize() }}
-            >
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead
-                          key={header.id}
-                          className="group/head relative h-10 select-none last:[&>.cursor-col-resize]:opacity-0 text-sm bg-zinc-50"
-                          {...{
-                            colSpan: header.colSpan,
-                            style: {
-                              width: header.getSize(),
-                            },
-                          }}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                              header.column
-                                .columnDef
-                                .header,
-                              header.getContext(),
-                            )}
-                          {header.column.getCanResize() && (
-                            <div
+            {
+              loading ? <Skeleton className="w-full h-full" />
+                :
+                <Table
+                  className="table-fixed"
+                  style={{ width: table.getCenterTotalSize() }}
+                >
+                  <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => {
+                          return (
+                            <TableHead
                               key={header.id}
+                              className="group/head relative h-10 select-none last:[&>.cursor-col-resize]:opacity-0 text-sm bg-zinc-50"
                               {...{
-                                onDoubleClick:
-                                  () =>
-                                    header.column.resetSize(),
-                                onMouseDown:
-                                  header.getResizeHandler(),
-                                onTouchStart:
-                                  header.getResizeHandler(),
-                                className:
-                                  "group-last/head:hidden absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:translate-x-px",
+                                colSpan: header.colSpan,
+                                style: {
+                                  width: header.getSize(),
+                                },
                               }}
-                            />
-                          )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={
-                        row.getIsSelected() &&
-                        "selected"
-                      }
-                    >
-                      {row
-                        .getVisibleCells()
-                        .map((cell) => (
-                          <TableCell
-                            key={cell.id}
-                            className="text-md whitespace-normal"
-                            style={{
-                              width: cell.column.getSize(),
-                            }}
-                          >
-                            {flexRender(
-                              cell.column
-                                .columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </TableCell>
-                        ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="text-center"
-                    >
-                      Cargando datos...
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                            >
+                              {header.isPlaceholder
+                                ? null
+                                : flexRender(
+                                  header.column
+                                    .columnDef
+                                    .header,
+                                  header.getContext(),
+                                )}
+                              {header.column.getCanResize() && (
+                                <div
+                                  key={header.id}
+                                  {...{
+                                    onDoubleClick:
+                                      () =>
+                                        header.column.resetSize(),
+                                    onMouseDown:
+                                      header.getResizeHandler(),
+                                    onTouchStart:
+                                      header.getResizeHandler(),
+                                    className:
+                                      "group-last/head:hidden absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:translate-x-px",
+                                  }}
+                                />
+                              )}
+                            </TableHead>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows?.length ? (
+                      table.getRowModel().rows.map((row) => (
+                        <TableRow
+                          key={row.id}
+                          data-state={
+                            row.getIsSelected() &&
+                            "selected"
+                          }
+                        >
+                          {row
+                            .getVisibleCells()
+                            .map((cell) => (
+                              <TableCell
+                                key={cell.id}
+                                className="text-md whitespace-normal"
+                                style={{
+                                  width: cell.column.getSize(),
+                                }}
+                              >
+                                {flexRender(
+                                  cell.column
+                                    .columnDef.cell,
+                                  cell.getContext(),
+                                )}
+                              </TableCell>
+                            ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={columns.length}
+                          className="text-center"
+                        >
+                          No hay datos (╥﹏╥)
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+
+            }
           </div>
         </CardContent>
         <CardFooter className="flex flex-row justify-between">
@@ -583,7 +580,11 @@ export function DataTable<TData extends BitacoraRecord, TValue>({
             </Button>
           </div>
           <div>
-            <span className="text-sm font-bold text-zinc-500">{uiPagination.from}-{uiPagination.to} de {rowCount}</span>
+            {
+              loading ? <Skeleton className="w-20 h-10" />
+                :
+                <span className="text-sm font-bold text-zinc-500">{uiPagination.from}-{uiPagination.to} de {rowCount}</span>
+            }
           </div>
         </CardFooter>
       </Card>
