@@ -12,8 +12,8 @@ const useDateRange = () => {
       to: parsed.to ? new Date(parsed.to) : undefined,
     };
   });
-  const handleSetDateRange = (e: { from: Date, to: Date }) => setDateRange(e)
-  return [dateRange, handleSetDateRange]
+  const handleSetDateRange = (e: DateRange | undefined) => setDateRange(e)
+  return { dateRange, handleSetDateRange }
 }
 
 export default useDateRange

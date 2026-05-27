@@ -54,6 +54,8 @@ import { Filters } from "@/types/fetchData";
 import FiltersResponsive from "./FiltersResponsive";
 import FilterDesktop from "./filterDesktop";
 import FilterUsers from "./filterUsers";
+import useDateRange from "@/hooks/bitacora/useDateRange";
+import CalendarFilter from "./calendarFilter";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -79,6 +81,7 @@ export function DataTable<TData extends BitacoraRecord>({
   const [rowCount, setRowCount] = useState(0);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true)
+  const { dateRange } = useDateRange()
 
   const { table } = useBitacoraTable(
     dataBitacora,
@@ -211,7 +214,7 @@ export function DataTable<TData extends BitacoraRecord>({
             <FilterDesktop placeholder="Redes sociales" idFilterItem="socialNetwork" idColumnBitacora="social_network" filters={filters} onChangeFilter={onChangeFilter} />
             <FilterDesktop placeholder="Prioridad" idFilterItem="priority" idColumnBitacora="priority" filters={filters} onChangeFilter={onChangeFilter} />
             <FilterDesktop placeholder="Estatus" idFilterItem="status" idColumnBitacora="status" filters={filters} onChangeFilter={onChangeFilter} />
-
+            <CalendarFilter onChangeFilter={onChangeFilter} />
           </div>
           {
             // Container right corner card

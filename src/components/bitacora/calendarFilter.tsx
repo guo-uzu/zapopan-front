@@ -4,8 +4,8 @@ import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 import useDateRange from "@/hooks/bitacora/useDateRange";
 
 
-const CalendarFilter = () => {
-  const [dateRange,] = useDateRange()
+const CalendarFilter = ({ onChangeFilter }: { onChangeFilter: (key: string, value: string) => void }) => {
+  const { dateRange, handleSetDateRange } = useDateRange()
   return (
     <div className="flex items-center">
       <Popover>
@@ -21,7 +21,7 @@ const CalendarFilter = () => {
             selected={dateRange}
             onSelect={(range) => {
               // 1. Actualiza tu estado local para la UI
-              setDateRange(range);
+              handleSetDateRange(range);
               // Opcional: Guardarlo en local storage para que persista
               localStorage.setItem(
                 "bitacora_date_range",
@@ -37,3 +37,5 @@ const CalendarFilter = () => {
     </div>
   )
 }
+
+export default CalendarFilter

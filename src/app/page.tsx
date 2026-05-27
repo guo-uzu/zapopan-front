@@ -277,10 +277,6 @@ export default function Home() {
     handleFetchReportesPorDependencia()
   }, [dateRange]);
 
-
-
-
-
   return (
     <SidebarProvider>
       <AppSidebar />
