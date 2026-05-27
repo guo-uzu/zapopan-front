@@ -1,6 +1,5 @@
 "use client"
 /**
- * @import Dispatch, SetStateAction, useState are types and a hook to describe that wer're using or recieving an useState hook
  * @import BitacoraTable are the types of Bitacora
  * @import useReact, ColumnDef, ... are parts of tanstack library to use them in filters, visibility and basically certain actions of the table
  * @param data is the data fetched from supabase of the bitacora
@@ -8,7 +7,7 @@
  * @returns useBitacoraTable a custom hook to create the table and mantain the whole table in one place
  */
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { BitacoraRecord, BitacoraTableMeta } from "@/types/bitacoraTable";
 import {
   useReactTable,

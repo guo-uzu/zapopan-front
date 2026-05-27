@@ -52,6 +52,8 @@ import goNextPage from "@/utils/bitacora/goNextPage";
 import goPreviousPage from "@/utils/bitacora/goPreviousPage";
 import { Filters } from "@/types/fetchData";
 import FiltersResponsive from "./FiltersResponsive";
+import FilterDesktop from "./filterDesktop";
+import FilterUsers from "./filterUsers";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -69,7 +71,6 @@ export function DataTable<TData extends BitacoraRecord>({
   const [defaultData, setDefaultData] = useState({});
   const [toEdit, setToEdit] = useState<boolean>(false);
   const handleOpenForm = () => setOpen(true);
-  const [usersToFilter, setUsersToFilter] = useState<{ id: string; full_name: string }[]>([]);
   const handleToEdit = () => setToEdit(prev => !prev);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -88,18 +89,12 @@ export function DataTable<TData extends BitacoraRecord>({
       setDefaultData,
     },
   );
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const data = await fetchUsersFilterBitacora()
-      if (data) setUsersToFilter(data)
-    }
-    fetchUsers()
-  }, [])
 
   const [filters, setFilters] = useState<Filters>(() => {
     if (typeof window === "undefined") {
       return { account: "", area: "", status: "", channel: "", category: "", priority: "", userName: "", socialNetwork: "", dateRange: "" };
     }
+
     return {
       account: localStorage.getItem("account") ?? "",
       area: localStorage.getItem("area") ?? "",
@@ -113,7 +108,7 @@ export function DataTable<TData extends BitacoraRecord>({
     };
   })
 
-  const debouncedGlobal = useDebouncedValue(globalFilter, 300);
+  const debouncedGlobal = useDebouncedValue(globalFilter, 100);
   const [uiPagination, setUIPagination] = useState<{ from: number | undefined, to: number | undefined }>({
     from: undefined,
     to: undefined
@@ -131,20 +126,7 @@ export function DataTable<TData extends BitacoraRecord>({
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
-    if (typeof window === "undefined") return undefined;
-    const storedDate = localStorage.getItem("bitacora_date_range");
-    if (!storedDate) return;
-    try {
-      const parsed = JSON.parse(storedDate);
-      return {
-        from: parsed.from ? new Date(parsed.from) : undefined,
-        to: parsed.to ? new Date(parsed.to) : undefined,
-      };
-    } catch {
-      return undefined;
-    }
-  });
+
 
   // Realtime updates
   useEffect(() => {
@@ -220,224 +202,16 @@ export function DataTable<TData extends BitacoraRecord>({
                 className="max-w-sm"
               />
             </div>
-            <FiltersResponsive usersToFilter={usersToFilter} filters={filters} onChangeFilter={onChangeFilter} />
-            <div className="2xl:flex items-center hidden">
-              <Select
-                value={filters.userName !== "all" ? filters.userName : ""}
-                onValueChange={(value: string) => {
-                  window.localStorage.setItem("userName", value);
-                  onChangeFilter("userName", value);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Usuarios" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {usersToFilter.map((e) => (
-                    <SelectItem key={`u-${e.full_name}`} value={e.id}>
-                      {e.full_name}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="N/A">N/A</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="2xl:flex items-center hidden">
-              <Select
-                value={filters.account !== "all" ? filters.account : ""}
-                onValueChange={(value: string) => {
-                  localStorage.setItem("account", value);
-                  onChangeFilter("account", value);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Cuentas" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {ColumnsBitacoraOpts.account_id.map((e) => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {e.value}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="N/A">N/A</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="2xl:flex items-center hidden">
-              <Select
-                value={filters.area !== "all" ? filters.area : ""}
-                onValueChange={(value: string) => {
-                  localStorage.setItem("area", value);
-                  onChangeFilter("area", value);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Area" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {ColumnsBitacoraOpts.area_id.map(
-                    (e) => (
-                      <SelectItem
-                        key={e.id}
-                        value={e.value}
-                      >
-                        {e.value}
-                      </SelectItem>
-                    ),
-                  )}
-                  <SelectItem value="N/A">N/A</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="2xl:flex items-center hidden">
-              <Select
-                value={filters.channel !== "all" ? filters.channel : ""}
-                onValueChange={(value: string) => {
-                  localStorage.setItem("channel", value);
-                  onChangeFilter("channel", value);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Canal" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {ColumnsBitacoraOpts.channel.map((e) => (
-                    <SelectItem key={e.id} value={e.value}>
-                      {e.value}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="N/A">N/A</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="2xl:flex items-center hidden">
-              <Select
-                value={filters.category !== "all" ? filters.category : ""}
-                onValueChange={(value: string) => {
-                  localStorage.setItem("category", value);
-                  onChangeFilter("category", value);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Categoría" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {ColumnsBitacoraOpts.category.map((e) => (
-                    <SelectItem key={e.id} value={e.value}>
-                      {e.value}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="N/A">N/A</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="2xl:flex items-center hidden">
-              <Select
-                value={filters.socialNetwork !== "all" ? filters.socialNetwork : ""}
-                onValueChange={(value: string) => {
-                  localStorage.setItem(
-                    "socialNetwork",
-                    value,
-                  );
-                  onChangeFilter("socialNetwork", value);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Redes sociales" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {ColumnsBitacoraOpts.social_network.map(
-                    (e) => (
-                      <SelectItem
-                        key={e.id}
-                        value={e.value}
-                      >
-                        {e.value}
-                      </SelectItem>
-                    ),
-                  )}
-                  <SelectItem value="N/A">N/A</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="2xl:flex items-center hidden">
-              <Select
-                value={filters.priority !== "all" ? filters.priority : ""}
-                onValueChange={(value: string) => {
-                  localStorage.setItem("priority", value);
-                  onChangeFilter("priority", value);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Prioridad" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {ColumnsBitacoraOpts.priority.map((e) => (
-                    <SelectItem key={e.id} value={e.value}>
-                      {e.value}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="N/A">N/A</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="2xl:flex items-center hidden">
-              <Select
-                value={filters.status !== "all" ? filters.status : ""}
-                onValueChange={(value: string) => {
-                  localStorage.setItem("status", value);
-                  onChangeFilter("status", value);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Estatus" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {ColumnsBitacoraOpts.status.map((e) => (
-                    <SelectItem key={e.id} value={e.value}>
-                      {e.value}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="N/A">N/A</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <div className="border border-zinc-300 rounded-sm p-2 cursor-pointer">
-                    <CalendarDays size={20} />
-                  </div>
-                </PopoverTrigger>
-                <PopoverContent className="w-full">
-                  <Calendar
-                    mode="range"
-                    defaultMonth={dateRange?.from}
-                    selected={dateRange}
-                    onSelect={(range) => {
-                      // 1. Actualiza tu estado local para la UI
-                      setDateRange(range);
-                      // Opcional: Guardarlo en local storage para que persista
-                      localStorage.setItem(
-                        "bitacora_date_range",
-                        JSON.stringify(range),
-                      );
-                      onChangeFilter("bitacora_date_range", JSON.stringify(range))
-                    }}
-                    numberOfMonths={2}
-                    className="rounded-lg border shadow-sm"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+            <FiltersResponsive filters={filters} onChangeFilter={onChangeFilter} />
+            <FilterUsers filters={filters} onChangeFilter={onChangeFilter} />
+            <FilterDesktop placeholder="Cuentas" idFilterItem="account" idColumnBitacora="account_id" filters={filters} onChangeFilter={onChangeFilter} />
+            <FilterDesktop placeholder="Area" idFilterItem="area" idColumnBitacora="area_id" filters={filters} onChangeFilter={onChangeFilter} />
+            <FilterDesktop placeholder="Canal" idFilterItem="channel" idColumnBitacora="channel" filters={filters} onChangeFilter={onChangeFilter} />
+            <FilterDesktop placeholder="Categoría" idFilterItem="category" idColumnBitacora="category" filters={filters} onChangeFilter={onChangeFilter} />
+            <FilterDesktop placeholder="Redes sociales" idFilterItem="socialNetwork" idColumnBitacora="social_network" filters={filters} onChangeFilter={onChangeFilter} />
+            <FilterDesktop placeholder="Prioridad" idFilterItem="priority" idColumnBitacora="priority" filters={filters} onChangeFilter={onChangeFilter} />
+            <FilterDesktop placeholder="Estatus" idFilterItem="status" idColumnBitacora="status" filters={filters} onChangeFilter={onChangeFilter} />
+
           </div>
           {
             // Container right corner card

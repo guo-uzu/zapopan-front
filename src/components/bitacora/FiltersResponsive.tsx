@@ -5,7 +5,7 @@ import { Filters } from "@/types/fetchData";
 import Users from "./filterMenuMobile/Users";
 import StaticFilters from "./filterMenuMobile/StaticFilters";
 
-const FiltersResponsive = ({ usersToFilter, filters, onChangeFilter }: { usersToFilter: { id: string; full_name: string }[], filters: Filters, onChangeFilter: (key: string, value: string) => void }) => {
+const FiltersResponsive = ({ filters, onChangeFilter }: { filters: Filters, onChangeFilter: (key: string, value: string) => void }) => {
   return (
     <div className="block 2xl:hidden">
       <DropdownMenu>
@@ -14,7 +14,7 @@ const FiltersResponsive = ({ usersToFilter, filters, onChangeFilter }: { usersTo
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuGroup>
-            <Users filters={filters} usersToFilter={usersToFilter} onChangeFilter={onChangeFilter} />
+            <Users filters={filters} onChangeFilter={onChangeFilter} />
             <StaticFilters icon={<Shield size={14} />} title="Cuenta" column="account_id" valueFilter="account" filters={filters} onChangeFilter={onChangeFilter} />
             <StaticFilters icon={<Building size={14} />} title="Area" column="area_id" valueFilter="area" filters={filters} onChangeFilter={onChangeFilter} />
             <StaticFilters icon={<Inbox size={14} />} title="Canal" column="channel" valueFilter="channel" filters={filters} onChangeFilter={onChangeFilter} />

@@ -14,3 +14,5 @@ export const fetchUsersFilterBitacora = async () => {
     )
   return query.data;
 };
+
+export type FetchUsersFilter = Awaited<ReturnType<typeof fetchUsersFilterBitacora>>
