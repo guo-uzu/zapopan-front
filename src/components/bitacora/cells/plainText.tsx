@@ -10,7 +10,7 @@ const CellPlainText = (props: CellContext<BitacoraRecord, unknown>) => {
       toast.error("No hay información para copiar", { position: "top-center" })
       return
     }
-    await navigator.clipboard.writeText(e.currentTarget.innerHTML)
+    await navigator.clipboard.writeText(e.currentTarget.innerText)
     toast.success("Información copiada al portapapeles", { position: "top-center" })
   }
   const urlify = (text: string) => {
