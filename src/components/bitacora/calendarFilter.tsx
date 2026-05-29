@@ -1,11 +1,10 @@
 import { Calendar } from "../ui/calendar";
 import { CalendarDays } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
-import useDateRange from "@/hooks/bitacora/useDateRange";
+import { DateRange } from "react-day-picker";
+import { Dispatch } from "react";
 
-
-const CalendarFilter = ({ onChangeFilter }: { onChangeFilter: (key: string, value: string) => void }) => {
-  const { dateRange, handleSetDateRange } = useDateRange()
+const CalendarFilter = ({ dateRange, setDateRange, onChangeFilter }: { dateRange: DateRange | undefined, setDateRange: Dispatch<DateRange | undefined>, onChangeFilter: (key: string, value: string) => void }) => {
   return (
     <div className="flex items-center">
       <Popover>
@@ -21,12 +20,12 @@ const CalendarFilter = ({ onChangeFilter }: { onChangeFilter: (key: string, valu
             selected={dateRange}
             onSelect={(range) => {
               // 1. Actualiza tu estado local para la UI
-              handleSetDateRange(range);
+              setDateRange(range);
               // Opcional: Guardarlo en local storage para que persista
               localStorage.setItem(
                 "bitacora_date_range",
                 JSON.stringify(range),
-              );
+              )
               onChangeFilter("bitacora_date_range", JSON.stringify(range))
             }}
             numberOfMonths={2}

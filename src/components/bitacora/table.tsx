@@ -23,31 +23,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import {
-  ColumnsBitacoraOpts,
-} from "@/hooks/dataBitacoraColumns";
-
-import { type DateRange } from "react-day-picker";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarDays, Ellipsis } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import FormBitacora from "./form";
 import useBitacoraTable from "@/hooks/bitacora/useBitacoraTable";
 import { BitacoraRecord } from "@/types/bitacoraTable";
 import useDebouncedValue from "@/hooks/bitacora/useDebounce";
-import { fetchUsersFilterBitacora } from "@/lib/data/usersFilter";
 import goNextPage from "@/utils/bitacora/goNextPage";
 import goPreviousPage from "@/utils/bitacora/goPreviousPage";
 import { Filters } from "@/types/fetchData";
@@ -81,7 +60,7 @@ export function DataTable<TData extends BitacoraRecord>({
   const [rowCount, setRowCount] = useState(0);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true)
-  const { dateRange } = useDateRange()
+  const { dateRange, setDateRange } = useDateRange()
 
   const { table } = useBitacoraTable(
     dataBitacora,
@@ -214,7 +193,7 @@ export function DataTable<TData extends BitacoraRecord>({
             <FilterDesktop placeholder="Redes sociales" idFilterItem="socialNetwork" idColumnBitacora="social_network" filters={filters} onChangeFilter={onChangeFilter} />
             <FilterDesktop placeholder="Prioridad" idFilterItem="priority" idColumnBitacora="priority" filters={filters} onChangeFilter={onChangeFilter} />
             <FilterDesktop placeholder="Estatus" idFilterItem="status" idColumnBitacora="status" filters={filters} onChangeFilter={onChangeFilter} />
-            <CalendarFilter onChangeFilter={onChangeFilter} />
+            <CalendarFilter dateRange={dateRange} setDateRange={setDateRange} onChangeFilter={onChangeFilter} />
           </div>
           {
             // Container right corner card

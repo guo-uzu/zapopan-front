@@ -49,7 +49,7 @@ export const fetchBitacora = async ({
     .range(from, to).eq("available", true)
     .order('created_at', { ascending: false })
 
-  if (globalFilter) query = query.textSearch("search_in_bitacora", globalFilter.replace(" ", "+"))
+  if (globalFilter) query = query.textSearch("search_in_bitacora", globalFilter.replaceAll(" ", "+"))
   if (idFilter) query = query.eq("id", idFilter);
   if (filters.status === "N/A") {
     query = query.is("status_id", null);
