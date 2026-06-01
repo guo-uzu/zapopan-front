@@ -90,7 +90,7 @@ export function DataTable<TData extends BitacoraRecord>({
     };
   })
 
-  const debouncedGlobal = useDebouncedValue(globalFilter, 100);
+  const debouncedGlobal = useDebouncedValue(globalFilter, 800);
   const [uiPagination, setUIPagination] = useState<{ from: number | undefined, to: number | undefined }>({
     from: undefined,
     to: undefined
@@ -163,6 +163,7 @@ export function DataTable<TData extends BitacoraRecord>({
         dateRange,
       })
       if (data) setDataBitacora(data as TData[]);
+      console.log(data)
       setRowCount(count ?? 0);
       setUIPagination({ from, to })
       setLoading(false)

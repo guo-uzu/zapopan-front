@@ -6,6 +6,28 @@ import { formatDate } from "@/utils/bitacora/formatDate";
 
 const supabase = createClient();
 
+const columns = `
+  id,
+  user_id(full_name),
+  created_by_name,
+  account_id(name),
+  area_id(name),
+  category_id(name),
+  social_network_id(name),
+  channel_id(name),
+  priority_id(name),
+  status_id(name),
+  description,
+  link,
+  username,
+  created_at,
+  updated_at,
+  latest_updated_user_id(full_name),
+  colonia,
+  folio,
+  observations
+`;
+
 export const fetchBitacora = async ({
   pageIndex,
   pageSize,
@@ -22,34 +44,18 @@ export const fetchBitacora = async ({
   const to = from + pageSize - 1;
   let query = supabase
     .from("bitacora")
-    .select(
-      `
-          id,
-          user_id(full_name),
-          created_by_name,
-          account_id(name),
-          area_id(name),
-          category_id(name),
-          social_network_id(name),
-          channel_id(name),
-          priority_id(name),
-          status_id(name),
-          description,
-          link,
-          username,
-          created_at,
-          updated_at,
-          latest_updated_user_id(full_name),
-          colonia,
-          folio,
-          observations
-          `,
-      { count: "exact" },
-    )
-    .range(from, to).eq("available", true)
-    .order('created_at', { ascending: false })
+    .select(columns, { count: "exact" })
+    .eq("available", true)
+    .range(from, to)
+    .order("created_at", { ascending: false });
 
-  if (globalFilter) query = query.textSearch("search_in_bitacora", globalFilter.replaceAll(" ", "+"))
+  if (globalFilter) {
+    const filter = `%${globalFilter}%`;
+    query = query.or(
+      `username.ilike.${filter},description.ilike.${filter},colonia.ilike.${filter},observations.ilike.${filter}`
+    )
+
+  }
   if (idFilter) query = query.eq("id", idFilter);
   if (filters.status === "N/A") {
     query = query.is("status_id", null);
@@ -101,13 +107,11 @@ export const fetchBitacora = async ({
   if (dateRange?.to) {
     let date = new Date(dateRange.to)
     date.setHours(23, 59, 59)
-    console.log(dateRange.to)
     query = query.lte("created_at", formatDate(date));
   }
 
   const { data, error, count } = await query
   if (error) throw error
-  console.log(data)
   return {
     data,
     count,
