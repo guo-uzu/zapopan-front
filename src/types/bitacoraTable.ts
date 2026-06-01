@@ -1,55 +1,56 @@
 type NestedName = {
-    name: string;
+  name: string;
 };
 
 type NestedUser = {
-    full_name: string;
+  full_name: string;
 };
 
 type BitacoraRecord = {
-    id: string;
-    user_id?: NestedUser;
-    created_by_name?: string;
-    account_id?: NestedName;
-    area_id?: NestedName;
-    channel_id?: NestedName;
-    category_id?: NestedName;
-    social_network_id?: NestedName;
-    priority_id?: NestedName;
-    status_id?: NestedName;
-    username?: string;
-    link?: string;
-    description?: string;
-    colonia?: string;
-    folio?: string;
-    observations: string;
-    created_at: string;
-    updated_at: string;
-    latest_updated_user_id?: NestedUser;
+  id: string;
+  user_id?: NestedUser;
+  created_by_name?: string;
+  account_id?: NestedName;
+  area_id?: NestedName;
+  channel_id?: NestedName;
+  category_id?: NestedName;
+  social_network_id?: NestedName;
+  priority_id?: NestedName;
+  status_id?: NestedName;
+  username?: string;
+  link?: string;
+  description?: string;
+  colonia?: string;
+  folio?: string;
+  observations: string;
+  created_at: string;
+  updated_at: string;
+  latest_updated_user_id?: NestedUser;
 };
 
 type BitacoraFormState = {
-    id: string;
-    username?: string;
-    created_at: string
-    account: string;
-    channel: string;
-    link?: string;
-    category: string;
-    area_responsable: string;
-    description?: string;
-    colonia?: string;
-    social_network: string;
-    priority: string;
-    status: string;
-    folio?: string;
-    observations?: string;
+  id: string;
+  username?: string;
+  created_at: string
+  account: string;
+  channel: string;
+  link?: string;
+  category: string;
+  area_responsable: string;
+  description?: string;
+  colonia?: string;
+  social_network: string;
+  priority: string;
+  status: string;
+  folio?: string;
+  observations?: string;
 }
 
 type BitacoraTableMeta = {
-    setDefaultData: (data: BitacoraFormState) => void;
-    handleToEdit: () => void;
-    handleOpenForm: () => void;
+  setDefaultData: (data: BitacoraFormState) => void;
+  handleToEdit: () => void;
+  handleOpenForm: () => void;
+  debouncedGlobal: string | undefined
 };
 
 export type { BitacoraFormState, BitacoraRecord, BitacoraTableMeta }

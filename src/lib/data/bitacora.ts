@@ -54,7 +54,6 @@ export const fetchBitacora = async ({
     query = query.or(
       `username.ilike.${filter},description.ilike.${filter},colonia.ilike.${filter},observations.ilike.${filter}`
     )
-
   }
   if (idFilter) query = query.eq("id", idFilter);
   if (filters.status === "N/A") {

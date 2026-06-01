@@ -61,6 +61,7 @@ export function DataTable<TData extends BitacoraRecord>({
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true)
   const { dateRange, setDateRange } = useDateRange()
+  const debouncedGlobal = useDebouncedValue(globalFilter, 800);
 
   const { table } = useBitacoraTable(
     dataBitacora,
@@ -69,6 +70,7 @@ export function DataTable<TData extends BitacoraRecord>({
       handleOpenForm,
       handleToEdit,
       setDefaultData,
+      debouncedGlobal
     },
   );
 
@@ -90,7 +92,6 @@ export function DataTable<TData extends BitacoraRecord>({
     };
   })
 
-  const debouncedGlobal = useDebouncedValue(globalFilter, 800);
   const [uiPagination, setUIPagination] = useState<{ from: number | undefined, to: number | undefined }>({
     from: undefined,
     to: undefined
