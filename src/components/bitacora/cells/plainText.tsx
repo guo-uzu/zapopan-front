@@ -15,8 +15,9 @@ const CellPlainText = (props: CellContext<BitacoraRecord, unknown>) => {
   }
 
   const value = String(props.getValue())
-  const globalFilter = String(props.table.options.meta?.debouncedGlobal)
-  const regex = new RegExp(`(${globalFilter})`, 'i')
+
+  const globalFilter = props.table.options.meta as BitacoraTableMeta
+  const regex = new RegExp(`(${globalFilter.debouncedGlobal})`, 'i')
   const parts = globalFilter && value !== "N/A" ? value.split(regex) : [value]
   const urlify = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;

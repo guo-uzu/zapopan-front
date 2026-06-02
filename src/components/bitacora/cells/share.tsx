@@ -1,5 +1,5 @@
 import type { CellContext } from "@tanstack/react-table";
-import { BitacoraRecord, BitacoraTableMeta } from "@/types/bitacoraTable";
+import { BitacoraRecord } from "@/types/bitacoraTable";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink } from "lucide-react";
 import { usePathname } from "next/navigation";

@@ -1,12 +1,13 @@
 import { Badge } from "@/components/ui/badge";
-import { BitacoraRecord } from "@/types/bitacoraTable";
+import { BitacoraRecord, BitacoraTableMeta } from "@/types/bitacoraTable";
 import type { CellContext } from "@tanstack/react-table";
 import { Ban, CircleUser } from "lucide-react";
 
 const CellUsername = (props: CellContext<BitacoraRecord, unknown>) => {
   const value = String(props.getValue()).trim()
-  const globalFilter = String(props.table.options.meta?.debouncedGlobal)
-  const regex = new RegExp(`(${globalFilter})`, 'i')
+
+  const globalFilter = props.table.options.meta as BitacoraTableMeta
+  const regex = new RegExp(`(${globalFilter.debouncedGlobal})`, 'i')
   const parts = globalFilter && value !== "N/A" ? value.split(regex) : [value]
   const color = "oklch(57.7% 0.245 27.325)"
   return (
