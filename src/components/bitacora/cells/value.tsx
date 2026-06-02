@@ -7,8 +7,9 @@ import { Ban } from "lucide-react";
 const CellValue = (props: CellContext<BitacoraRecord, unknown>) => {
   const value = String(props.getValue())
   const globalFilter = String(props.table.options.meta?.debouncedGlobal)
+  const regex = new RegExp(`(${globalFilter})`, 'i')
+  const parts = globalFilter && value !== "N/A" ? value.split(regex) : [value]
   const color = "oklch(57.7% 0.245 27.325)"
-  const parts = globalFilter ? value.split(new RegExp(`(${globalFilter})`, 'i')) : [value]
   if (value === "N/A") {
     return (
       <Badge
@@ -25,8 +26,8 @@ const CellValue = (props: CellContext<BitacoraRecord, unknown>) => {
     <p>
       {
         parts.map((e) => (
-          e === globalFilter ?
-            <span className="bg-yellow-500">{e}</span>
+          regex.test(e) && parts.length > 1 ?
+            <span className="bg-sky-200">{e}</span>
             :
             e
         ))

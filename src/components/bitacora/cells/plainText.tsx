@@ -1,4 +1,4 @@
-import { BitacoraRecord } from "@/types/bitacoraTable";
+import { BitacoraRecord, BitacoraTableMeta } from "@/types/bitacoraTable";
 import type { CellContext } from "@tanstack/react-table";
 import type { MouseEvent } from "react";
 import { Link } from "lucide-react";
@@ -13,6 +13,11 @@ const CellPlainText = (props: CellContext<BitacoraRecord, unknown>) => {
     await navigator.clipboard.writeText(e.currentTarget.innerText)
     toast.success("Información copiada al portapapeles", { position: "top-center" })
   }
+
+  const value = String(props.getValue())
+  const globalFilter = String(props.table.options.meta?.debouncedGlobal)
+  const regex = new RegExp(`(${globalFilter})`, 'i')
+  const parts = globalFilter && value !== "N/A" ? value.split(regex) : [value]
   const urlify = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     if (urlRegex.test(text)) {
@@ -39,7 +44,14 @@ const CellPlainText = (props: CellContext<BitacoraRecord, unknown>) => {
   }
   return (
     <span className="overflow-hidden w-full h-full" onClick={copyText}>
-      {urlify(String(props.getValue()))}
+      {
+        parts.map((e) => (
+          regex.test(e) && parts.length > 1 ?
+            <span className="bg-sky-200">{urlify(e)}</span>
+            :
+            urlify(e)
+        ))
+      }
     </span>
   )
 }
