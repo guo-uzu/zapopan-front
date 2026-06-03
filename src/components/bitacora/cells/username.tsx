@@ -5,10 +5,9 @@ import { Ban, CircleUser } from "lucide-react";
 
 const CellUsername = (props: CellContext<BitacoraRecord, unknown>) => {
   const value = String(props.getValue()).trim()
-
   const globalFilter = props.table.options.meta as BitacoraTableMeta
   const regex = new RegExp(`(${globalFilter.debouncedGlobal})`, 'i')
-  const parts = globalFilter && value !== "N/A" ? value.split(regex) : [value]
+  const parts = value !== "N/A" && globalFilter.debouncedGlobal !== "" ? value.split(regex) : [value]
   const color = "oklch(57.7% 0.245 27.325)"
   return (
     value === "N/A" ? (
@@ -25,7 +24,7 @@ const CellUsername = (props: CellContext<BitacoraRecord, unknown>) => {
         <CircleUser className="shrink-0" size={18} />
         {
           parts.map((e) => (
-            regex.test(e) && parts.length > 1 ?
+            globalFilter.debouncedGlobal !== "" && regex.test(e) ?
               <span className="bg-sky-200">{e}</span>
               :
               e

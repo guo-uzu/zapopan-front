@@ -8,7 +8,7 @@ const CellValue = (props: CellContext<BitacoraRecord, unknown>) => {
   const value = String(props.getValue())
   const globalFilter = props.table.options.meta as BitacoraTableMeta
   const regex = new RegExp(`(${globalFilter.debouncedGlobal})`, 'i')
-  const parts = globalFilter && value !== "N/A" ? value.split(regex) : [value]
+  const parts = value !== "N/A" && globalFilter.debouncedGlobal !== "" ? value.split(regex) : [value]
   const color = "oklch(57.7% 0.245 27.325)"
   if (value === "N/A") {
     return (
@@ -21,12 +21,11 @@ const CellValue = (props: CellContext<BitacoraRecord, unknown>) => {
       </Badge>
     )
   }
-
   return (
     <p>
       {
         parts.map((e) => (
-          regex.test(e) && parts.length > 1 ?
+          globalFilter.debouncedGlobal !== "" && regex.test(e) ?
             <span className="bg-sky-200">{e}</span>
             :
             e

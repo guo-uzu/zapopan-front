@@ -18,7 +18,7 @@ const CellPlainText = (props: CellContext<BitacoraRecord, unknown>) => {
 
   const globalFilter = props.table.options.meta as BitacoraTableMeta
   const regex = new RegExp(`(${globalFilter.debouncedGlobal})`, 'i')
-  const parts = globalFilter && value !== "N/A" ? value.split(regex) : [value]
+  const parts = value !== "N/A" && globalFilter.debouncedGlobal !== "" ? value.split(regex) : [value]
   const urlify = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     if (urlRegex.test(text)) {
@@ -47,7 +47,7 @@ const CellPlainText = (props: CellContext<BitacoraRecord, unknown>) => {
     <span className="overflow-hidden w-full h-full" onClick={copyText}>
       {
         parts.map((e) => (
-          regex.test(e) && parts.length > 1 ?
+          globalFilter.debouncedGlobal !== "" && regex.test(e) ?
             <span className="bg-sky-200">{urlify(e)}</span>
             :
             urlify(e)
