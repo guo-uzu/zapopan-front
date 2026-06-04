@@ -24,7 +24,7 @@ const CellObservations = (props: CellContext<BitacoraRecord, unknown>) => {
     )
   }
 
-  return splitedText.map((text, index) => {
+  return parts.map((text, index) => {
     if (text.match(/https?:\/\/[^\s]+/)) {
       return (
         <a
@@ -39,7 +39,11 @@ const CellObservations = (props: CellContext<BitacoraRecord, unknown>) => {
         </a>
       );
     }
-    return <span key={index}>{text}</span>;
+    return globalFilter.debouncedGlobal !== "" && regex.test(text) ?
+      <span className="bg-sky-200">{text}</span>
+      :
+      text
+
   })
 }
 

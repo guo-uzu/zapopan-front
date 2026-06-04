@@ -35,6 +35,7 @@ import FilterDesktop from "./filterDesktop";
 import FilterUsers from "./filterUsers";
 import useDateRange from "@/hooks/bitacora/useDateRange";
 import CalendarFilter from "./calendarFilter";
+import duplicateRow from "./duplicateRow";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -97,17 +98,18 @@ export function DataTable<TData extends BitacoraRecord>({
     to: undefined
   })
 
+  const down = (e: KeyboardEvent) => {
+    if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      setOpen((open) => !open);
+    }
+  };
+
   // handler Command Form
   useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-      }
-    };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, []);
+  }, [down]);
 
 
 
@@ -164,7 +166,6 @@ export function DataTable<TData extends BitacoraRecord>({
         dateRange,
       })
       if (data) setDataBitacora(data as TData[]);
-      console.log(data)
       setRowCount(count ?? 0);
       setUIPagination({ from, to })
       setLoading(false)
@@ -207,7 +208,7 @@ export function DataTable<TData extends BitacoraRecord>({
             <div>
               <p className="text-muted-foreground text-sm">
                 Formulario{" "}
-                <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+                <kbd onClick={() => down} className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
                   <span className="text-xs">⌘</span>J
                 </kbd>
               </p>
@@ -272,6 +273,7 @@ export function DataTable<TData extends BitacoraRecord>({
                     {table.getRowModel().rows?.length ? (
                       table.getRowModel().rows.map((row) => (
                         <TableRow
+                          onClick={() => duplicateRow(row.original)}
                           key={row.id}
                           data-state={
                             row.getIsSelected() &&
