@@ -36,6 +36,7 @@ import FilterUsers from "./filterUsers";
 import useDateRange from "@/hooks/bitacora/useDateRange";
 import CalendarFilter from "./calendarFilter";
 import duplicateRow from "./duplicateRow";
+import DuplicateRow from "./duplicateRow";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -110,8 +111,6 @@ export function DataTable<TData extends BitacoraRecord>({
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, [down]);
-
-
 
   // Realtime updates
   useEffect(() => {
@@ -272,32 +271,33 @@ export function DataTable<TData extends BitacoraRecord>({
                   <TableBody>
                     {table.getRowModel().rows?.length ? (
                       table.getRowModel().rows.map((row) => (
-                        <TableRow
-                          onClick={() => duplicateRow(row.original)}
-                          key={row.id}
-                          data-state={
-                            row.getIsSelected() &&
-                            "selected"
-                          }
-                        >
-                          {row
-                            .getVisibleCells()
-                            .map((cell) => (
-                              <TableCell
-                                key={cell.id}
-                                className="text-md whitespace-normal"
-                                style={{
-                                  width: cell.column.getSize(),
-                                }}
-                              >
-                                {flexRender(
-                                  cell.column
-                                    .columnDef.cell,
-                                  cell.getContext(),
-                                )}
-                              </TableCell>
-                            ))}
-                        </TableRow>
+                        <DuplicateRow record={row.original}>
+                          <TableRow
+                            key={row.id}
+                            data-state={
+                              row.getIsSelected() &&
+                              "selected"
+                            }
+                          >
+                            {row
+                              .getVisibleCells()
+                              .map((cell) => (
+                                <TableCell
+                                  key={cell.id}
+                                  className="text-md whitespace-normal"
+                                  style={{
+                                    width: cell.column.getSize(),
+                                  }}
+                                >
+                                  {flexRender(
+                                    cell.column
+                                      .columnDef.cell,
+                                    cell.getContext(),
+                                  )}
+                                </TableCell>
+                              ))}
+                          </TableRow>
+                        </DuplicateRow>
                       ))
                     ) : (
                       <TableRow>
