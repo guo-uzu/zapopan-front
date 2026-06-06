@@ -10,13 +10,13 @@ type DuplicateRow = {
 }
 
 export const sendDuplicateRow = async ({ record, n }: DuplicateRow) => {
+  console.log(record)
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("User not founded");
-
   const payload = {
     user_id: record.user_id,
     account_id: mustMap(accountMap, record.account_id?.name, "account"),
