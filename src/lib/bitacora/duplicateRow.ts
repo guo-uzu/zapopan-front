@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { mustMap, accountMap, areaMap, categoryMap, channelMap, priorityMap, statusMap, socialNetworkMap } from "@/lib/bitacora/maps";
 import { BitacoraRecord } from "@/types/bitacoraTable";
+import { formatData } from "../formatters/formatData";
 
 type DuplicateRow = {
   record: BitacoraRecord
@@ -19,12 +20,12 @@ export const sendDuplicateRow = async ({ record, n }: DuplicateRow) => {
   if (!user) throw new Error("User not founded");
   const payload = {
     user_id: record.user_id,
-    account_id: mustMap(accountMap, record.account_id?.name, "account"),
-    area_id: mustMap(areaMap, record.area_id?.name, "area_responsable"),
-    category_id: mustMap(categoryMap, record.category_id?.name, "category"),
-    channel_id: mustMap(channelMap, record.channel_id?.name, "channel"),
-    priority_id: mustMap(priorityMap, record.priority_id?.name, "priority"),
-    status_id: mustMap(statusMap, record.status_id?.name, "status"),
+    account_id: mustMap(accountMap, formatData(record.account_id?.name ?? ""), "account"),
+    area_id: mustMap(areaMap, formatData(record.area_id?.name ?? ""), "area_responsable"),
+    category_id: mustMap(categoryMap, formatData(record.category_id?.name ?? ""), "category"),
+    channel_id: mustMap(channelMap, formatData(record.channel_id?.name ?? ""), "channel"),
+    priority_id: mustMap(priorityMap, formatData(record.priority_id?.name ?? ""), "priority"),
+    status_id: mustMap(statusMap, formatData(record.status_id?.name ?? ""), "status"),
     colonia: record.colonia || null,
     description: record.description,
     link: record.link || null,
