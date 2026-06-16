@@ -4,17 +4,18 @@ import { sendDuplicateRow } from "@/lib/bitacora/duplicateRow"
 import { toast } from "sonner"
 
 type DuplicateRowProps = {
-  record: BitacoraRecord
+  id: BitacoraRecord
   children: React.ReactNode
   n: number
 }
-
+type idRow = string
+type duplicateNumber = number
 const counts = [1, 3, 5, 7, 10]
 
-const DuplicateRow = ({ record, children }: DuplicateRowProps) => {
-  const handleSendDuplicate = (record, n) => {
+const DuplicateRow = ({ id, children }: DuplicateRowProps) => {
+  const handleSendDuplicate = (id: idRow, n: number) => {
     toast.promise(
-      sendDuplicateRow({ record, n }),
+      sendDuplicateRow({ id, n }),
       {
         loading: "Duplicando...",
         success: (reponse: { ok: boolean }) => {
@@ -26,6 +27,8 @@ const DuplicateRow = ({ record, children }: DuplicateRowProps) => {
         position: "top-center"
       })
   }
+
+
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
@@ -34,7 +37,7 @@ const DuplicateRow = ({ record, children }: DuplicateRowProps) => {
         <ContextMenuSeparator />
         {
           counts.map((n) => (
-            <ContextMenuItem key={n} onSelect={() => handleSendDuplicate(record, n)}>
+            <ContextMenuItem key={n} onSelect={() => handleSendDuplicate(id, n)}>
               {n === 1 ? "1 vez" : `${n} veces`}
             </ContextMenuItem>
           ))

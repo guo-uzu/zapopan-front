@@ -270,7 +270,7 @@ export function DataTable<TData extends BitacoraRecord>({
                   <TableBody>
                     {table.getRowModel().rows?.length ? (
                       table.getRowModel().rows.map((row) => (
-                        <DuplicateRow record={row.original}>
+                        <DuplicateRow id={row.original.id} >
                           <TableRow
                             key={row.id}
                             data-state={

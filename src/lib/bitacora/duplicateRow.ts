@@ -6,12 +6,11 @@ import { BitacoraRecord } from "@/types/bitacoraTable";
 import { formatData } from "../formatters/formatData";
 
 type DuplicateRow = {
-  record: BitacoraRecord
+  id: string
   n: number
 }
 
-export const sendDuplicateRow = async ({ record, n }: DuplicateRow) => {
-  console.log(record)
+export const sendDuplicateRow = async ({ id, n }: DuplicateRow) => {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
   const {
@@ -40,6 +39,7 @@ export const sendDuplicateRow = async ({ record, n }: DuplicateRow) => {
     ),
   };
 
+  console.log(payload)
   const arrayPayloads = Array(n).fill(payload)
 
   const { error } = await supabase.from("bitacora").insert(arrayPayloads);
