@@ -1,19 +1,17 @@
-import { BitacoraRecord } from "@/types/bitacoraTable"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuTrigger } from "../ui/context-menu"
 import { sendDuplicateRow } from "@/lib/bitacora/duplicateRow"
 import { toast } from "sonner"
 
 type DuplicateRowProps = {
-  id: BitacoraRecord
+  id: string
   children: React.ReactNode
-  n: number
 }
 type idRow = string
 type duplicateNumber = number
 const counts = [1, 3, 5, 7, 10]
 
 const DuplicateRow = ({ id, children }: DuplicateRowProps) => {
-  const handleSendDuplicate = (id: idRow, n: number) => {
+  const handleSendDuplicate = (id: idRow, n: duplicateNumber) => {
     toast.promise(
       sendDuplicateRow({ id, n }),
       {

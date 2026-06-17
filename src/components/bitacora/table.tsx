@@ -43,11 +43,12 @@ import DuplicateRow from "./duplicateRow";
  * @returns DataTable is the function that prints the table in the DOM and shows all of the rows or individually
  */
 
+const supabase = createClient();
+
 export function DataTable<TData extends BitacoraRecord>({
   columns,
   idFilter,
 }: { columns: ColumnDef<BitacoraRecord, unknown>[], idFilter: string | null }) {
-  const supabase = createClient();
   const [dataBitacora, setDataBitacora] = useState<TData[]>([]);
   const [open, setOpen] = useState(false);
   const [defaultData, setDefaultData] = useState({});
@@ -123,20 +124,26 @@ export function DataTable<TData extends BitacoraRecord>({
           table: "bitacora",
         },
         () => {
+          console.log("[realtime] event fired");
           const fetchBitacoraData = async () => {
-            const { data, count, from, to } = await fetchBitacora({
-              pageIndex: pagination.pageIndex,
-              pageSize: pagination.pageSize,
-              idFilter,
-              filters,
-              globalFilter: debouncedGlobal,
-              dateRange,
-            })
-            if (data) setDataBitacora(data as TData[]);
-            setRowCount(count ?? 0);
-            setUIPagination({ from, to })
-          }
-          fetchBitacoraData()
+            try {
+              const { data, count, from, to } = await fetchBitacora({
+                pageIndex: pagination.pageIndex,
+                pageSize: pagination.pageSize,
+                idFilter,
+                filters,
+                globalFilter: debouncedGlobal,
+                dateRange,
+              })
+              console.log("[realtime] fetched", { count, dataLen: data?.length });
+              if (data) setDataBitacora(data as TData[]);
+              setRowCount(count ?? 0);
+              setUIPagination({ from, to });
+            } catch (err) {
+              console.error("[realtime] fetch failed", err);
+            }
+          };
+          fetchBitacoraData();
         },
       )
       .subscribe();
