@@ -1,9 +1,7 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { mustMap, accountMap, areaMap, categoryMap, channelMap, priorityMap, statusMap, socialNetworkMap } from "@/lib/bitacora/maps";
-import { BitacoraRecord } from "@/types/bitacoraTable";
-import { formatData } from "../formatters/formatData";
+import type { BitacoraRecord } from "@/types/bitacoraTable"
 
 type DuplicateRow = {
   id: string
@@ -17,34 +15,17 @@ export const sendDuplicateRow = async ({ id, n }: DuplicateRow) => {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("User not founded");
-  const payload = {
-    user_id: record.user_id,
-    account_id: mustMap(accountMap, formatData(record.account_id?.name ?? ""), "account"),
-    area_id: mustMap(areaMap, formatData(record.area_id?.name ?? ""), "area_responsable"),
-    category_id: mustMap(categoryMap, formatData(record.category_id?.name ?? ""), "category"),
-    channel_id: mustMap(channelMap, formatData(record.channel_id?.name ?? ""), "channel"),
-    priority_id: mustMap(priorityMap, formatData(record.priority_id?.name ?? ""), "priority"),
-    status_id: mustMap(statusMap, formatData(record.status_id?.name ?? ""), "status"),
-    colonia: record.colonia || null,
-    description: record.description,
-    link: record.link || null,
-    observations: record.observations || null,
-    created_at: record.created_at,
-    username: record.username,
-    folio: record.folio || null,
-    social_network_id: mustMap(
-      socialNetworkMap,
-      record.social_network_id?.name,
-      "social_network",
-    ),
-  };
 
-  console.log(payload)
-  const arrayPayloads = Array(n).fill(payload)
-
-  const { error } = await supabase.from("bitacora").insert(arrayPayloads);
+  const { data, error } = await supabase.from("bitacora").select("*").eq("id", id)
   if (error) {
-    throw new Error("DB insert failed");
+    throw new Error("Error obteniendo los datos");
+  }
+  const payload = data.map(({ id, ...rest }) => rest)
+  const arrayPayloads = Array(n).fill(payload[0] ?? null)
+
+  const { error: errorInsert } = await supabase.from("bitacora").insert(arrayPayloads);
+  if (errorInsert) {
+    throw new Error("Error duplicando la fila");
   }
   return { ok: true };
 };
