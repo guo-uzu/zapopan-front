@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase"
 import { ColumnDef, flexRender } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "../ui/skeleton";
@@ -43,7 +43,7 @@ import DuplicateRow from "./duplicateRow";
  * @returns DataTable is the function that prints the table in the DOM and shows all of the rows or individually
  */
 
-const supabase = createClient();
+const supabase = SingletonClientSupabase.instance;
 
 export function DataTable<TData extends BitacoraRecord>({
   columns,
@@ -151,7 +151,7 @@ export function DataTable<TData extends BitacoraRecord>({
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, [pagination, filters, debouncedGlobal, dateRange, idFilter]);
+  }, []);
 
   const onChangeFilter = (key: string, value: string) => {
     localStorage.setItem(key, value);

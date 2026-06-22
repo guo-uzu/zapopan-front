@@ -1,7 +1,6 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import type { BitacoraRecord } from "@/types/bitacoraTable"
 
 type DuplicateRow = {
   id: string
