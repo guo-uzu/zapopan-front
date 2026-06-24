@@ -24,7 +24,7 @@ interface FormProps {
   defaultData: Partial<Inputs>;
   toEdit: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  setDefaultData: Dispatch<SetStateAction<{}>>;
+  setDefaultData: Dispatch<SetStateAction<Partial<Inputs>>>;
   open: boolean;
   handleToEdit: () => void;
 }
@@ -55,12 +55,12 @@ export default function FormBitacora({
   setDefaultData,
 }: FormProps) {
   const [requiredValue, setRequiredValue] = useState(true)
-  const { setValue, register, handleSubmit, control, reset, watch, formState: { errors } } = useForm<Inputs>({
+  const { setValue, register, handleSubmit, control, reset, watch } = useForm<Inputs>({
     defaultValues: Object.keys(defaultData).length > 0 ? defaultData : emptyValues
   });
 
   const selectedCategory = watch("category");
-  const selectedArea = watch("area_responsable")
+
   useEffect(() => {
     switch (selectedCategory) {
       case "solicitud_de_información":
@@ -78,7 +78,7 @@ export default function FormBitacora({
         setRequiredValue(true)
         break
       case "participación_en_curso":
-        setRequiredValue(prev => !prev)
+        setRequiredValue(false)
         break
       case "reporte_de_inspección_y_vigilancia":
         setValue("area_responsable", "inspección_y_vigilancia")
@@ -87,16 +87,18 @@ export default function FormBitacora({
         setRequiredValue(true)
         break
     }
-  }, [selectedCategory, selectedArea, setValue])
+  }, [selectedCategory, setValue])
 
   useEffect(() => {
     if (defaultData) {
       reset(defaultData);
     }
   }, [defaultData, reset]);
+
   const onInvalid = () => {
     toast.error("Error al enviar los datos, revisa los campos obligatorios");
   };
+
   const saveData: SubmitHandler<Inputs> = async (dataForm) => {
     if (!toEdit) {
       toast.promise(sendDataSupabase(dataForm), {
@@ -134,7 +136,6 @@ export default function FormBitacora({
         setOpen(isOpen);
         if (!isOpen && toEdit) {
           setDefaultData({});
-          setOpen(false);
           handleToEdit();
           reset(emptyValues);
         }
@@ -295,21 +296,13 @@ export default function FormBitacora({
                   />
                 </Field>
               </FieldGroup>
-              {toEdit ? (
-                <Button
-                  type="submit"
-                  className="w-full"
-                >
-                  Actualizar
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  className="w-full"
-                >
-                  Guardar
-                </Button>
-              )}
+              <Button
+                type="submit"
+                className="w-full">
+                {
+                  toEdit ? "Actualizar" : "Guardar"
+                }
+              </Button>
               <Button
                 type="reset"
                 onClick={() => reset(emptyValues)}

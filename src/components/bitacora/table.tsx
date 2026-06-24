@@ -36,6 +36,7 @@ import FilterUsers from "./filterUsers";
 import useDateRange from "@/hooks/bitacora/useDateRange";
 import CalendarFilter from "./calendarFilter";
 import DuplicateRow from "./duplicateRow";
+import { createClient } from "@/utils/supabase/client";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -43,7 +44,7 @@ import DuplicateRow from "./duplicateRow";
  * @returns DataTable is the function that prints the table in the DOM and shows all of the rows or individually
  */
 
-const supabase = SingletonClientSupabase.instance;
+const supabase = createClient();
 
 export function DataTable<TData extends BitacoraRecord>({
   columns,
@@ -124,7 +125,6 @@ export function DataTable<TData extends BitacoraRecord>({
           table: "bitacora",
         },
         () => {
-          console.log("[realtime] event fired");
           const fetchBitacoraData = async () => {
             try {
               const { data, count, from, to } = await fetchBitacora({
