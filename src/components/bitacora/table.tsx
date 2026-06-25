@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase"
 import { ColumnDef, flexRender } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
@@ -36,7 +36,6 @@ import FilterUsers from "./filterUsers";
 import useDateRange from "@/hooks/bitacora/useDateRange";
 import CalendarFilter from "./calendarFilter";
 import DuplicateRow from "./duplicateRow";
-import { createClient } from "@/utils/supabase/client";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -44,7 +43,7 @@ import { createClient } from "@/utils/supabase/client";
  * @returns DataTable is the function that prints the table in the DOM and shows all of the rows or individually
  */
 
-const supabase = createClient();
+const supabase = SingletonClientSupabase
 
 export function DataTable<TData extends BitacoraRecord>({
   columns,
@@ -52,7 +51,7 @@ export function DataTable<TData extends BitacoraRecord>({
 }: { columns: ColumnDef<BitacoraRecord, unknown>[], idFilter: string | null }) {
   const [dataBitacora, setDataBitacora] = useState<TData[]>([]);
   const [open, setOpen] = useState(false);
-  const [defaultData, setDefaultData] = useState({});
+  const [defaultData, setDefaultData] = useState<Partial<BitacoraRecord>>({});
   const [toEdit, setToEdit] = useState<boolean>(false);
   const handleOpenForm = () => setOpen(true);
   const handleToEdit = () => setToEdit(prev => !prev);
@@ -78,9 +77,7 @@ export function DataTable<TData extends BitacoraRecord>({
   );
 
   const [filters, setFilters] = useState<Filters>(() => {
-    if (typeof window === "undefined") {
-      return { account: "", area: "", status: "", channel: "", category: "", priority: "", userName: "", socialNetwork: "", dateRange: "" };
-    }
+    if (typeof window === "undefined") return { account: "", area: "", status: "", channel: "", category: "", priority: "", userName: "", socialNetwork: "", dateRange: "" };
 
     return {
       account: localStorage.getItem("account") ?? "",
@@ -100,12 +97,12 @@ export function DataTable<TData extends BitacoraRecord>({
     to: undefined
   })
 
-  const down = (e: KeyboardEvent) => {
+  const down = useCallback((e: KeyboardEvent) => {
     if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       setOpen((open) => !open);
     }
-  };
+  }, [])
 
   // handler Command Form
   useEffect(() => {
@@ -115,42 +112,7 @@ export function DataTable<TData extends BitacoraRecord>({
 
   // Realtime updates
   useEffect(() => {
-    const subscription = supabase
-      .channel("changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "bitacora",
-        },
-        () => {
-          const fetchBitacoraData = async () => {
-            try {
-              const { data, count, from, to } = await fetchBitacora({
-                pageIndex: pagination.pageIndex,
-                pageSize: pagination.pageSize,
-                idFilter,
-                filters,
-                globalFilter: debouncedGlobal,
-                dateRange,
-              })
-              console.log("[realtime] fetched", { count, dataLen: data?.length });
-              if (data) setDataBitacora(data as TData[]);
-              setRowCount(count ?? 0);
-              setUIPagination({ from, to });
-            } catch (err) {
-              console.error("[realtime] fetch failed", err);
-            }
-          };
-          fetchBitacoraData();
-        },
-      )
-      .subscribe();
 
-    return () => {
-      supabase.removeChannel(subscription);
-    };
   }, []);
 
   const onChangeFilter = (key: string, value: string) => {
@@ -213,7 +175,7 @@ export function DataTable<TData extends BitacoraRecord>({
             <div>
               <p className="text-muted-foreground text-sm">
                 Formulario{" "}
-                <kbd onClick={() => down} className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+                <kbd onClick={() => setOpen(o => !o)} className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
                   <span className="text-xs">⌘</span>J
                 </kbd>
               </p>
