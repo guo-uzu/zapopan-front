@@ -1,6 +1,5 @@
 "use client"
 import { useCallback, useEffect, useState } from "react";
-import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase"
 import { ColumnDef, flexRender } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "../ui/skeleton";
@@ -14,7 +13,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { fetchBitacora } from "@/lib/data/bitacora";
 import {
   Card,
   CardContent,
@@ -26,16 +24,15 @@ import { Button } from "@/components/ui/button";
 import FormBitacora from "./form";
 import useBitacoraTable from "@/hooks/bitacora/useBitacoraTable";
 import { BitacoraRecord } from "@/types/bitacoraTable";
-import useDebouncedValue from "@/hooks/bitacora/useDebounce";
 import goNextPage from "@/utils/bitacora/goNextPage";
 import goPreviousPage from "@/utils/bitacora/goPreviousPage";
-import { Filters } from "@/types/fetchData";
 import FiltersResponsive from "./FiltersResponsive";
 import FilterDesktop from "./filterDesktop";
 import FilterUsers from "./filterUsers";
-import useDateRange from "@/hooks/bitacora/useDateRange";
 import CalendarFilter from "./calendarFilter";
 import DuplicateRow from "./duplicateRow";
+import { useBitacoraUpdateData } from "@/hooks/bitacora/useBitacoraUpdateData";
+import { Inputs } from "@/hooks/types";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -43,27 +40,30 @@ import DuplicateRow from "./duplicateRow";
  * @returns DataTable is the function that prints the table in the DOM and shows all of the rows or individually
  */
 
-const supabase = SingletonClientSupabase
-
-export function DataTable<TData extends BitacoraRecord>({
+export function DataTable({
   columns,
   idFilter,
 }: { columns: ColumnDef<BitacoraRecord, unknown>[], idFilter: string | null }) {
-  const [dataBitacora, setDataBitacora] = useState<TData[]>([]);
+  const {
+    dataBitacora,
+    debouncedGlobal,
+    setGlobalFilter,
+    filters,
+    onChangeFilter,
+    dateRange,
+    setDateRange,
+    loading,
+    pagination,
+    rowCount,
+    setPagination,
+    uiPagination
+  } = useBitacoraUpdateData(idFilter)
+
   const [open, setOpen] = useState(false);
-  const [defaultData, setDefaultData] = useState<Partial<BitacoraRecord>>({});
+  const [defaultData, setDefaultData] = useState<Partial<Inputs>>({});
   const [toEdit, setToEdit] = useState<boolean>(false);
   const handleOpenForm = () => setOpen(true);
   const handleToEdit = () => setToEdit(prev => !prev);
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 50,
-  });
-  const [rowCount, setRowCount] = useState(0);
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [loading, setLoading] = useState(true)
-  const { dateRange, setDateRange } = useDateRange()
-  const debouncedGlobal = useDebouncedValue(globalFilter, 800);
 
   const { table } = useBitacoraTable(
     dataBitacora,
@@ -75,27 +75,6 @@ export function DataTable<TData extends BitacoraRecord>({
       debouncedGlobal
     },
   );
-
-  const [filters, setFilters] = useState<Filters>(() => {
-    if (typeof window === "undefined") return { account: "", area: "", status: "", channel: "", category: "", priority: "", userName: "", socialNetwork: "", dateRange: "" };
-
-    return {
-      account: localStorage.getItem("account") ?? "",
-      area: localStorage.getItem("area") ?? "",
-      status: localStorage.getItem("status") ?? "",
-      channel: localStorage.getItem("channel") ?? "",
-      category: localStorage.getItem("category") ?? "",
-      priority: localStorage.getItem("priority") ?? "",
-      userName: localStorage.getItem("userName") ?? "",
-      socialNetwork: localStorage.getItem("socialNetwork") ?? "",
-      dateRange: localStorage.getItem("bitacora_date_range") ?? ""
-    };
-  })
-
-  const [uiPagination, setUIPagination] = useState<{ from: number | undefined, to: number | undefined }>({
-    from: undefined,
-    to: undefined
-  })
 
   const down = useCallback((e: KeyboardEvent) => {
     if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
@@ -109,36 +88,6 @@ export function DataTable<TData extends BitacoraRecord>({
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, [down]);
-
-  // Realtime updates
-  useEffect(() => {
-
-  }, []);
-
-  const onChangeFilter = (key: string, value: string) => {
-    localStorage.setItem(key, value);
-    setFilters((prev) => ({ ...prev, [key]: value }));
-    setPagination((prev) => ({ ...prev, pageIndex: 0 })); // ← critical
-  };
-
-  useEffect(() => {
-    setLoading(true)
-    const fetchBitacoraData = async () => {
-      const { data, count, from, to } = await fetchBitacora({
-        pageIndex: pagination.pageIndex,
-        pageSize: pagination.pageSize,
-        idFilter,
-        filters,
-        globalFilter: debouncedGlobal,
-        dateRange,
-      })
-      if (data) setDataBitacora(data as TData[]);
-      setRowCount(count ?? 0);
-      setUIPagination({ from, to })
-      setLoading(false)
-    }
-    fetchBitacoraData()
-  }, [pagination, filters, debouncedGlobal, dateRange, idFilter]);
 
   return (
     <>
@@ -239,7 +188,7 @@ export function DataTable<TData extends BitacoraRecord>({
                   <TableBody>
                     {table.getRowModel().rows?.length ? (
                       table.getRowModel().rows.map((row) => (
-                        <DuplicateRow id={row.original.id} >
+                        <DuplicateRow key={row.id} id={row.original.id} >
                           <TableRow
                             key={row.id}
                             data-state={

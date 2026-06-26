@@ -34,6 +34,7 @@ export const fetchBitacora = async ({
   idFilter,
   filters,
   globalFilter,
+  signal,
   dateRange,
 }: FetchData) => {
   const {
@@ -99,7 +100,6 @@ export const fetchBitacora = async ({
 
   if (dateRange?.from) {
     const date = new Date(dateRange.from)
-    console.log(dateRange.from)
     query = query.gte("created_at", formatDate(date));
   }
 
@@ -108,7 +108,7 @@ export const fetchBitacora = async ({
     date.setHours(23, 59, 59)
     query = query.lte("created_at", formatDate(date));
   }
-
+  query = query.abortSignal(signal)
   const { data, error, count } = await query
   if (error) throw error
   return {

@@ -1,7 +1,6 @@
 "use client";
 import { columns } from "@/components/columns/dashboard";
 import useDashboardTable from "@/hooks/dashboard/useDashboardTable";
-import { handleFetchPng } from "@/hooks/fetch-data";
 
 import {
   SidebarInset,

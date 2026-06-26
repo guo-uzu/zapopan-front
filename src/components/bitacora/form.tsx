@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Inputs } from "@/hooks/types";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { sendDataSupabase } from "@/hooks/sendData";
+import { sendDataBitacora } from "@/lib/data/sendDataBitacora";
 import { updateDataSupabase } from "@/lib/data/updateRowBitacora";
 import { toast } from "sonner";
 import FilterSelector from "./filter-selector";
@@ -101,7 +101,12 @@ export default function FormBitacora({
 
   const saveData: SubmitHandler<Inputs> = async (dataForm) => {
     if (!toEdit) {
-      toast.promise(sendDataSupabase(dataForm), {
+      const now = new Date()
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const seconds = String(now.getSeconds()).padStart(2, "0");
+      const clientTimeStr = `${hours}:${minutes}:${seconds}`; // Result: "19:00:00"
+      toast.promise(sendDataBitacora(dataForm, clientTimeStr), {
         loading: "Enviando datos...",
         success: () => {
           setDefaultData({});

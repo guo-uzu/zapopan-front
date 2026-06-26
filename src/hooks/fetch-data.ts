@@ -1,4 +1,4 @@
-import { Option } from "@/app/respuestas/[[...respuestas]]/multi-select";
+import { Option } from "@/app/respuestas/multi-select";
 import { formatDataDate } from "@/lib/formatters/date";
 import { DashBoardTable } from "@/types/dashboardTable";
 import { createClient } from "@/utils/supabase/client";

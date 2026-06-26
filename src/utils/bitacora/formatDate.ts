@@ -11,6 +11,6 @@ function formatDate(date: Date) {
     acc[part.type] = part.value;
     return acc;
   }, {} as Record<string, string>);
-  return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}:${p.second}-06:00`;
+  return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}:${p.second}`;
 }
 export { formatDate }

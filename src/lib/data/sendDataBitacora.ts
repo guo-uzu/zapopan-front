@@ -1,10 +1,10 @@
-"use server";
+"use server"
 import { createClient } from "@/utils/supabase/server";
 import { Inputs } from "@/hooks/types";
 import { cookies } from "next/headers";
 import { mustMap, accountMap, areaMap, categoryMap, channelMap, priorityMap, statusMap, socialNetworkMap } from "@/lib/bitacora/maps";
 
-export const sendDataSupabase = async (formData: Inputs) => {
+export const sendDataBitacora = async (formData: Inputs, clientTimeStr: string) => {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
   const {
@@ -12,16 +12,8 @@ export const sendDataSupabase = async (formData: Inputs) => {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("User not founded");
   const [year, month, day] = String(formData.created_at).split("-").map(Number)
-  const now = new Date()
-  const createdAt = new Date(
-    year,
-    month - 1,
-    day,
-    now.getHours(),
-    now.getMinutes(),
-    now.getSeconds()
-  ).toISOString()
-
+  const createdTimestamp = `${year}-${month}-${day} ${clientTimeStr}`
+  console.log(createdTimestamp)
   const payload = {
     user_id: user.id,
     account_id: mustMap(accountMap, formData.account, "account"),
@@ -34,7 +26,7 @@ export const sendDataSupabase = async (formData: Inputs) => {
     description: formData.description,
     link: formData.link || null,
     observations: formData.observations || null,
-    created_at: createdAt,
+    created_at: createdTimestamp,
     username: formData.username,
     folio: formData.folio || null,
     social_network_id: mustMap(
