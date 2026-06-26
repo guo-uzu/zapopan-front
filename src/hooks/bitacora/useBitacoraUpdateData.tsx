@@ -6,7 +6,7 @@ import { Filters } from "@/types/fetchData";
 import useDebouncedValue from "@/hooks/bitacora/useDebounce";
 import { useTriggerRealtimeDB } from "./useTriggerRealtimeDB";
 
-export const useBitacoraUpdateData = <TData extends BitacoraRecord>(idFilter: string | null) => {
+export const useBitacoraUpdateData = <TData extends BitacoraRecord>(idFilter: string | null, manualRefresh: number = 0) => {
   const [dataBitacora, setDataBitacora] = useState<TData[]>([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -76,6 +76,6 @@ export const useBitacoraUpdateData = <TData extends BitacoraRecord>(idFilter: st
     return () => {
       controller.abort()
     }
-  }, [pagination, filters, debouncedGlobal, dateRange, idFilter, bitacoraTrigger]);
+  }, [pagination, filters, debouncedGlobal, dateRange, idFilter, bitacoraTrigger, manualRefresh]);
   return { dataBitacora, debouncedGlobal, setGlobalFilter, filters, onChangeFilter, dateRange, setDateRange, loading, setPagination, pagination, rowCount, uiPagination }
 }

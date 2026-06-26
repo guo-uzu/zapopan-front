@@ -44,6 +44,7 @@ export function DataTable({
   columns,
   idFilter,
 }: { columns: ColumnDef<BitacoraRecord, unknown>[], idFilter: string | null }) {
+  const [manualRefresh, setManualRefresh] = useState(0)
   const {
     dataBitacora,
     debouncedGlobal,
@@ -57,7 +58,7 @@ export function DataTable({
     rowCount,
     setPagination,
     uiPagination
-  } = useBitacoraUpdateData(idFilter)
+  } = useBitacoraUpdateData(idFilter, manualRefresh)
 
   const [open, setOpen] = useState(false);
   const [defaultData, setDefaultData] = useState<Partial<Inputs>>({});
@@ -72,7 +73,8 @@ export function DataTable({
       handleOpenForm,
       handleToEdit,
       setDefaultData,
-      debouncedGlobal
+      debouncedGlobal,
+      setManualRefresh
     },
   );
 
@@ -272,6 +274,7 @@ export function DataTable({
         open={open}
         handleToEdit={handleToEdit}
         setDefaultData={setDefaultData}
+        onSuccess={() => setManualRefresh(prev => prev + 1)}
       />
     </>
   );

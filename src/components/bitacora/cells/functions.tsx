@@ -12,7 +12,11 @@ const CellFunctions = (props: CellContext<BitacoraRecord, unknown>) => {
   const deleteRowBitacoraHandler = (id: string) => {
     toast.promise(deleteRowBitacora(id), {
       loading: "Eliminando registro...",
-      success: "Registro eliminado correctamente.",
+      success: () => {
+        const meta = props.table.options.meta as BitacoraTableMeta
+        meta.setManualRefresh(prev => prev + 1)
+        return "Registro eliminado correctamente."
+      },
       error: "Error eliminado este registro, intente nuevamente más tarde.",
       position: "top-center",
     });

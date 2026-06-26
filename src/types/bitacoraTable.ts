@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 type NestedName = {
   name: string;
 };
@@ -51,6 +53,7 @@ type BitacoraTableMeta = {
   handleToEdit: () => void;
   handleOpenForm: () => void;
   debouncedGlobal: string | undefined
+  setManualRefresh: Dispatch<SetStateAction<number>>
 };
 
 export type { BitacoraFormState, BitacoraRecord, BitacoraTableMeta }

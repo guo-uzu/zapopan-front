@@ -13,7 +13,6 @@ export const sendDataBitacora = async (formData: Inputs, clientTimeStr: string) 
   if (!user) throw new Error("User not founded");
   const [year, month, day] = String(formData.created_at).split("-").map(Number)
   const createdTimestamp = `${year}-${month}-${day} ${clientTimeStr}`
-  console.log(createdTimestamp)
   const payload = {
     user_id: user.id,
     account_id: mustMap(accountMap, formData.account, "account"),

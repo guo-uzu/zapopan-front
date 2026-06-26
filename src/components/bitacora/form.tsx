@@ -27,6 +27,7 @@ interface FormProps {
   setDefaultData: Dispatch<SetStateAction<Partial<Inputs>>>;
   open: boolean;
   handleToEdit: () => void;
+  onSuccess: () => void
 }
 
 const emptyValues: Inputs = {
@@ -53,6 +54,7 @@ export default function FormBitacora({
   open,
   handleToEdit,
   setDefaultData,
+  onSuccess,
 }: FormProps) {
   const [requiredValue, setRequiredValue] = useState(true)
   const { setValue, register, handleSubmit, control, reset, watch } = useForm<Inputs>({
@@ -112,6 +114,7 @@ export default function FormBitacora({
           setDefaultData({});
           setOpen(false);
           reset(emptyValues);
+          onSuccess()
           return "Datos enviados correctamente!";
         },
         error: "Error enviando datos, intente nuevamente",
@@ -126,6 +129,7 @@ export default function FormBitacora({
         setOpen(false);
         handleToEdit();
         reset(emptyValues);
+        onSuccess()
         return "Datos actualizados correctamente!";
       },
       error: "Error actualizando datos, intente nuevamente",
