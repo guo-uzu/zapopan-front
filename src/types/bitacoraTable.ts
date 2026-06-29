@@ -33,7 +33,7 @@ type BitacoraRecord = {
 type BitacoraFormState = {
   id: string;
   username?: string;
-  created_at: string
+  created_at: string;
   account: string;
   channel: string;
   link?: string;
@@ -46,14 +46,14 @@ type BitacoraFormState = {
   status: string;
   folio?: string;
   observations?: string;
-}
+};
 
 type BitacoraTableMeta = {
   setDefaultData: (data: BitacoraFormState) => void;
   handleToEdit: () => void;
   handleOpenForm: () => void;
-  debouncedGlobal: string | undefined
-  setManualRefresh: Dispatch<SetStateAction<number>>
+  debouncedGlobal: string | undefined;
+  setManualRefresh: Dispatch<SetStateAction<number>>;
 };
 
-export type { BitacoraFormState, BitacoraRecord, BitacoraTableMeta }
+export type { BitacoraFormState, BitacoraRecord, BitacoraTableMeta };
