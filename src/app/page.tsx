@@ -48,6 +48,7 @@ import { DashBoardTable } from "@/types/dashboardTable";
 import totalDashboard from "@/lib/toReturn/totalDashboard";
 import ChartDashboard from "@/components/dashboard/chart";
 import categoryChart from "@/lib/configs/dashboard";
+import { getReportsToday } from "@/lib/dashboard/getReportsToday";
 
 interface PendientesTotal {
   pendientesT: number | null;
@@ -62,6 +63,15 @@ import DownloadChartBtn from "@/components/dashboard/download-chart-btn";
 import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase";
 
 const supabase = SingletonClientSupabase.instance;
+
+const getTotal = async () => {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const clientTimeStr = `${now.getFullYear()}-${month}-${day}T00:00:00Z`;
+  const getReports = await getReportsToday(clientTimeStr);
+  return getReports;
+};
 
 export default function Home() {
   const [categoryDashboard, setCategoryDashboard] = useState<{
@@ -301,7 +311,7 @@ export default function Home() {
             // Headers graphs
           }
           <div className="grid auto-rows-min gap-4 md:grid-cols-3 ">
-            <TotalSummayCard delta={10} reports={20} />
+            <TotalSummayCard delta={10} reports={getTotal} />
             <div className="bg-muted/50 aspect-video rounded-xl p-4 h-full">
               <p className="font-light text-xl">
                 Estatus de respuestas | Total

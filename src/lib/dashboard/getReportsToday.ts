@@ -1,19 +1,18 @@
 import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase";
+import { unstable_noStore as noStore } from "next/cache";
 
 const supabase = SingletonClientSupabase.instance;
 
-export const fetchUsersFilterBitacora = async () => {
+export const getReportsToday = async (date: string) => {
+  noStore();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("User not founded");
   let query = await supabase
-    .from("users")
-    .select(`id, full_name`, { count: "exact" })
+    .from("bitacora")
+    .select("*", { count: "exact", head: true })
+    .gte("created_at", date)
     .eq("available", true);
-  return query.data;
+  return query.count;
 };
-
-export type FetchUsersFilter = Awaited<
-  ReturnType<typeof fetchUsersFilterBitacora>
->;
