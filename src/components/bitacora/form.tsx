@@ -27,7 +27,7 @@ interface FormProps {
   setDefaultData: Dispatch<SetStateAction<Partial<Inputs>>>;
   open: boolean;
   handleToEdit: () => void;
-  onSuccess: () => void
+  onSuccess: () => void;
 }
 
 const emptyValues: Inputs = {
@@ -44,7 +44,7 @@ const emptyValues: Inputs = {
   status: "",
   folio: "",
   observations: "",
-  created_at: toLocalYMD()
+  created_at: toLocalYMD(),
 };
 
 export default function FormBitacora({
@@ -56,40 +56,42 @@ export default function FormBitacora({
   setDefaultData,
   onSuccess,
 }: FormProps) {
-  const [requiredValue, setRequiredValue] = useState(true)
-  const { setValue, register, handleSubmit, control, reset, watch } = useForm<Inputs>({
-    defaultValues: Object.keys(defaultData).length > 0 ? defaultData : emptyValues
-  });
+  const [requiredValue, setRequiredValue] = useState(true);
+  const { setValue, register, handleSubmit, control, reset, watch } =
+    useForm<Inputs>({
+      defaultValues:
+        Object.keys(defaultData).length > 0 ? defaultData : emptyValues,
+    });
 
   const selectedCategory = watch("category");
 
   useEffect(() => {
     switch (selectedCategory) {
       case "solicitud_de_información":
-        setValue("priority", "baja")
-        setValue("colonia", "N/A")
-        setRequiredValue(true)
-        break
+        setValue("priority", "baja");
+        setValue("colonia", "N/A");
+        setRequiredValue(true);
+        break;
       case "reportes_de_servicios":
-        setValue("priority", "media")
-        setValue("area_responsable", "servicios_municipales")
-        setRequiredValue(true)
-        break
+        setValue("priority", "media");
+        setValue("area_responsable", "servicios_municipales");
+        setRequiredValue(true);
+        break;
       case "reportes_externos":
-        setValue("priority", "baja")
-        setRequiredValue(true)
-        break
+        setValue("priority", "baja");
+        setRequiredValue(true);
+        break;
       case "participación_en_curso":
-        setRequiredValue(false)
-        break
+        setRequiredValue(false);
+        break;
       case "reporte_de_inspección_y_vigilancia":
-        setValue("area_responsable", "inspección_y_vigilancia")
-        break
+        setValue("area_responsable", "inspección_y_vigilancia");
+        break;
       default:
-        setRequiredValue(true)
-        break
+        setRequiredValue(true);
+        break;
     }
-  }, [selectedCategory, setValue])
+  }, [selectedCategory, setValue]);
 
   useEffect(() => {
     if (defaultData) {
@@ -102,19 +104,19 @@ export default function FormBitacora({
   };
 
   const saveData: SubmitHandler<Inputs> = async (dataForm) => {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    const clientTimeStr = `${hours}:${minutes}:${seconds}`; // Result: "19:00:00"
     if (!toEdit) {
-      const now = new Date()
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const seconds = String(now.getSeconds()).padStart(2, "0");
-      const clientTimeStr = `${hours}:${minutes}:${seconds}`; // Result: "19:00:00"
       toast.promise(sendDataBitacora(dataForm, clientTimeStr), {
         loading: "Enviando datos...",
         success: () => {
           setDefaultData({});
           setOpen(false);
           reset(emptyValues);
-          onSuccess()
+          onSuccess();
           return "Datos enviados correctamente!";
         },
         error: "Error enviando datos, intente nuevamente",
@@ -122,14 +124,14 @@ export default function FormBitacora({
       });
       return;
     }
-    toast.promise(updateDataSupabase(dataForm), {
+    toast.promise(updateDataSupabase(dataForm, clientTimeStr), {
       loading: "Actualizando datos...",
       success: () => {
         setDefaultData({});
         setOpen(false);
         handleToEdit();
         reset(emptyValues);
-        onSuccess()
+        onSuccess();
         return "Datos actualizados correctamente!";
       },
       error: "Error actualizando datos, intente nuevamente",
@@ -162,7 +164,10 @@ export default function FormBitacora({
             <FieldSet>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="username" className="flex flex-row gap-2 items-center">
+                  <FieldLabel
+                    htmlFor="username"
+                    className="flex flex-row gap-2 items-center"
+                  >
                     Nombre de usuario <ObligatoryIcon />
                   </FieldLabel>
                   <Input
@@ -225,9 +230,7 @@ export default function FormBitacora({
                 />
                 <FilterSelector
                   control={control}
-                  column={
-                    ColumnsBitacoraOpts.area_id
-                  }
+                  column={ColumnsBitacoraOpts.area_id}
                   name="area_responsable"
                   label="Área responable"
                 />
@@ -248,9 +251,7 @@ export default function FormBitacora({
               </FieldGroup>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="colonia">
-                    Colonia
-                  </FieldLabel>
+                  <FieldLabel htmlFor="colonia">Colonia</FieldLabel>
                   <Input
                     {...register("colonia")}
                     id="colonia"
@@ -281,9 +282,7 @@ export default function FormBitacora({
               </FieldGroup>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="folio">
-                    Folio
-                  </FieldLabel>
+                  <FieldLabel htmlFor="folio">Folio</FieldLabel>
                   <Input
                     {...register("folio")}
                     id="folio"
@@ -305,12 +304,8 @@ export default function FormBitacora({
                   />
                 </Field>
               </FieldGroup>
-              <Button
-                type="submit"
-                className="w-full">
-                {
-                  toEdit ? "Actualizar" : "Guardar"
-                }
+              <Button type="submit" className="w-full">
+                {toEdit ? "Actualizar" : "Guardar"}
               </Button>
               <Button
                 type="reset"

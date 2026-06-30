@@ -1,27 +1,15 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { ColumnDef, flexRender } from "@tanstack/react-table";
-import { Skeleton } from "../ui/skeleton";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
+import { ColumnDef } from "@tanstack/react-table";
 import { Card, CardContent } from "@/components/ui/card";
-
-import FormBitacora from "./form";
 import useBitacoraTable from "@/hooks/bitacora/useBitacoraTable";
+import FormBitacora from "./form";
 import { BitacoraRecord } from "@/types/bitacoraTable";
-import DuplicateRow from "./duplicateRow";
 import { useBitacoraUpdateData } from "@/hooks/bitacora/useBitacoraUpdateData";
 import { Inputs } from "@/hooks/types";
 import { TableToolbar } from "./TableToolbar";
 import { TablePagination } from "./TablePagination";
+import { BitacoraTableBody } from "./BitacoraTableBody";
 
 /**
  * @param columns are the columns of the table, coming from app/bitacora/page.tsx
@@ -57,8 +45,8 @@ export function DataTable({
   const [open, setOpen] = useState(false);
   const [defaultData, setDefaultData] = useState<Partial<Inputs>>({});
   const [toEdit, setToEdit] = useState<boolean>(false);
-  const handleOpenForm = () => setOpen(true);
   const handleToEdit = () => setToEdit((prev) => !prev);
+  const handleOpenForm = () => setOpen(true);
 
   const { table } = useBitacoraTable(dataBitacora, columns, {
     handleOpenForm,
@@ -94,91 +82,11 @@ export function DataTable({
         />
         <CardContent className="flex-1 overflow-hidden relative">
           <div className="flex h-full w-full overflow-x-auto">
-            {loading ? (
-              <Skeleton className="w-full h-full" />
-            ) : (
-              <Table
-                className="table-fixed"
-                style={{ width: table.getCenterTotalSize() }}
-              >
-                <TableHeader>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => {
-                        return (
-                          <TableHead
-                            key={header.id}
-                            className="group/head relative h-10 select-none last:[&>.cursor-col-resize]:opacity-0 text-sm bg-zinc-50"
-                            {...{
-                              colSpan: header.colSpan,
-                              style: {
-                                width: header.getSize(),
-                              },
-                            }}
-                          >
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext(),
-                                )}
-                            {header.column.getCanResize() && (
-                              <div
-                                key={header.id}
-                                {...{
-                                  onDoubleClick: () =>
-                                    header.column.resetSize(),
-                                  onMouseDown: header.getResizeHandler(),
-                                  onTouchStart: header.getResizeHandler(),
-                                  className:
-                                    "group-last/head:hidden absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:translate-x-px",
-                                }}
-                              />
-                            )}
-                          </TableHead>
-                        );
-                      })}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <DuplicateRow key={row.id} id={row.original.id}>
-                        <TableRow
-                          key={row.id}
-                          data-state={row.getIsSelected() && "selected"}
-                        >
-                          {row.getVisibleCells().map((cell) => (
-                            <TableCell
-                              key={cell.id}
-                              className="text-md whitespace-normal"
-                              style={{
-                                width: cell.column.getSize(),
-                              }}
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                              )}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      </DuplicateRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={columns.length}
-                        className="text-center"
-                      >
-                        No hay datos (╥﹏╥)
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            )}
+            <BitacoraTableBody
+              table={table}
+              loading={loading}
+              columns={columns}
+            />
           </div>
         </CardContent>
         <TablePagination

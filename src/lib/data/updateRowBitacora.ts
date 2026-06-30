@@ -1,12 +1,22 @@
-"use server"
+"use server";
 import { Inputs } from "@/hooks/types";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 
-import { accountMap, areaMap, categoryMap, channelMap, mustMap, priorityMap, socialNetworkMap, statusMap } from "../bitacora/maps";
+import {
+  accountMap,
+  areaMap,
+  categoryMap,
+  channelMap,
+  mustMap,
+  priorityMap,
+  socialNetworkMap,
+  statusMap,
+} from "../bitacora/maps";
 
 export const updateDataSupabase = async (
   formData: Inputs,
+  clientTimeStr: string,
 ) => {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
@@ -14,27 +24,26 @@ export const updateDataSupabase = async (
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("User not founded");
+  // Fetch current row to compare created_at
+  const { data: current, error: fetchError } = await supabase
+    .from("bitacora")
+    .select("created_at")
+    .eq("id", formData.id);
+  if (fetchError) throw new Error("Failed to fetch current row");
+  const [year, month, day] = String(formData.created_at).split("-").map(Number);
+  const formDateStr = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-  const [year, month, day] = String(formData.created_at).split("-").map(Number)
-  const now = new Date()
-  const createdAt = new Date(
-    year,
-    month - 1,
-    day,
-    now.getHours(),
-    now.getMinutes(),
-    now.getSeconds()
-  ).toISOString()
+  // Compare only the date part of the current created_at
+  const rawCurrentDateStr = current[0].created_at as string;
+  const currentDateStr = rawCurrentDateStr.split("T")[0];
+  const updatedTimestamp = `${formDateStr} ${clientTimeStr}`;
 
   const payload = {
     latest_updated_user_id: user.id,
-    created_at: new Date(year, month - 1, day, 12, 0, 0).toISOString(),
+    ...(formDateStr !== currentDateStr && { created_at: updatedTimestamp }),
+    updated_at: updatedTimestamp,
     account_id: mustMap(accountMap, formData.account, "account"),
-    area_id: mustMap(
-      areaMap,
-      formData.area_responsable,
-      "area_responsable",
-    ),
+    area_id: mustMap(areaMap, formData.area_responsable, "area_responsable"),
     category_id: mustMap(categoryMap, formData.category, "category"),
     channel_id: mustMap(channelMap, formData.channel, "channel"),
     priority_id: mustMap(priorityMap, formData.priority, "priority"),
@@ -43,7 +52,6 @@ export const updateDataSupabase = async (
     description: formData.description,
     link: formData.link || null,
     observations: formData.observations || null,
-    updated_at: createdAt,
     folio: formData.folio || null,
     username: formData.username,
     social_network_id: mustMap(
@@ -57,8 +65,7 @@ export const updateDataSupabase = async (
     .from("bitacora")
     .update(payload)
     .eq("id", formData.id);
-  if (error) {
-    throw new Error("DB insert failed");
-  }
+
+  if (error) throw new Error("DB update failed");
   return { ok: true };
 };

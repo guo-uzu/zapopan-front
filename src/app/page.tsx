@@ -1,13 +1,13 @@
 "use client";
 import { columns } from "@/components/columns/dashboard";
 import useDashboardTable from "@/hooks/dashboard/useDashboardTable";
+import { TotalSummayCard } from "@/components/dashboard/TotalSummaryCard";
 
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { createClient } from "@/utils/supabase/client";
 
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -25,7 +25,6 @@ import {
   getDashboardAreaEstatal,
   getDashboardReportesPorDependencias,
 } from "@/hooks/fetch-data";
-import { Skeleton } from "@/components/ui/skeleton";
 import { subDays } from "date-fns";
 import { Pie, PieChart } from "recharts";
 
@@ -60,10 +59,11 @@ interface PendientesTotal {
 import { formatDateUI } from "@/lib/formatters/date";
 import useExportPng from "@/hooks/dashboard/useExportPng";
 import DownloadChartBtn from "@/components/dashboard/download-chart-btn";
+import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase";
+
+const supabase = SingletonClientSupabase.instance;
 
 export default function Home() {
-  const supabase = createClient();
-
   const [categoryDashboard, setCategoryDashboard] = useState<{
     data: DashBoardTable[];
     total: number;
@@ -78,7 +78,11 @@ export default function Home() {
     data: [],
     total: 0,
   });
-  const [reportesPorDependenciasDashboard, setReportesPorDependenciasDashboard] = useState<{
+
+  const [
+    reportesPorDependenciasDashboard,
+    setReportesPorDependenciasDashboard,
+  ] = useState<{
     data: DashBoardTable[];
     total: number;
   }>({
@@ -120,7 +124,7 @@ export default function Home() {
       setUserData(profile);
     } else {
       // Otherwise, just fall back to their email
-      setUserData(profile.email);
+      setUserData(user.email);
     }
   };
 
@@ -146,6 +150,15 @@ export default function Home() {
       resueltosT: counts.status2,
       direccionT: counts.status3,
     });
+  };
+
+  const handleFetchData = async () => {
+    if (dateRange?.from && dateRange.to) {
+      const data = await getDashboardCategory(dateRange?.from, dateRange?.to);
+      if (data) {
+        setCategoryDashboard({ data, total: totalDashboard(data) });
+      }
+    }
   };
 
   useEffect(() => {
@@ -181,7 +194,10 @@ export default function Home() {
   // Here is the modularized data
   const tableCategories = useDashboardTable(categoryDashboard.data, columns);
   const tableEstatal = useDashboardTable(areaEstatalDashboard.data, columns);
-  const tableReportesPorDependencias = useDashboardTable(reportesPorDependenciasDashboard.data, columns);
+  const tableReportesPorDependencias = useDashboardTable(
+    reportesPorDependenciasDashboard.data,
+    columns,
+  );
   // Here ends
 
   const chartPieData = [
@@ -234,18 +250,6 @@ export default function Home() {
     to: new Date(), // Today
   });
 
-  const handleFetchData = async () => {
-    if (dateRange?.from && dateRange.to) {
-      const data = await getDashboardCategory(
-        dateRange?.from,
-        dateRange?.to,
-      );
-      if (data) {
-        setCategoryDashboard({ data, total: totalDashboard(data) });
-      }
-    }
-  };
-
   const handleFetchAreaEstatalData = async () => {
     if (dateRange?.from && dateRange.to) {
       const data = await getDashboardAreaEstatal(
@@ -265,15 +269,18 @@ export default function Home() {
         dateRange?.to,
       );
       if (data) {
-        setReportesPorDependenciasDashboard({ data, total: totalDashboard(data) });
+        setReportesPorDependenciasDashboard({
+          data,
+          total: totalDashboard(data),
+        });
       }
     }
   };
 
   useEffect(() => {
     handleFetchData();
-    handleFetchAreaEstatalData()
-    handleFetchReportesPorDependencia()
+    handleFetchAreaEstatalData();
+    handleFetchReportesPorDependencia();
   }, [dateRange]);
 
   return (
@@ -294,18 +301,7 @@ export default function Home() {
             // Headers graphs
           }
           <div className="grid auto-rows-min gap-4 md:grid-cols-3 ">
-            <div className="bg-muted/50 aspect-video rounded-xl flex items-center justify-center flex-col">
-              <span className=" text-xl font-light">
-                Bienvenid@
-              </span>
-              {!userData ? (
-                <Skeleton className="bg-zinc-200/90 w-[300px] h-[40] rounded-full" />
-              ) : (
-                <span className="font-black text-2xl">
-                  {userData.full_name}
-                </span>
-              )}
-            </div>
+            <TotalSummayCard delta={10} reports={20} />
             <div className="bg-muted/50 aspect-video rounded-xl p-4 h-full">
               <p className="font-light text-xl">
                 Estatus de respuestas | Total
@@ -318,11 +314,7 @@ export default function Home() {
                   <PieChart>
                     <ChartTooltip
                       cursor={false}
-                      content={
-                        <ChartTooltipContent
-                          hideLabel
-                        />
-                      }
+                      content={<ChartTooltipContent hideLabel />}
                     />
                     <Pie
                       data={chartPieDataTotal}
@@ -345,17 +337,9 @@ export default function Home() {
                   <PieChart>
                     <ChartTooltip
                       cursor={false}
-                      content={
-                        <ChartTooltipContent
-                          hideLabel
-                        />
-                      }
+                      content={<ChartTooltipContent hideLabel />}
                     />
-                    <Pie
-                      data={chartPieData}
-                      dataKey="count"
-                      nameKey="status"
-                    />
+                    <Pie data={chartPieData} dataKey="count" nameKey="status" />
                   </PieChart>
                 </ChartContainer>
               </div>
@@ -385,7 +369,12 @@ export default function Home() {
                       />
                     </PopoverContent>
                   </Popover>
-                  <DownloadChartBtn data={categoryDashboard.data} title="Solicitudes recibidas" dateFrom={formatDateUI(dateRange?.from)} dateTo={formatDateUI(dateRange?.to)} />
+                  <DownloadChartBtn
+                    data={categoryDashboard.data}
+                    title="Solicitudes recibidas"
+                    dateFrom={formatDateUI(dateRange?.from)}
+                    dateTo={formatDateUI(dateRange?.to)}
+                  />
                 </div>
                 <div className="flex flex-row max-h-[481px]">
                   <TableDashboard
@@ -404,7 +393,12 @@ export default function Home() {
               </div>
               <div className="flex flex-col gap-4">
                 <div>
-                  <DownloadChartBtn data={reportesPorDependenciasDashboard.data} title="Reportes por dependencias" dateFrom={formatDateUI(dateRange?.from)} dateTo={formatDateUI(dateRange?.to)} />
+                  <DownloadChartBtn
+                    data={reportesPorDependenciasDashboard.data}
+                    title="Reportes por dependencias"
+                    dateFrom={formatDateUI(dateRange?.from)}
+                    dateTo={formatDateUI(dateRange?.to)}
+                  />
                 </div>
                 <div className="flex flex-row max-h-[481px]">
                   <TableDashboard
@@ -423,7 +417,12 @@ export default function Home() {
               </div>
               <div className="flex flex-col gap-4">
                 <div>
-                  <DownloadChartBtn data={areaEstatalDashboard.data} title="Reportes externos" dateFrom={formatDateUI(dateRange?.from)} dateTo={formatDateUI(dateRange?.to)} />
+                  <DownloadChartBtn
+                    data={areaEstatalDashboard.data}
+                    title="Reportes externos"
+                    dateFrom={formatDateUI(dateRange?.from)}
+                    dateTo={formatDateUI(dateRange?.to)}
+                  />
                 </div>
                 <div className="flex flex-row max-h-[481px]">
                   <TableDashboard
