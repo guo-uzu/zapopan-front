@@ -124,7 +124,7 @@ export default function Home() {
       setUserData(profile);
     } else {
       // Otherwise, just fall back to their email
-      setUserData(user.email);
+      setUserData(profile.email);
     }
   };
 
