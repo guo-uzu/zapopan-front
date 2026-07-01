@@ -1,13 +1,5 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Separator } from "@radix-ui/react-separator";
 import "./globals.css";
 
 const geistSans = Roboto({

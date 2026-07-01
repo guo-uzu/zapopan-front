@@ -58,10 +58,9 @@ const TableDashboard = ({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column
-                              .columnDef.header,
-                            header.getContext(),
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                       </TableHead>
                     );
                   })}
@@ -74,9 +73,7 @@ const TableDashboard = ({
                   <TableRow
                     className="whitespace-nowrap overflow-hidden truncate"
                     key={row.id}
-                    data-state={
-                      row.getIsSelected() && "selected"
-                    }
+                    data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
@@ -101,12 +98,8 @@ const TableDashboard = ({
             </TableBody>
             <TableFooter className="bg-background sticky bottom-0">
               <TableRow>
-                <TableCell className="font-bold">
-                  Total
-                </TableCell>
-                <TableCell className="font-bold">
-                  {total}
-                </TableCell>
+                <TableCell className="font-bold">Total</TableCell>
+                <TableCell className="font-bold">{total}</TableCell>
               </TableRow>
             </TableFooter>
           </Table>
