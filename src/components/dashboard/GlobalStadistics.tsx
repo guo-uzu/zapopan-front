@@ -1,8 +1,13 @@
 import { getGlobalReports } from "@/lib/dashboard/getGlobalReports";
 
-type globalReports = {};
+type globalReports = {
+  count_resuelto: number;
+  count_pendiente: number;
+  count_en_proceso: number;
+  count_direccion: number;
+};
 export const GlobalStadistics = async () => {
-  const reports = await getGlobalReports();
+  const reports: globalReports = await getGlobalReports();
   const resueltos = Number(reports.count_resuelto).toLocaleString("es-MX");
   const pendientes = Number(reports.count_pendiente).toLocaleString("es-MX");
   const enProceso = Number(reports.count_en_proceso).toLocaleString("es-MX");
