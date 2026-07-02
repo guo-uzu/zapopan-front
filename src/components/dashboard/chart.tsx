@@ -10,11 +10,11 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 const ChartDashboard = ({
   data,
   config,
-  title
+  title,
 }: {
   data: DashBoardTable[];
   config: ChartConfig;
-  title: string
+  title: string;
 }) => {
   const keys = Object.keys(config);
   return (
@@ -37,15 +37,13 @@ const ChartDashboard = ({
           />
           <ChartTooltip content={<ChartTooltipContent />} />
           {keys.map((key) => (
-            <Bar
-              dataKey={key}
-              fill={`var(--color-${key})`}
-              radius={4}
-            />
+            <Bar dataKey={key} fill={`var(--color-${key})`} radius={4} />
           ))}
         </BarChart>
       </ChartContainer>
-      <span className="text-center mx-auto block w-full text-sm font-bold">{title}</span>
+      <span className="text-center mx-auto block w-full text-sm font-bold">
+        {title}
+      </span>
     </div>
   );
 };
