@@ -10,7 +10,7 @@ import {
 
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "@/components/app-sidebar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   getDashboardCategory,
   getDashboardAreaEstatal,
@@ -28,7 +28,6 @@ import { CalendarDays } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import TableDashboard from "@/components/dashboard/table";
 import { DateRange } from "react-day-picker";
-import { DashBoardTable } from "@/types/dashboardTable";
 import ChartDashboard from "@/components/dashboard/chart";
 import categoryChart from "@/lib/configs/dashboard";
 
@@ -37,62 +36,30 @@ import DownloadChartBtn from "@/components/dashboard/download-chart-btn";
 import { GlobalStadistics } from "@/components/dashboard/GlobalStadistics";
 import { TodaySummaryCard } from "@/components/dashboard/TodaySummaryCard";
 import { UserStadistics } from "@/components/dashboard/UserStadistics";
-import { handleFetchFunction } from "@/lib/dashboard/handleFetchFunction";
+import useDashboardData from "@/hooks/dashboard/useDashboardData";
 
 export default function DashboardClients() {
-  const [categoryDashboard, setCategoryDashboard] = useState<{
-    data: DashBoardTable[];
-    total: number;
-  }>({
-    data: [],
-    total: 0,
-  });
-  const [areaEstatalDashboard, setAreaEstatalDashboard] = useState<{
-    data: DashBoardTable[];
-    total: number;
-  }>({
-    data: [],
-    total: 0,
-  });
-
-  const [
-    reportesPorDependenciasDashboard,
-    setReportesPorDependenciasDashboard,
-  ] = useState<{
-    data: DashBoardTable[];
-    total: number;
-  }>({
-    data: [],
-    total: 0,
-  });
-
-  // Here is the modularized data
-  const tableCategories = useDashboardTable(categoryDashboard.data, columns);
-  const tableEstatal = useDashboardTable(areaEstatalDashboard.data, columns);
-  const tableReportesPorDependencias = useDashboardTable(
-    reportesPorDependenciasDashboard.data,
-    columns,
-  );
-  // Here ends
-
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: subDays(new Date(), 7), // 7 days ago
     to: new Date(), // Today
   });
 
-  useEffect(() => {
-    handleFetchFunction(dateRange, getDashboardCategory, setCategoryDashboard);
-    handleFetchFunction(
-      dateRange,
-      getDashboardAreaEstatal,
-      setAreaEstatalDashboard,
-    );
-    handleFetchFunction(
-      dateRange,
-      getDashboardReportesPorDependencias,
-      setReportesPorDependenciasDashboard,
-    );
-  }, [dateRange]);
+  const categoryDashboard = useDashboardData(getDashboardCategory, dateRange);
+  const tableCategories = useDashboardTable(categoryDashboard.data, columns);
+  const areaEstatalDashboard = useDashboardData(
+    getDashboardAreaEstatal,
+    dateRange,
+  );
+  const tableEstatal = useDashboardTable(areaEstatalDashboard.data, columns);
+
+  const reportesPorDependenciasDashboard = useDashboardData(
+    getDashboardReportesPorDependencias,
+    dateRange,
+  );
+  const tableReportesPorDependencias = useDashboardTable(
+    reportesPorDependenciasDashboard.data,
+    columns,
+  );
 
   return (
     <SidebarProvider>
