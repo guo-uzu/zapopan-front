@@ -10,28 +10,13 @@ import {
 
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import { useEffect, useState } from "react";
 import {
   getDashboardCategory,
-  getPendientesTotal,
-  getPendientesUser,
   getDashboardAreaEstatal,
   getDashboardReportesPorDependencias,
 } from "@/hooks/fetch-data";
 import { subDays } from "date-fns";
-import { Pie, PieChart } from "recharts";
-
-type UserProfile = {
-  id: string;
-  full_name: string;
-  email?: string;
-};
 
 import {
   Popover,
@@ -44,25 +29,15 @@ import { Calendar } from "@/components/ui/calendar";
 import TableDashboard from "@/components/dashboard/table";
 import { DateRange } from "react-day-picker";
 import { DashBoardTable } from "@/types/dashboardTable";
-import totalDashboard from "@/lib/toReturn/totalDashboard";
 import ChartDashboard from "@/components/dashboard/chart";
 import categoryChart from "@/lib/configs/dashboard";
 
-interface PendientesTotal {
-  pendientesT: number | null;
-  resueltosT: number | null;
-  enProcesoT: number | null;
-  direccionT: number | null;
-}
-
 import { formatDateUI } from "@/lib/formatters/date";
 import DownloadChartBtn from "@/components/dashboard/download-chart-btn";
-import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase";
 import { GlobalStadistics } from "@/components/dashboard/GlobalStadistics";
 import { TodaySummaryCard } from "@/components/dashboard/TodaySummaryCard";
 import { UserStadistics } from "@/components/dashboard/UserStadistics";
-
-const supabase = SingletonClientSupabase.instance;
+import { handleFetchFunction } from "@/lib/dashboard/handleFetchFunction";
 
 export default function DashboardClients() {
   const [categoryDashboard, setCategoryDashboard] = useState<{
@@ -91,107 +66,6 @@ export default function DashboardClients() {
     total: 0,
   });
 
-  const [userData, setUserData] = useState<UserProfile | null>(null);
-  const [pendientes, setPendientes] = useState<number | null>(null);
-  const [resueltos, setResueltos] = useState<number | null>(null);
-  const [enProceso, setEnProceso] = useState<number | null>(null);
-  const [direccion, setDireccion] = useState<number | null>(null);
-  const [pendientesTotal, setPendientesTotal] = useState<PendientesTotal>({
-    pendientesT: null,
-    resueltosT: null,
-    enProcesoT: null,
-    direccionT: null,
-  });
-
-  const handleUserData = async () => {
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError) throw authError;
-    if (!user) return;
-
-    const { data: profile, error: profileError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-    if (profileError) throw profileError;
-
-    // --- STEP 3: Set the Data ---
-    if (profile) {
-      // If they have a profile AND a name, use that
-      setUserData(profile);
-    } else {
-      // Otherwise, just fall back to their email
-      setUserData(profile.email);
-    }
-  };
-
-  const handlePendientes = async () => {
-    const { counts, error } = await getPendientesUser();
-    if (error) {
-      throw Error("Error fetching the data. Try again");
-    }
-    setPendientes(counts.status0);
-    setEnProceso(counts.status1);
-    setResueltos(counts.status2);
-    setDireccion(counts.status3);
-  };
-
-  const handlePendientesTotal = async () => {
-    const { counts, error } = await getPendientesTotal();
-    if (error) {
-      throw Error("Error fetching the data. Try again");
-    }
-    setPendientesTotal({
-      pendientesT: counts.status0,
-      enProcesoT: counts.status1,
-      resueltosT: counts.status2,
-      direccionT: counts.status3,
-    });
-  };
-
-  const handleFetchData = async () => {
-    if (dateRange?.from && dateRange.to) {
-      const data = await getDashboardCategory(dateRange?.from, dateRange?.to);
-      if (data) {
-        setCategoryDashboard({ data, total: totalDashboard(data) });
-      }
-    }
-  };
-
-  useEffect(() => {
-    handleFetchData();
-    handleUserData();
-    handlePendientes();
-    handlePendientesTotal();
-  }, [supabase]);
-
-  const chartPieConfig = {
-    visitors: {
-      label: "Visitors",
-    },
-    chrome: {
-      label: "Chrome",
-    },
-    safari: {
-      label: "Safari",
-    },
-    firefox: {
-      label: "Firefox",
-      color: "var(--chart-3)",
-    },
-    edge: {
-      label: "Edge",
-      color: "var(--chart-4)",
-    },
-    other: {
-      label: "Other",
-      color: "var(--chart-5)",
-    },
-  } satisfies ChartConfig;
   // Here is the modularized data
   const tableCategories = useDashboardTable(categoryDashboard.data, columns);
   const tableEstatal = useDashboardTable(areaEstatalDashboard.data, columns);
@@ -201,87 +75,23 @@ export default function DashboardClients() {
   );
   // Here ends
 
-  const chartPieData = [
-    {
-      status: "Pendientes",
-      count: pendientes,
-      fill: "oklch(79.5% 0.184 86.047)",
-    },
-    {
-      status: "En Proceso",
-      count: enProceso,
-      fill: "oklch(63.7% 0.237 25.331)",
-    },
-    {
-      status: "Resueltos",
-      count: resueltos,
-      fill: "oklch(72.3% 0.219 149.579)",
-    },
-    {
-      status: "Dirección",
-      count: direccion,
-      fill: "oklch(70.5% 0.213 47.604)",
-    },
-  ];
-
-  const chartPieDataTotal = [
-    {
-      status: "Pendientes",
-      count: pendientesTotal.pendientesT,
-      fill: "oklch(79.5% 0.184 86.047)",
-    },
-    {
-      status: "En Proceso",
-      count: pendientesTotal.enProcesoT,
-      fill: "oklch(63.7% 0.237 25.331)",
-    },
-    {
-      status: "Resueltos",
-      count: pendientesTotal.resueltosT,
-      fill: "oklch(72.3% 0.219 149.579)",
-    },
-    {
-      status: "Dirección",
-      count: pendientesTotal.direccionT,
-      fill: "oklch(70.5% 0.213 47.604)",
-    },
-  ];
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: subDays(new Date(), 7), // 7 days ago
     to: new Date(), // Today
   });
 
-  const handleFetchAreaEstatalData = async () => {
-    if (dateRange?.from && dateRange.to) {
-      const data = await getDashboardAreaEstatal(
-        dateRange?.from,
-        dateRange?.to,
-      );
-      if (data) {
-        setAreaEstatalDashboard({ data, total: totalDashboard(data) });
-      }
-    }
-  };
-
-  const handleFetchReportesPorDependencia = async () => {
-    if (dateRange?.from && dateRange.to) {
-      const data = await getDashboardReportesPorDependencias(
-        dateRange?.from,
-        dateRange?.to,
-      );
-      if (data) {
-        setReportesPorDependenciasDashboard({
-          data,
-          total: totalDashboard(data),
-        });
-      }
-    }
-  };
-
   useEffect(() => {
-    handleFetchData();
-    handleFetchAreaEstatalData();
-    handleFetchReportesPorDependencia();
+    handleFetchFunction(dateRange, getDashboardCategory, setCategoryDashboard);
+    handleFetchFunction(
+      dateRange,
+      getDashboardAreaEstatal,
+      setAreaEstatalDashboard,
+    );
+    handleFetchFunction(
+      dateRange,
+      getDashboardReportesPorDependencias,
+      setReportesPorDependenciasDashboard,
+    );
   }, [dateRange]);
 
   return (
@@ -306,9 +116,6 @@ export default function DashboardClients() {
             <GlobalStadistics />
             <UserStadistics />
           </div>
-          {
-            // Content
-          }
           <div className="bg-muted/50 flex-1 flex flex-col gap-4 p-4 rounded-xl">
             <div className="flex flex-col gap-10">
               <div className="flex flex-col gap-4">
