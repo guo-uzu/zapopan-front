@@ -13,7 +13,11 @@ type globalReports = {
 };
 
 export const GlobalStadistics = () => {
-  const { dateRange, setDateRange, from, to } = useDateRange();
+  const dateFrom = new Date();
+  dateFrom.setMonth(dateFrom.getMonth() - 1);
+  const { dateRange, setDateRange, from, to } = useDateRange({
+    defaultFrom: dateFrom,
+  });
   const trigger = useTriggerRealtimeDB();
   const [error, setError] = useState(false);
   const [globalReports, setGlobalReports] = useState<globalReports>({
