@@ -3,48 +3,6 @@ import { formatDataDate } from "@/lib/formatters/date";
 import { DashBoardTable } from "@/types/dashboardTable";
 import { createClient } from "@/utils/supabase/client";
 import { formatData } from "../lib/formatters/formatData";
-/*
-export const fetchData = async (id?: string | null) => {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("User not founded");
-  let query = supabase
-    .from("bitacora")
-    .select(
-      `
-      id,
-      user_id(full_name),
-      account_bitacora:account_id(name),
-      created_at,
-      category_bitacora:category_id(name),
-      description,
-      folio,
-      link,
-      observations,
-      priority_bitacora:priority_id(name),
-      status_bitacora:status_id(name),
-      username,
-      responsable_area_bitacora:area_id(name),
-      colonia,
-      channel_bitacora:channel_id(name),
-      social_network_bitacora:social_network_id(name),
-      updated_at,
-      latest_updated_user_id(full_name),
-      snapshot_before_edit(*)
-    `,
-    )
-    .eq("available", true);
-
-  if (id) {
-    query = query.eq("id", id);
-  }
-  const response = await query.order("created_at", { ascending: false });
-  console.log(response)
-  return response;
-};
- */
 
 export const getDashboardCategory = async (data_from: Date, data_to: Date) => {
   const supabase = createClient();
@@ -55,59 +13,11 @@ export const getDashboardCategory = async (data_from: Date, data_to: Date) => {
   if (!data_from && !data_to) {
     return;
   }
-  const dataFrom = new Date(`${formatDataDate(data_from)}:00:00:00`);
-  const dataTo = new Date(`${formatDataDate(data_to)}:23:59:59`);
+  const dataFrom = new Date(`${formatDataDate(data_from)}T00:00:00`);
+  const dataTo = new Date(`${formatDataDate(data_to)}T23:59:59`);
   const { data, error } = await supabase.rpc("getcategorycount", {
-    data_from: dataFrom.toISOString(),
-    data_to: dataTo.toISOString(),
-  });
-  if (error) {
-    console.log("Error", error);
-  }
-  return data;
-};
-
-export const getDashboardReportesPorDependencias = async (
-  data_from: Date,
-  data_to: Date,
-) => {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("User not founded");
-  if (!data_from && !data_to) {
-    return;
-  }
-  const dataFrom = new Date(`${formatDataDate(data_from)}:00:00:00`);
-  const dataTo = new Date(`${formatDataDate(data_to)}:23:59:59`);
-  const { data, error } = await supabase.rpc("getreportespordependencias", {
-    data_from: dataFrom.toISOString(),
-    data_to: dataTo.toISOString(),
-  });
-  if (error) {
-    console.log("Error", error);
-  }
-  return data;
-};
-
-export const getDashboardAreaEstatal = async (
-  data_from: Date,
-  data_to: Date,
-) => {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("User not founded");
-  if (!data_from && !data_to) {
-    return;
-  }
-  const dataFrom = new Date(`${formatDataDate(data_from)}:00:00:00`);
-  const dataTo = new Date(`${formatDataDate(data_to)}:23:59:59`);
-  const { data, error } = await supabase.rpc("getareacount", {
-    data_from: dataFrom.toISOString(),
-    data_to: dataTo.toISOString(),
+    data_from: dataFrom,
+    data_to: dataTo,
   });
   if (error) {
     console.log("Error", error);

@@ -17,6 +17,7 @@ const ChartDashboard = ({
   title: string;
 }) => {
   const keys = Object.keys(config);
+
   return (
     <div className="w-full h-full flex flex-col">
       <ChartContainer className="max-h-[481px]" config={config}>
@@ -27,6 +28,8 @@ const ChartDashboard = ({
             tickLine={false}
             tickMargin={10}
             axisLine={false}
+            width={10}
+            height={20}
           />
           <XAxis
             dataKey="name"
@@ -34,6 +37,8 @@ const ChartDashboard = ({
             tickMargin={10}
             axisLine={false}
             interval={1}
+            width={10}
+            height={20}
           />
           <ChartTooltip content={<ChartTooltipContent />} />
           {keys.map((key) => (

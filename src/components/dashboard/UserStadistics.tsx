@@ -4,6 +4,8 @@ import { useTriggerRealtimeDB } from "@/hooks/bitacora/useTriggerRealtimeDB";
 import { useEffect, useState } from "react";
 import { useDateRange } from "@/hooks/dashboard/useDateRange";
 import { CalendarSearch } from "./calendar";
+import { dateFormat } from "@/lib/dashboard/formatDate";
+import { Skeleton } from "../ui/skeleton";
 
 type globalReports = {
   count_resuelto: number;
@@ -14,11 +16,14 @@ type globalReports = {
 export const UserStadistics = () => {
   const dateFrom = new Date();
   dateFrom.setMonth(dateFrom.getMonth() - 1);
+
   const { dateRange, setDateRange, from, to } = useDateRange({
     defaultFrom: dateFrom,
   });
+
   const trigger = useTriggerRealtimeDB();
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [userReports, setUserReports] = useState<globalReports>({
     count_resuelto: 0,
     count_direccion: 0,
@@ -29,10 +34,16 @@ export const UserStadistics = () => {
   useEffect(() => {
     getUserReports({ from, to })
       .then((totalReports) => {
+        setLoading(false);
         setUserReports(totalReports);
       })
-      .catch(() => setError(true));
+      .catch(() => {
+        setLoading(false);
+        setError(true);
+      });
   }, [trigger, from, to]);
+
+  if (loading) return <Skeleton />;
 
   if (error)
     return (
@@ -46,7 +57,14 @@ export const UserStadistics = () => {
       <div className="absolute top-4 left-4">
         <CalendarSearch dateRange={dateRange} onSelect={setDateRange} />
       </div>
-      <h2 className="text-2xl text-black/60">Reportes individuales</h2>
+      <div className="flex flex-col items-center">
+        <h2 className="text-2xl text-black/60">Reportes individuales</h2>
+        <span className="text-center text-sm text-black/40">
+          {dateFormat(from)
+            ? `${dateFormat(from)} - ${dateFormat(to)}`
+            : "Resultados globales"}
+        </span>
+      </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-4">
         <div className="flex flex-col items-center text-green-700">
           <p className="text-md text-current/70">Resueltos</p>

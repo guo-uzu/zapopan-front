@@ -13,20 +13,35 @@ type DashboardGetter = (
   to: Date,
 ) => Promise<DashBoardTable[] | null | undefined>;
 
+type UseDashboardDataResult = DashboardState & {
+  loading: boolean;
+  error: boolean;
+};
+
 export const useDashboardData = (
   getter: DashboardGetter,
   dateRange: DateRange | undefined,
-): DashboardState => {
+): UseDashboardDataResult => {
   const [state, setState] = useState<DashboardState>({
     data: [],
     total: 0,
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    handleFetchFunction(dateRange, getter, setState);
+    handleFetchFunction(dateRange, getter)
+      .then(({ data, total }) => {
+        setState({ data, total });
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
   }, [dateRange, getter]);
 
-  return state;
+  return { data: state.data, total: state.total, loading, error };
 };
 
 export default useDashboardData;

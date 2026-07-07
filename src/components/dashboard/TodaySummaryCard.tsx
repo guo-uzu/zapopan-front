@@ -4,6 +4,7 @@ import { useTriggerRealtimeDB } from "@/hooks/bitacora/useTriggerRealtimeDB";
 import { getReportsToday } from "@/lib/dashboard/getReportsToday";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Skeleton } from "../ui/skeleton";
 
 type DataSummaryCard = {
   today: number;
@@ -13,15 +14,24 @@ type DataSummaryCard = {
 export const TodaySummaryCard = () => {
   const [data, setData] = useState<DataSummaryCard>({ today: 0, delta: 0 });
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
   const RED_COLOR = "oklch(63.7% 0.237 25.331)";
   const GREEN_COLOR = "oklch(62.7% 0.194 149.214)";
   const trigger = useTriggerRealtimeDB();
 
   useEffect(() => {
     getReportsToday()
-      .then(({ today, delta }) => setData({ today, delta }))
-      .catch(() => setError(true));
+      .then(({ today, delta }) => {
+        setLoading(false);
+        setData({ today, delta });
+      })
+      .catch(() => {
+        setLoading(false);
+        setError(true);
+      });
   }, [trigger]);
+
+  if (loading) return <Skeleton />;
 
   if (error)
     return (
