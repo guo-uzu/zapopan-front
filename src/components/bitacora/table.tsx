@@ -17,13 +17,13 @@ import { BitacoraTableBody } from "./BitacoraTableBody";
  * @returns DataTable is the function that prints the table in the DOM and shows all of the rows or individually
  */
 
-export function DataTable({
-  columns,
-  idFilter,
-}: {
-  columns: ColumnDef<BitacoraRecord, unknown>[];
+type DataTableProps = {
   idFilter: string | null;
-}) {
+  columns: ColumnDef<BitacoraRecord, unknown>[];
+  statusFilter?: string | null;
+};
+
+export function DataTable({ columns, idFilter, statusFilter }: DataTableProps) {
   const [manualRefresh, setManualRefresh] = useState(0);
 
   const {
@@ -40,7 +40,7 @@ export function DataTable({
     uiPagination,
     goNextPage,
     goPreviousPage,
-  } = useBitacoraUpdateData(idFilter, manualRefresh);
+  } = useBitacoraUpdateData(idFilter, manualRefresh, statusFilter);
 
   const [open, setOpen] = useState(false);
   const [defaultData, setDefaultData] = useState<Partial<Inputs>>({});

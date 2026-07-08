@@ -9,6 +9,7 @@ import { useTriggerRealtimeDB } from "./useTriggerRealtimeDB";
 export const useBitacoraUpdateData = <TData extends BitacoraRecord>(
   idFilter: string | null,
   manualRefresh: number = 0,
+  statusFilter?: string | null,
 ) => {
   const [dataBitacora, setDataBitacora] = useState<TData[]>([]);
   const [pagination, setPagination] = useState({
@@ -35,8 +36,7 @@ export const useBitacoraUpdateData = <TData extends BitacoraRecord>(
         socialNetwork: "",
         dateRange: "",
       };
-
-    return {
+    const base = {
       account: localStorage.getItem("account") ?? "",
       area: localStorage.getItem("area") ?? "",
       status: localStorage.getItem("status") ?? "",
@@ -47,6 +47,12 @@ export const useBitacoraUpdateData = <TData extends BitacoraRecord>(
       socialNetwork: localStorage.getItem("socialNetwork") ?? "",
       dateRange: localStorage.getItem("bitacora_date_range") ?? "",
     };
+
+    if (statusFilter) {
+      localStorage.setItem("status", statusFilter);
+      return { ...base, status: statusFilter };
+    }
+    return base;
   });
 
   const goNextPage = () => {

@@ -3,10 +3,10 @@ import { Input } from "../ui/input";
 import FiltersResponsive from "./FiltersResponsive";
 import FilterUsers from "./filterUsers";
 import FilterDesktop from "./filterDesktop";
-import CalendarFilter from "./calendarFilter";
 import { Filters } from "@/types/fetchData";
 import { Dispatch, SetStateAction } from "react";
 import { DateRange } from "react-day-picker";
+import { CalendarSearch } from "../dashboard/calendar";
 
 const FILTERS = [
   {
@@ -85,9 +85,9 @@ export const TableToolbar = ({
             onChangeFilter={onChangeFilter}
           />
         ))}
-        <CalendarFilter
+        <CalendarSearch
           dateRange={dateRange}
-          setDateRange={setDateRange}
+          onSelect={setDateRange}
           onChangeFilter={onChangeFilter}
         />
       </div>

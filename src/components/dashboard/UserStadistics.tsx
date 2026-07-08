@@ -6,6 +6,7 @@ import { useDateRange } from "@/hooks/dashboard/useDateRange";
 import { CalendarSearch } from "./calendar";
 import { dateFormat } from "@/lib/dashboard/formatDate";
 import { Skeleton } from "../ui/skeleton";
+import Link from "next/link";
 
 type globalReports = {
   count_resuelto: number;
@@ -66,30 +67,38 @@ export const UserStadistics = () => {
         </span>
       </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-        <div className="flex flex-col items-center text-green-700">
-          <p className="text-md text-current/70">Resueltos</p>
-          <span className="text-3xl font-bold">
-            {userReports.count_resuelto.toLocaleString("es-MX")}
-          </span>
-        </div>
-        <div className="flex flex-col items-center text-yellow-600">
-          <p className="text-md text-current/70">Pendiente</p>
-          <span className="text-3xl font-bold">
-            {userReports.count_pendiente.toLocaleString("es-MX")}
-          </span>
-        </div>
-        <div className="flex flex-col items-center text-red-600">
-          <p className="text-md text-current/70">En proceso</p>
-          <span className="text-3xl font-bold">
-            {userReports.count_en_proceso.toLocaleString("es-MX")}
-          </span>
-        </div>
-        <div className="flex flex-col items-center text-orange-600">
-          <p className="text-md text-current/70">Dirección</p>
-          <span className="text-3xl font-bold">
-            {userReports.count_direccion.toLocaleString("es-MX")}
-          </span>
-        </div>
+        <Link href="/bitacora?status=resuelto">
+          <div className="flex flex-col items-center text-green-700">
+            <p className="text-md text-current/70">Resueltos</p>
+            <span className="text-3xl font-bold">
+              {userReports.count_resuelto.toLocaleString("es-MX")}
+            </span>
+          </div>
+        </Link>
+        <Link href="/bitacora?status=pendiente">
+          <div className="flex flex-col items-center text-yellow-600">
+            <p className="text-md text-current/70">Pendiente</p>
+            <span className="text-3xl font-bold">
+              {userReports.count_pendiente.toLocaleString("es-MX")}
+            </span>
+          </div>
+        </Link>
+        <Link href="/bitacora?status=en_proceso">
+          <div className="flex flex-col items-center text-red-600">
+            <p className="text-md text-current/70">En proceso</p>
+            <span className="text-3xl font-bold">
+              {userReports.count_en_proceso.toLocaleString("es-MX")}
+            </span>
+          </div>
+        </Link>
+        <Link href="/bitacora?status=dirección">
+          <div className="flex flex-col items-center text-orange-600">
+            <p className="text-md text-current/70">Dirección</p>
+            <span className="text-3xl font-bold">
+              {userReports.count_direccion.toLocaleString("es-MX")}
+            </span>
+          </div>
+        </Link>
       </div>
     </div>
   );
