@@ -11,7 +11,7 @@ import { CleanFilters } from "./response-clean-filters";
 export const ResponsesSection = () => {
   const {
     searchTerm,
-    setSearchTerm,
+    handleSearchTerm,
     openSheet,
     setOpenSheet,
     handleReset,
@@ -37,7 +37,7 @@ export const ResponsesSection = () => {
       <div className="max-w-xl w-full mx-auto flex flex-col gap-4 mb-8">
         <ResponsesSearchBar
           searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
+          handleSearchTerm={handleSearchTerm}
         />
         <ResponseFormSheet
           formDefaultData={formDefaultData}
@@ -76,7 +76,7 @@ export const ResponsesSection = () => {
       <CleanFilters
         filteredResponses={filteredResponses}
         searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+        handleSearchTerm={handleSearchTerm}
       />
     </div>
   );
