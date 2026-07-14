@@ -8,7 +8,6 @@ import { deleteRespuesta } from "@/hooks/deleteRow";
 import { sanitizeSearchTerm } from "@/lib/sanitizeInput";
 import { filterResponses } from "@/lib/responses/filterResponses";
 import useDebouncedValue from "../bitacora/useDebounce";
-import { getResponses } from "@/lib/data/getResponses";
 import { fetchResponses } from "@/lib/responses/fetchResponses";
 
 const supabase = SingletonClientSupabase.instance;
@@ -109,7 +108,7 @@ export const useResponsesSection = () => {
           if (response.ok === true) {
             setLoading(false);
             handleReset();
-            fetchResponse();
+            fetchResponses(setResponses);
           }
           return "Respuesta creada";
         },
@@ -125,7 +124,7 @@ export const useResponsesSection = () => {
             setLoading(false);
           }
           handleReset();
-          fetchResponse();
+          fetchResponses(setResponses);
           return "Respuesta actualizada";
         },
         error: "Error",
@@ -135,7 +134,7 @@ export const useResponsesSection = () => {
   };
 
   useEffect(() => {
-    fetchResponses();
+    fetchResponses(setResponses);
   }, []);
 
   useEffect(() => {
@@ -174,7 +173,7 @@ export const useResponsesSection = () => {
           table: "respuestas",
         },
         () => {
-          fetchResponses();
+          fetchResponses(setResponses);
         },
       )
       .subscribe();
