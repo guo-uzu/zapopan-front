@@ -9,6 +9,7 @@ import { sanitizeSearchTerm } from "@/lib/sanitizeInput";
 import { filterResponses } from "@/lib/responses/filterResponses";
 import useDebouncedValue from "../bitacora/useDebounce";
 import { fetchResponses } from "@/lib/responses/fetchResponses";
+import { getResponses } from "@/lib/data/getResponses";
 
 const supabase = SingletonClientSupabase.instance;
 
@@ -17,7 +18,7 @@ export const useResponsesSection = () => {
   const [selectedResponse, setSelectedResponse] = useState<ResponseFromAPI>();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const debouce = useDebouncedValue(searchTerm, 800);
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 800);
 
   const [upperMenu, setUpperMenu] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -134,8 +135,8 @@ export const useResponsesSection = () => {
   };
 
   useEffect(() => {
-    fetchResponses(setResponses);
-  }, []);
+    fetchResponses(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
 
   useEffect(() => {
     if (searchTerm !== "") {

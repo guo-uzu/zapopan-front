@@ -6,14 +6,15 @@ type filteredReponsesProps = {
 };
 
 const filterResponses = ({ responses, searchTerm }: filteredReponsesProps) => {
-  if (!searchTerm) return true;
+  if (!searchTerm) return responses;
+
   const terms = searchTerm
     .toLowerCase()
     .split(",")
     .map((term) => term.trim())
     .filter((term) => term.length > 0);
 
-  if (terms.length === 0) return true;
+  if (terms.length === 0) return responses;
 
   return responses.filter((response) =>
     terms.some((term) => {

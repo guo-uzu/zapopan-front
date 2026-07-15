@@ -1,7 +1,15 @@
 import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase";
 const supabase = SingletonClientSupabase.instance;
 
-export const getResponses = async () => {
+type GetResponsesProps = {
+  searchText: string;
+  areaIds: string;
+};
+
+export const getResponses = async ({
+  searchText,
+  areaIds,
+}: GetResponsesProps) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -22,6 +30,10 @@ export const getResponses = async () => {
       user_id(full_name,email,avatar_url)
       `,
     )
+    .ilike("title", searchText)
+    .ilike("description_jjf", searchText)
+    .ilike("description_gob", searchText)
+    .contains("labels_areas", areaIds)
     .eq("available", true)
     .order("created_at", { ascending: false });
   if (error) {
