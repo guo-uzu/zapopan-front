@@ -51,6 +51,7 @@ export const ResponsesSection = () => {
         />
       </div>
       <ResponsesAreaSelectors
+        debouncedText={searchTerm}
         handleTagClick={handleTagClick}
         upperMenu={upperMenu}
       />
