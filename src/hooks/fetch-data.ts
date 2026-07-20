@@ -1,4 +1,3 @@
-import { Option } from "@/app/respuestas/multi-select";
 import { formatDataDate } from "@/lib/formatters/date";
 import { DashBoardTable } from "@/types/dashboardTable";
 import { createClient } from "@/utils/supabase/client";
@@ -83,24 +82,6 @@ export const getPendientesTotal = async () => {
   };
   return { counts, error };
 };
-
-interface Response {
-  id: string;
-  labels_areas: Option[];
-  created_at: string;
-  description_jjf: string;
-  description_gob: string;
-  title: string;
-  updated_at: string;
-  latest_updated_user_id?: {
-    full_name: string;
-  };
-  user_id?: {
-    full_name: string;
-    email: string;
-    avatar_url: string;
-  };
-}
 
 export const getUsersFilter = async () => {
   const supabase = createClient();

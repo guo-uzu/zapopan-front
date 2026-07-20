@@ -7,11 +7,21 @@ import { ResponsesCardContainer } from "./responses-cards-container";
 import { ResponsesFiltered } from "./reponses-filtered";
 import { ResponseCard } from "./response-card";
 import { CleanFilters } from "./response-clean-filters";
+import { useResponsesFetch } from "@/hooks/responses/useReponsesFetch";
 
 export const ResponsesSection = () => {
   const {
     searchTerm,
     handleSearchTerm,
+    upperMenu,
+    setUpperMenu,
+    handleTagClick,
+    responses,
+    isFetchingResponses,
+    isSearching,
+  } = useResponsesFetch();
+
+  const {
     openSheet,
     setOpenSheet,
     handleReset,
@@ -19,11 +29,6 @@ export const ResponsesSection = () => {
     handleFormSubmit,
     formDefaultData,
     setFormDefaultData,
-    isLoading,
-    upperMenu,
-    handleTagClick,
-    setUpperMenu,
-    filteredResponses,
     handleViewDialog,
     openDialog,
     selectedResponse,
@@ -47,7 +52,6 @@ export const ResponsesSection = () => {
           openSheet={openSheet}
           setFormDefaultData={setFormDefaultData}
           setOpenSheet={setOpenSheet}
-          isLoading={isLoading}
         />
       </div>
       <ResponsesAreaSelectors
@@ -62,9 +66,11 @@ export const ResponsesSection = () => {
       />
       <ResponsesFiltered
         handleViewDialog={handleViewDialog}
-        filteredResponses={filteredResponses}
+        responses={responses}
         handleTagClick={handleTagClick}
         upperMenu={upperMenu}
+        isSearching={isSearching}
+        isFetchingResponses={isFetchingResponses}
       />
       <ResponseCard
         handleTagClick={handleTagClick}
@@ -75,7 +81,7 @@ export const ResponsesSection = () => {
         handleEditRespuesta={handleEditRespuesta}
       />
       <CleanFilters
-        filteredResponses={filteredResponses}
+        responses={responses}
         searchTerm={searchTerm}
         handleSearchTerm={handleSearchTerm}
       />

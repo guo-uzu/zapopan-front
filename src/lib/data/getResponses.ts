@@ -10,14 +10,11 @@ export const getResponses = async (
   } = await supabase.auth.getUser();
   if (!user) throw new Error("User not founded");
 
-  const { data, error } = await supabase
-    .rpc("search_responses", {
-      areas_json: areas_json,
-      terminos_busqueda: terminos_busqueda,
-    })
-    .range(0, 10);
-
-  console.log("data", data);
+  const { data, error } = await supabase.rpc("search_responses", {
+    areas_json: areas_json,
+    terminos_busqueda: terminos_busqueda,
+  });
+  // .range(0, 10);
   if (error) {
     throw new Error("Error searching the data");
   }

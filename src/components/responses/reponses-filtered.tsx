@@ -11,24 +11,32 @@ import { getUserFullName } from "@/lib/formatters/responses";
 import { formatDataFrom } from "@/lib/formatters/responses";
 import { Hash } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { Skeleton } from "../ui/skeleton";
 
 type ResponsesFilteredProps = {
   upperMenu: boolean;
-  filteredResponses: ResponseFromAPI[];
+  responses: ResponseFromAPI[];
   handleViewDialog: (item: ResponseFromAPI) => void;
   handleTagClick: (tag: string) => void;
+  isSearching: boolean;
+  isFetchingResponses: boolean;
 };
 
 export const ResponsesFiltered = ({
   upperMenu,
-  filteredResponses,
+  responses,
   handleViewDialog,
   handleTagClick,
+  isSearching,
+  isFetchingResponses,
 }: ResponsesFilteredProps) => {
+  if (isSearching || isFetchingResponses)
+    return <Skeleton className="w-full h-[800px]" />;
+
   if (upperMenu)
     return (
       <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredResponses?.map((response) => (
+        {responses.map((response) => (
           <Card
             onClick={() => handleViewDialog(response)}
             key={response.id}
