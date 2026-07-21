@@ -1,5 +1,3 @@
-import type { User } from "@/types/respuestas";
-
 export const formatDataFrom = (dateString?: string) => {
   if (!dateString) return "N/A";
   const date = new Date(dateString);
@@ -9,12 +7,7 @@ export const formatDataFrom = (dateString?: string) => {
   return `${day}/${month}/${date?.getFullYear()}`;
 };
 
-export const getUserFullName = (
-  user: User | User[] | null | undefined,
-): string => {
+export const getUserFullName = (user: string | undefined): string => {
   if (!user) return "Anónimo";
-  if (Array.isArray(user)) {
-    return user[0]?.full_name ?? "Anónimo";
-  }
-  return user.full_name;
+  return user;
 };

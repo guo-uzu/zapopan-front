@@ -20,6 +20,7 @@ type ResponseCard = {
   handleTagClick: (tag: string) => void;
   handleEditRespuesta: () => Promise<void>;
   handleDeleteRespuesta: () => Promise<void>;
+  handleCopyText: (text: string) => void;
 };
 
 export const ResponseCard = ({
@@ -29,41 +30,42 @@ export const ResponseCard = ({
   handleTagClick,
   handleDeleteRespuesta,
   handleEditRespuesta,
+  handleCopyText,
 }: ResponseCard) => {
   return (
-    <Dialog open={openDialog} onOpenChange={() => setOpenDialog(!openDialog)}>
+    <Dialog open={openDialog} onOpenChange={() => setOpenDialog(false)}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{selectedResponse?.title}</DialogTitle>
-          <DialogDescription className="flex flex-col gap-2 text-xs mt-2">
-            <div className="flex items-center justify-between">
-              <span className="flex flex-row items-center justify-between text-xs pt-2 w-full font-medium text-zinc-700">
-                {getUserFullName(selectedResponse?.user_id)}
-              </span>
-              <span>{formatDataFrom(selectedResponse?.created_at)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="flex flex-row items-center justify-between text-xs pt-2 w-full font-medium text-zinc-700">
-                {getUserFullName(selectedResponse?.latest_updated_user_id)}
-              </span>
-              <span>{formatDataFrom(selectedResponse?.updated_at)}</span>
-            </div>
-          </DialogDescription>
         </DialogHeader>
-        <DialogContent className="flex flex-col gap-4 max-h-96 overflow-y-scroll">
+        <div className="flex flex-col gap-4 max-h-96 overflow-y-scroll">
           <div>
-            <h2 className="text-sm font-bold">JJF</h2>
-            <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap break-words">
+            <h2 className="text-sm font-bold">Respuesta en tono JJF:</h2>
+            <p
+              className="text-sm cursor-pointer text-zinc-600 leading-relaxed whitespace-pre-wrap break-words"
+              onClick={() =>
+                handleCopyText(
+                  selectedResponse ? selectedResponse?.description_jjf : "",
+                )
+              }
+            >
               {selectedResponse?.description_jjf}
             </p>
           </div>
           <div>
             <h2 className="text-sm font-bold">Gobierno de Zapopan</h2>
-            <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap break-words">
+            <p
+              onClick={() =>
+                handleCopyText(
+                  selectedResponse ? selectedResponse?.description_gob : "",
+                )
+              }
+              className="cursor-pointer text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap break-words"
+            >
               {selectedResponse?.description_gob}
             </p>
           </div>
-        </DialogContent>
+        </div>
         <DialogFooter>
           <div className="flex flex-col w-full gap-8">
             <div className="flex flex-wrap gap-1.5 mt-auto w-full">
@@ -83,6 +85,28 @@ export const ResponseCard = ({
                 </Badge>
               ))}
             </div>
+            <div className="flex flex-col text-xs">
+              <h2 className="font-black">Hecho por:</h2>
+              <div className="flex items-center justify-between">
+                <span>{selectedResponse?.full_name}</span>
+                <span>{formatDataFrom(selectedResponse?.created_at)}</span>
+              </div>
+            </div>
+            {selectedResponse?.lastest_updated_user_full_name ? (
+              <div className="flex flex-col text-xs">
+                <h2 className="font-bold">Última edición por:</h2>
+                <div className="flex items-center justify-between">
+                  <span>
+                    {getUserFullName(
+                      selectedResponse?.lastest_updated_user_full_name,
+                    )}
+                  </span>
+                  <span>{formatDataFrom(selectedResponse?.updated_at)}</span>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
             <CardActions
               handleEditRespuesta={handleEditRespuesta}
               handleDeleteRespuesta={handleDeleteRespuesta}

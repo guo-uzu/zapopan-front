@@ -25,9 +25,6 @@ export const useTriggerRealtimeDB = () => {
       )
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
-          console.log(
-            `📡 Conectado exitosamente al canal: ${uniqueChannelName}`,
-          );
         }
       });
 

@@ -87,7 +87,6 @@ export const useBitacoraUpdateData = <TData extends BitacoraRecord>(
     const controller = new AbortController();
     const { signal } = controller;
     setLoading(true);
-    console.log(bitacoraTrigger);
     const fetchBitacoraData = async () => {
       try {
         const { data, count, from, to } = await fetchBitacora({

@@ -15,8 +15,6 @@ export const getResponses = async (
     terminos_busqueda: terminos_busqueda,
   });
   // .range(0, 10);
-  if (error) {
-    throw new Error("Error searching the data");
-  }
+  if (error) throw new Error("Error searching the data");
   return data;
 };

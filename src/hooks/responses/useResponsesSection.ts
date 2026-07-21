@@ -18,10 +18,11 @@ export const useResponsesSection = () => {
   const [isEditing, setEditing] = useState(false);
   const [openSheet, setOpenSheet] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [isLoadingSendForm, setIsLoadingSetForm] = useState(false);
 
   const handleViewDialog = (item: ResponseFromAPI) => {
     setSelectedResponse(item);
-    setOpenDialog(!openDialog);
+    setOpenDialog(true);
   };
 
   const handleEditRespuesta = async () => {
@@ -40,7 +41,10 @@ export const useResponsesSection = () => {
   const handleDeleteRespuesta = async () => {
     toast.promise(deleteRespuesta(selectedResponse?.id), {
       loading: "Eliminando registro...",
-      success: "Registro eliminado correctamente.",
+      success: () => {
+        setOpenDialog(false);
+        return "Registro eliminado correctamente.";
+      },
       error: "Error eliminado este registro, intente nuevamente más tarde.",
       position: "top-center",
     });
@@ -53,6 +57,15 @@ export const useResponsesSection = () => {
       jjfDescription: "",
       gobDescription: "",
       selectedAreas: [],
+    });
+  };
+
+  const handleCopyText = (text: string) => {
+    toast.promise(navigator.clipboard.writeText(text), {
+      loading: "Copiando...",
+      success: "¡Respuesta coppiada con exito!",
+      error: "Error copiando la respuesta.",
+      position: "top-right",
     });
   };
 
@@ -76,7 +89,6 @@ export const useResponsesSection = () => {
         success: (response) => {
           if (response.ok === true) {
             handleReset();
-            // fetchResponses(setResponses);
           }
           return "Respuesta creada";
         },
@@ -89,9 +101,9 @@ export const useResponsesSection = () => {
         loading: "Cargando...",
         success: (response: { ok: boolean }) => {
           if (response.ok === true) {
+            handleReset();
           }
-          handleReset();
-          // fetchResponses(setResponses);
+          setOpenSheet(false);
           return "Respuesta actualizada";
         },
         error: "Error",
@@ -131,5 +143,7 @@ export const useResponsesSection = () => {
     selectedResponse,
     handleDeleteRespuesta,
     handleEditRespuesta,
+    isLoadingSendForm,
+    handleCopyText,
   };
 };

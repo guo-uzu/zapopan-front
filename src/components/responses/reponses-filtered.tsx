@@ -7,7 +7,6 @@ import {
   CardFooter,
 } from "../ui/card";
 import type { ResponseFromAPI } from "@/types/respuestas";
-import { getUserFullName } from "@/lib/formatters/responses";
 import { formatDataFrom } from "@/lib/formatters/responses";
 import { Hash } from "lucide-react";
 import { Badge } from "../ui/badge";
@@ -48,7 +47,7 @@ export const ResponsesFiltered = ({
               </CardTitle>
               <CardDescription className="flex items-center justify-between text-xs mt-2">
                 <span className="font-medium text-zinc-700 truncate max-w-[120px]">
-                  {getUserFullName(response.user_id)}
+                  {response.full_name}
                 </span>
                 <span>{formatDataFrom(response.created_at)}</span>
               </CardDescription>
@@ -74,10 +73,9 @@ export const ResponsesFiltered = ({
                     key={tag.value}
                     variant="secondary"
                     className="cursor-pointer hover:bg-zinc-200/80 transition-colors px-2 py-0.5 text-xs font-normal"
-                    // 3. UPDATED CLICK HANDLER
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleTagClick(tag.label); // Now adds with comma!
+                      handleTagClick(tag.label);
                     }}
                   >
                     <Hash className="w-3 h-3 mr-1 opacity-50" />

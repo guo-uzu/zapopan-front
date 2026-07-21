@@ -26,9 +26,6 @@ export const useTriggerRealtimeDB = () => {
       .subscribe((status) => {
         // Esto te ayudará a ver el estado limpio en la consola sin errores fantasmas
         if (status === "SUBSCRIBED") {
-          console.log(
-            `📡 Conectado exitosamente al canal: ${uniqueChannelName}`,
-          );
         }
       });
 

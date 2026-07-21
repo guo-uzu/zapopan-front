@@ -3,19 +3,29 @@ import { Button } from "../ui/button";
 
 type CleanFiltersProps = {
   responses: ResponseFromAPI[];
+  debounceSearchTerm: string;
   searchTerm: string;
   handleSearchTerm: (input: string) => void;
 };
 
 export const CleanFilters = ({
   searchTerm,
+  debounceSearchTerm,
   responses,
   handleSearchTerm,
 }: CleanFiltersProps) => {
-  if (responses.length === 0)
+  if (
+    responses.length === 0 &&
+    debounceSearchTerm &&
+    searchTerm &&
+    searchTerm === debounceSearchTerm
+  )
     return (
       <div className="col-span-full text-center py-10 text-muted-foreground">
-        <p>No se encontraron resultados para &quot;{searchTerm}&quot; </p>
+        <p>
+          No se encontraron resultados para &quot;{debounceSearchTerm}
+          &quot;{" "}
+        </p>
         <Button variant="link" onClick={() => handleSearchTerm("")}>
           Limpiar filtros
         </Button>

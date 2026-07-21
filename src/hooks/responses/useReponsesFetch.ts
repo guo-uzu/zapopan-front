@@ -63,6 +63,7 @@ const useResponsesFetch = () => {
     handleTagClick,
     responses,
     isFetchingResponses,
+    debouncedSearchTerm,
   };
 };
 

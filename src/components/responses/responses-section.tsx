@@ -19,6 +19,7 @@ export const ResponsesSection = () => {
     responses,
     isFetchingResponses,
     isSearching,
+    debouncedSearchTerm,
   } = useResponsesFetch();
 
   const {
@@ -35,6 +36,8 @@ export const ResponsesSection = () => {
     setOpenDialog,
     handleEditRespuesta,
     handleDeleteRespuesta,
+    isLoadingSendForm,
+    handleCopyText,
   } = useResponsesSection();
 
   return (
@@ -52,6 +55,7 @@ export const ResponsesSection = () => {
           openSheet={openSheet}
           setFormDefaultData={setFormDefaultData}
           setOpenSheet={setOpenSheet}
+          isLoadingSendForm={isLoadingSendForm}
         />
       </div>
       <ResponsesAreaSelectors
@@ -73,6 +77,7 @@ export const ResponsesSection = () => {
         isFetchingResponses={isFetchingResponses}
       />
       <ResponseCard
+        handleCopyText={handleCopyText}
         handleTagClick={handleTagClick}
         openDialog={openDialog}
         setOpenDialog={setOpenDialog}
@@ -81,8 +86,9 @@ export const ResponsesSection = () => {
         handleEditRespuesta={handleEditRespuesta}
       />
       <CleanFilters
-        responses={responses}
         searchTerm={searchTerm}
+        debounceSearchTerm={debouncedSearchTerm}
+        responses={responses}
         handleSearchTerm={handleSearchTerm}
       />
     </div>

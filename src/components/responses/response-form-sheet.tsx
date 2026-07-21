@@ -21,6 +21,7 @@ import { ColumnsBitacoraOpts } from "@/hooks/dataBitacoraColumns";
 import { Button } from "../ui/button";
 import { DefaultForm } from "@/types/respuestas";
 import { Dispatch, SetStateAction } from "react";
+import ObligatoryIcon from "../bitacora/obligatoryIcon";
 
 type ResponseFormSheetProps = {
   openSheet: boolean;
@@ -30,7 +31,7 @@ type ResponseFormSheetProps = {
   handleFormSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   formDefaultData: DefaultForm;
   setFormDefaultData: Dispatch<SetStateAction<DefaultForm>>;
-  isLoading: boolean;
+  isLoadingSendForm: boolean;
 };
 
 export const ResponseFormSheet = ({
@@ -41,7 +42,7 @@ export const ResponseFormSheet = ({
   handleFormSubmit,
   formDefaultData,
   setFormDefaultData,
-  isLoading,
+  isLoadingSendForm,
 }: ResponseFormSheetProps) => {
   return (
     <div>
@@ -71,7 +72,9 @@ export const ResponseFormSheet = ({
             <FieldGroup>
               <FieldGroup>
                 <Field>
-                  <Label htmlFor="title">Título</Label>
+                  <Label htmlFor="title">
+                    Título <ObligatoryIcon />
+                  </Label>
                   <Input
                     required
                     value={formDefaultData.title}
@@ -87,7 +90,9 @@ export const ResponseFormSheet = ({
                   />
                 </Field>
                 <Field>
-                  <Label htmlFor="description_jjf">Descripción Frangie</Label>
+                  <Label htmlFor="description_jjf">
+                    Descripción Frangie <ObligatoryIcon />
+                  </Label>
                   <Textarea
                     required
                     value={formDefaultData.jjfDescription}
@@ -103,7 +108,7 @@ export const ResponseFormSheet = ({
                 </Field>
                 <Field>
                   <Label htmlFor="description_gob">
-                    Descripción Gobierno de Zapopan
+                    Descripción Gobierno de Zapopan <ObligatoryIcon />
                   </Label>
                   <Textarea
                     required
@@ -118,46 +123,40 @@ export const ResponseFormSheet = ({
                     }
                   />
                 </Field>
-                <FieldSet>
-                  <FieldLegend>Etiquetas</FieldLegend>
-                  <FieldGroup>
-                    <Field orientation="vertical">
-                      <FieldLabel>
-                        Áreas responsables{" "}
-                        <span className="text-red-500">*</span>
-                      </FieldLabel>
-                      <MultipleSelector
-                        commandProps={{
-                          label: "Selecciona un área",
-                        }}
-                        defaultOptions={ColumnsBitacoraOpts.area_id}
-                        placeholder="Selecciona un área"
-                        hidePlaceholderWhenSelected
-                        emptyIndicator={
-                          <p className="text-center text-sm">
-                            No se encontraron resultados
-                          </p>
-                        }
-                        value={formDefaultData.selectedAreas}
-                        onChange={(data) =>
-                          setFormDefaultData({
-                            ...formDefaultData,
-                            selectedAreas: data.map((item) => ({
-                              id: item.value,
-                              value: item.value,
-                              label: item.label,
-                              color: (item.color as string) || "",
-                            })),
-                          })
-                        }
-                        className="w-full"
-                      />
-                    </Field>
-                  </FieldGroup>
-                </FieldSet>
+                <Field orientation="vertical">
+                  <FieldLabel>
+                    Áreas responsables <ObligatoryIcon />
+                  </FieldLabel>
+                  <MultipleSelector
+                    commandProps={{
+                      label: "Selecciona un área",
+                    }}
+                    defaultOptions={ColumnsBitacoraOpts.area_id}
+                    placeholder="Selecciona un área"
+                    hidePlaceholderWhenSelected
+                    emptyIndicator={
+                      <p className="text-center text-sm">
+                        No se encontraron resultados
+                      </p>
+                    }
+                    value={formDefaultData.selectedAreas}
+                    onChange={(data) =>
+                      setFormDefaultData({
+                        ...formDefaultData,
+                        selectedAreas: data.map((item) => ({
+                          id: item.value,
+                          value: item.value,
+                          label: item.label,
+                          color: (item.color as string) || "",
+                        })),
+                      })
+                    }
+                    className="w-full"
+                  />
+                </Field>
                 <Field orientation="responsive">
-                  <Button type="submit" disabled={isLoading}>
-                    {!isLoading ? (
+                  <Button type="submit" disabled={isLoadingSendForm}>
+                    {!isLoadingSendForm ? (
                       <>Enviar</>
                     ) : (
                       <>

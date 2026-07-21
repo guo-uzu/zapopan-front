@@ -16,7 +16,6 @@ export const ResponsesAreaSelectors = ({
   const tags = separatedText
     .filter((e) => e.includes("#"))
     .map((e) => e.slice(1, e.length));
-
   if (upperMenu)
     return (
       <div className="scroller w-full flex flex-row gap-x-2 overflow-x-scroll text-xs py-2 px-8">
