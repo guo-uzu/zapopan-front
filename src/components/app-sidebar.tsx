@@ -1,25 +1,26 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   AudioWaveform,
   Bot,
   Command,
   GalleryVerticalEnd,
   SquareTerminal,
-  LoaderPinwheel
-} from "lucide-react"
+  LoaderPinwheel,
+  File,
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail
-} from "@/components/ui/sidebar"
+  SidebarRail,
+} from "@/components/ui/sidebar";
 
 const data = {
   teams: [
@@ -55,9 +56,14 @@ const data = {
       title: "Respuestas",
       url: "/respuestas",
       icon: LoaderPinwheel,
-    }
+    },
+    {
+      title: "Documentos",
+      url: "/documentos",
+      icon: File,
+    },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -73,5 +79,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
