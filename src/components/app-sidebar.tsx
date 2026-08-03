@@ -58,8 +58,8 @@ const data = {
       icon: LoaderPinwheel,
     },
     {
-      title: "Documentos",
-      url: "/documentos",
+      title: "Insumos",
+      url: "/insumos",
       icon: File,
     },
   ],
