@@ -1,8 +1,10 @@
 "use client";
+import FilterPill from "@/components/insumos/filter.pill";
 import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { postInsumos } from "@/lib/insumos/postInsumo";
+import { ArrowUpFromLine, Search, Tag } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const ACCEPTED_FILE_TYPES = [
@@ -103,34 +105,64 @@ const InsumosPage = () => {
       setIsUploading(false);
     }
   };
-
   return (
-    <div>
-      <h1>Insumos</h1>
-      <form onSubmit={handleSubmit}>
-        <Field>
-          <FieldLabel htmlFor="insumo">Insumo</FieldLabel>
-          <Input
-            id="insumo"
-            type="file"
-            accept=".pdf,.jpg,.jpeg,.webp,.png"
-            onChange={handleFileChange}
-          />
-          {previewUrl && (
-            <img src={previewUrl} alt="Preview" className="max-w-60 h-auto" />
-          )}
-          {errorFile && <p className="text-sm text-red-600">{errorFile}</p>}
-          {successMessage && (
-            <p className="text-sm text-green-600">{successMessage}</p>
-          )}
-          <FieldDescription>Selecciona un archivo para subir.</FieldDescription>
-        </Field>
-        <Button type="submit" disabled={!file || isUploading}>
-          {isUploading ? "Enviando..." : "Enviar"}
-        </Button>
-      </form>
-    </div>
-  );
+    <main>
+      <section className="max-w-300 mx-auto">
+        <div className="flex flex-col gap-y-4">
+          <div className="flex justify-between">
+            <div className="flex flex-col gap-y-2">
+              <h1 className="text-3xl font-black">Insumos</h1>
+              <p className="text-md">Busca los insumos por nombre, etiqueta, año y revisa cuando se subieron.</p>
+            </div>
+            <div className="flex gap-x-4">
+              <Button size="sm" variant="outline" className="flex cursor-pointer"><Tag />Administrar etiquetas</Button>
+              <Button size="sm" className="flex cursor-pointer"><ArrowUpFromLine />Subir archivo</Button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-2">
+            <InputGroup className="flex">
+              <InputGroupAddon align="inline-start" >
+                <Search className="text-muted-foreground" />
+              </InputGroupAddon >
+              <InputGroupInput type="text" id="inline-start-input" placeholder="Busca por nombre, etiqueta, reporte o año" />
+            </InputGroup>
+            <div className="flex gap-x-2 items-center">
+              <span className="text-sm text-current/70">Filter:</span>
+              <FilterPill />
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+
+  // return (
+  //   <div>
+  //     <h1>Insumos</h1>
+  //     <form onSubmit={handleSubmit}>
+  //       <Field>
+  //         <FieldLabel htmlFor="insumo">Insumo</FieldLabel>
+  //         <Input
+  //           id="insumo"
+  //           type="file"
+  //           accept=".pdf,.jpg,.jpeg,.webp,.png"
+  //           onChange={handleFileChange}
+  //         />
+  //         {previewUrl && (
+  //           <img src={previewUrl} alt="Preview" className="max-w-60 h-auto" />
+  //         )}
+  //         {errorFile && <p className="text-sm text-red-600">{errorFile}</p>}
+  //         {successMessage && (
+  //           <p className="text-sm text-green-600">{successMessage}</p>
+  //         )}
+  //         <FieldDescription>Selecciona un archivo para subir.</FieldDescription>
+  //       </Field>
+  //       <Button type="submit" disabled={!file || isUploading}>
+  //         {isUploading ? "Enviando..." : "Enviar"}
+  //       </Button>
+  //     </form>
+  //   </div>
+  // );
 };
 
 export default InsumosPage;
