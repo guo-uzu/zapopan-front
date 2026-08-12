@@ -5,10 +5,15 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'rpbkprzjlgbjqwgxrdqr.supabase.co',
+        protocol: "https",
+        hostname: "rpbkprzjlgbjqwgxrdqr.supabase.co",
       },
     ],
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "3mb",
+    },
   },
 };
 

@@ -1,4 +1,5 @@
 "use client";
+import { uploadInsumo } from "@/actions/insumos/uploadInsumo";
 import FilterPill from "@/components/insumos/filter.pill";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
@@ -91,24 +92,7 @@ const InsumosPage = () => {
     setIsUploading(true);
     setErrorFile(null);
     setSuccessMessage(null);
-
-    try {
-      const response = await postInsumos(file);
-
-      if (response.status !== 200) {
-        setErrorFile(
-          `No se pudo subir el archivo. Código de error: ${response.status}.`,
-        );
-        return;
-      }
-
-      setSuccessMessage("Archivo subido correctamente.");
-    } catch (error) {
-      console.error("Error uploading insumo:", error);
-      setErrorFile("No se pudo conectar con el servidor. Intenta nuevamente.");
-    } finally {
-      setIsUploading(false);
-    }
+    uploadInsumo(file);
   };
   // return (
   //   <main>
