@@ -1,3 +1,4 @@
+"use client"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { Button } from "../ui/button"
 import { ArrowUpFromLine } from "lucide-react"
@@ -5,6 +6,8 @@ import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Field, FieldGroup, FieldLabel } from "../ui/field"
 import { Textarea } from "../ui/textarea"
+import { postInsumos } from "@/lib/insumos/postInsumo"
+import { useActionState } from "react"
 
 const UploadFiles = () => {
   const labels = [
@@ -15,6 +18,7 @@ const UploadFiles = () => {
     { name: "informe-anual", link: "#" },
     { name: "seguimiento", link: "#" },
   ]
+  const [state, setAction, isPending] = useActionState(postInsumos, undefined)
 
   return (
     <Dialog>
@@ -24,29 +28,29 @@ const UploadFiles = () => {
       <DialogContent>
         <DialogTitle>Subir archivos</DialogTitle>
         <DialogDescription>Añade una imagen, un pdf, un docsx y ponle una etiqueta para que el equipo pueda encontrarlo más tarde.</DialogDescription>
-        <form>
+        <form action={setAction}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="file-insumos">Archivo</FieldLabel>
-              <Input type="file" id="file-insumos" />
+              <Input type="file" name="fileInsumos" id="file-insumos" />
             </Field>
             <Field>
               <FieldLabel htmlFor="name-insumos">Evento/Reporte</FieldLabel>
-              <Input type="text" id="name-insumos" />
+              <Input type="text" name="nameInsumos" id="name-insumos" />
             </Field>
             <div className="flex gap-x-4">
               <Field>
                 <FieldLabel htmlFor="date-insumos">Fecha</FieldLabel>
-                <Input type="date" id="date-insumos" />
+                <Input type="date" name="dateInsumos" id="date-insumos" />
               </Field>
               <Field>
                 <FieldLabel htmlFor="user-id-insumos">¿Quien sube?</FieldLabel>
-                <Input type="text" id="user-id-insumos" />
+                <Input type="text" name="userInsumos" id="user-id-insumos" />
               </Field>
             </div>
             <Field>
               <FieldLabel htmlFor="description-insumos">Descripción</FieldLabel>
-              <Textarea placeholder="¿Qué es este documento y para que sirve?" />
+              <Textarea name="descriptionInsumos" id="description-insumos" placeholder="¿Qué es este documento y para que sirve?" />
             </Field>
           </FieldGroup>
         </form>

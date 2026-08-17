@@ -1,5 +1,4 @@
 "use client";
-import { uploadInsumo } from "@/actions/insumos/uploadInsumo";
 import AdminLabels from "@/components/insumos/admin.labels";
 import FilterPill from "@/components/insumos/filter.pill";
 import UploadFiles from "@/components/insumos/upload.files";
@@ -13,7 +12,16 @@ import {
 } from "@/components/ui/input-group";
 import { postInsumos } from "@/lib/insumos/postInsumo";
 import { ArrowUpFromLine, Search, Tag } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import BgTest from "../assets/bg-test.png";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const ACCEPTED_FILE_TYPES = [
   "application/pdf",
@@ -94,8 +102,16 @@ const InsumosPage = () => {
     setIsUploading(true);
     setErrorFile(null);
     setSuccessMessage(null);
-    uploadInsumo(file);
+    // uploadInsumo(file);
   };
+  const data = [
+    {
+      title: "Algo",
+
+      description: "Lorem ipsum lorem ",
+    },
+  ];
+
   return (
     <main>
       <section className="max-w-300 mx-auto">
@@ -103,7 +119,10 @@ const InsumosPage = () => {
           <div className="flex justify-between">
             <div className="flex flex-col gap-y-2">
               <h1 className="text-3xl font-black">Insumos</h1>
-              <p className="text-md">Busca los insumos por nombre, etiqueta, año y revisa cuando se subieron.</p>
+              <p className="text-md">
+                Busca los insumos por nombre, etiqueta, año y revisa cuando se
+                subieron.
+              </p>
             </div>
             <div className="flex gap-x-4">
               <AdminLabels />
@@ -112,10 +131,14 @@ const InsumosPage = () => {
           </div>
           <div className="flex flex-col gap-y-2">
             <InputGroup className="flex">
-              <InputGroupAddon align="inline-start" >
+              <InputGroupAddon align="inline-start">
                 <Search className="text-muted-foreground" />
-              </InputGroupAddon >
-              <InputGroupInput type="text" id="inline-start-input" placeholder="Busca por nombre, etiqueta, reporte o año" />
+              </InputGroupAddon>
+              <InputGroupInput
+                type="text"
+                id="inline-start-input"
+                placeholder="Busca por nombre, etiqueta, reporte o año"
+              />
             </InputGroup>
             <div className="flex gap-x-2 items-center">
               <span className="text-sm text-current/70">Filter:</span>
@@ -123,9 +146,28 @@ const InsumosPage = () => {
             </div>
           </div>
         </div>
+        <div>
+          {data.map((e) => (
+            <Card className="w-fit">
+              <CardHeader>
+                <CardTitle className="text-md">{e.title}</CardTitle>
+                <CardDescription>{e.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="w-60 h-80 rounded-xs overflow-hidden">
+                  {/* <img */}
+                  {/*   className="object-center object-cover w-full h-full" */}
+                  {/*   src={e.img.src} */}
+                  {/*   alt="" */}
+                  {/* /> */}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </section>
     </main>
-  )
+  );
 
   //   return (
   //     <div>
