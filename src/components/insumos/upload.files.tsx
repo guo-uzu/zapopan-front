@@ -1,33 +1,59 @@
-"use client"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { Button } from "../ui/button"
-import { ArrowUpFromLine } from "lucide-react"
-import { Label } from "../ui/label"
-import { Input } from "../ui/input"
-import { Field, FieldGroup, FieldLabel } from "../ui/field"
-import { Textarea } from "../ui/textarea"
-import { postInsumos } from "@/lib/insumos/postInsumo"
-import { useActionState } from "react"
-
+"use client";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { ArrowUpFromLine } from "lucide-react";
+import { Input } from "../ui/input";
+import { Field, FieldGroup, FieldLabel } from "../ui/field";
+import { Textarea } from "../ui/textarea";
+import { postInsumos } from "@/lib/insumos/postInsumo";
+import { useActionState, useState } from "react";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxChips,
+  ComboboxValue,
+  ComboboxChip,
+  ComboboxChipsInput,
+  useComboboxAnchor,
+} from "../ui/combobox";
+import React from "react";
+const labels = [
+  { name: "salud", id: "salud" },
+  { name: "educación", id: "educacion" },
+  { name: "presupuesto", id: "presupuesto" },
+  { name: "transporte", id: "transporte" },
+  { name: "Informe anual", id: "informe-anual" },
+  { name: "seguimiento", id: "seguimiento" },
+];
 const UploadFiles = () => {
-  const labels = [
-    { name: "salud", link: "#" },
-    { name: "educación", link: "#" },
-    { name: "presupuesto", link: "#" },
-    { name: "transporte", link: "#" },
-    { name: "informe-anual", link: "#" },
-    { name: "seguimiento", link: "#" },
-  ]
-  const [state, setAction, isPending] = useActionState(postInsumos, undefined)
-
+  const [state, setAction, isPending] = useActionState(postInsumos, undefined);
+  const anchor = useComboboxAnchor();
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" className="flex cursor-pointer"><ArrowUpFromLine />Subir archivo</Button>
+        <Button size="sm" className="flex cursor-pointer">
+          <ArrowUpFromLine />
+          Subir archivo
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Subir archivos</DialogTitle>
-        <DialogDescription>Añade una imagen, un pdf, un docsx y ponle una etiqueta para que el equipo pueda encontrarlo más tarde.</DialogDescription>
+        <DialogDescription>
+          Añade una imagen, un pdf, un docsx y ponle una etiqueta para que el
+          equipo pueda encontrarlo más tarde.
+        </DialogDescription>
         <form action={setAction}>
           <FieldGroup>
             <Field>
@@ -50,29 +76,64 @@ const UploadFiles = () => {
             </div>
             <Field>
               <FieldLabel htmlFor="description-insumos">Descripción</FieldLabel>
-              <Textarea name="descriptionInsumos" id="description-insumos" placeholder="¿Qué es este documento y para que sirve?" />
+              <Textarea
+                name="descriptionInsumos"
+                id="description-insumos"
+                placeholder="¿Qué es este documento y para que sirve?"
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="label-insumos">Etiquetas</FieldLabel>
+              <Combobox
+                multiple
+                autoHighlight
+                items={labels}
+              >
+                <ComboboxChips ref={anchor} className="w-full max-w-xs">
+                  <ComboboxValue>
+                    {(values) => {
+                      console.log(values)
+                      return (
+                        <React.Fragment>
+                          {values.map((value: string) => (
+                            <ComboboxChip key={value}>
+                              {value}
+                            </ComboboxChip>
+                          ))}
+                          <ComboboxChipsInput />
+                        </React.Fragment>
+                      )
+                    }}
+                  </ComboboxValue>
+                </ComboboxChips>
+                <ComboboxContent anchor={anchor}>
+                  <ComboboxEmpty>No items found.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(item) => {
+                      console.log(item)
+                      return (
+                        <ComboboxItem key={item.id} value={item.id}>
+                          {item.name}
+                        </ComboboxItem>
+                      )
+                    }}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
             </Field>
           </FieldGroup>
         </form>
-        <div>
-          <h2>Label</h2>
-          <div className="flex flex-wrap gap-2">
-            {
-              labels.map(label => (
-                <Button variant="outline" size="xs">{label.name}</Button>
-              ))
-            }
-          </div>
-        </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" className="flex cursor-pointer">Cerrar</Button>
+            <Button variant="outline" className="flex cursor-pointer">
+              Cerrar
+            </Button>
           </DialogClose>
           <Button variant="default">Subir archivo</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default UploadFiles
+export default UploadFiles;
