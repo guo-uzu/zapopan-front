@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+
 import { Button } from "../ui/button";
 import { ArrowUpFromLine } from "lucide-react";
 import { Input } from "../ui/input";
@@ -22,13 +23,9 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  ComboboxChips,
-  ComboboxValue,
-  ComboboxChip,
-  ComboboxChipsInput,
-  useComboboxAnchor,
 } from "../ui/combobox";
-import React from "react";
+import { getUserId } from "@/lib/insumos/getUser";
+
 const labels = [
   { name: "salud", id: "salud" },
   { name: "educación", id: "educacion" },
@@ -37,9 +34,11 @@ const labels = [
   { name: "Informe anual", id: "informe-anual" },
   { name: "seguimiento", id: "seguimiento" },
 ];
+
 const UploadFiles = () => {
   const [state, setAction, isPending] = useActionState(postInsumos, undefined);
-  const anchor = useComboboxAnchor();
+  const [selectedLabel, setSelectedLabel] = useState<string>("");
+  const today = new Date().toISOString().split("T")[0];
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -59,19 +58,23 @@ const UploadFiles = () => {
             <Field>
               <FieldLabel htmlFor="file-insumos">Archivo</FieldLabel>
               <Input type="file" name="fileInsumos" id="file-insumos" />
+              {state?.errors?.fileInsumos?.errors[0] && <p className="text-red-500 text-xs">* {state.errors.fileInsumos?.errors[0]}</p>}
             </Field>
             <Field>
               <FieldLabel htmlFor="name-insumos">Evento/Reporte</FieldLabel>
-              <Input type="text" name="nameInsumos" id="name-insumos" />
+              <Input type="text" name="nameInsumos" id="name-insumos" defaultValue={state?.fields?.nameInsumos} />
+              {state?.errors?.nameInsumos?.errors[0] && <p className="text-red-500 text-xs">* {state.errors.nameInsumos.errors[0]}</p>}
             </Field>
             <div className="flex gap-x-4">
               <Field>
                 <FieldLabel htmlFor="date-insumos">Fecha</FieldLabel>
-                <Input type="date" name="dateInsumos" id="date-insumos" />
+                <Input type="date" name="dateInsumos" id="date-insumos" defaultValue={state?.fields?.dateInsumos || today}/>
+                {state?.errors?.dateInsumos?.errors[0] && <p className="text-red-500 text-xs">* {state.errors.dateInsumos.errors[0]}</p>}
               </Field>
               <Field>
                 <FieldLabel htmlFor="user-id-insumos">¿Quien sube?</FieldLabel>
-                <Input type="text" name="userInsumos" id="user-id-insumos" />
+                <Input type="text" name="userInsumos" id="user-id-insumos" defaultValue={getUserId} />
+                {state?.errors?.userInsumos?.errors[0] && <p className="text-red-500 text-xs">* {state.errors.userInsumos.errors[0]}</p>}
               </Field>
             </div>
             <Field>
@@ -81,56 +84,46 @@ const UploadFiles = () => {
                 id="description-insumos"
                 placeholder="¿Qué es este documento y para que sirve?"
               />
+              {state?.errors?.descriptionInsumos?.errors[0] && <p className="text-red-500 text-xs">* {state.errors.descriptionInsumos.errors[0]}</p>}
             </Field>
-            <Field>
+            <Field className="w-full relative">
               <FieldLabel htmlFor="label-insumos">Etiquetas</FieldLabel>
               <Combobox
-                multiple
-                autoHighlight
+                value={selectedLabel}
                 items={labels}
+                onValueChange={(val) => setSelectedLabel(val ?? "")}
               >
-                <ComboboxChips ref={anchor} className="w-full max-w-xs">
-                  <ComboboxValue>
-                    {(values) => {
-                      console.log(values)
-                      return (
-                        <React.Fragment>
-                          {values.map((value: string) => (
-                            <ComboboxChip key={value}>
-                              {value}
-                            </ComboboxChip>
-                          ))}
-                          <ComboboxChipsInput />
-                        </React.Fragment>
-                      )
-                    }}
-                  </ComboboxValue>
-                </ComboboxChips>
-                <ComboboxContent anchor={anchor}>
-                  <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxInput placeholder="Selecciona una opción" />
+                <ComboboxContent className="z-[100] pointer-events-auto">
+                  <ComboboxEmpty>No se encontró nada.</ComboboxEmpty>
                   <ComboboxList>
-                    {(item) => {
-                      console.log(item)
-                      return (
-                        <ComboboxItem key={item.id} value={item.id}>
-                          {item.name}
-                        </ComboboxItem>
-                      )
-                    }}
+                    {(item: { name: string; id: string }) => (
+                      <ComboboxItem key={item.id} value={item.id}>
+                        {item.name}
+                      </ComboboxItem>
+                    )}
                   </ComboboxList>
                 </ComboboxContent>
               </Combobox>
+              {state?.errors?.labelInsumos?.errors[0] && <p className="text-red-500 text-xs">* {state.errors.labelInsumos.errors[0]}</p>}
+              <input type="hidden" name="labelInsumos" value={selectedLabel} />
             </Field>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button
+                  type="reset"
+                  variant="outline"
+                  className="flex cursor-pointer"
+                >
+                  Cerrar
+                </Button>
+              </DialogClose>
+              <Button variant="default" type="submit">
+                Subir archivo
+              </Button>
+            </DialogFooter>
           </FieldGroup>
         </form>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline" className="flex cursor-pointer">
-              Cerrar
-            </Button>
-          </DialogClose>
-          <Button variant="default">Subir archivo</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

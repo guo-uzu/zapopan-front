@@ -1,12 +1,17 @@
 import * as z from "zod";
 
 export const UploadFiles = z.object({
-  fileInsumos: z.file(),
-  nameInsumos: z.string().trim(),
-  dateInsumos: z.date(),
+  fileInsumos: z
+    .file()
+    .min(10_000, { message: "El archivo debe de pesar más de 10K, subelo de nuevo." }),
+  nameInsumos: z
+    .string()
+    .trim()
+    .min(10, { message: "El nombre del evento debe de ser minimo 10 carácteres." }),
+  dateInsumos: z.string(),
   userInsumos: z.string().trim(),
   descriptionInsumos: z.string().trim(),
-  //label: z.array(z.string().trim())
+  labelInsumos: z.string().trim().min(5, {message: "Debe de elegir una opción."}),
 });
 
 export type UploadFilesState =
@@ -17,7 +22,15 @@ export type UploadFilesState =
         dateInsumos?: string[];
         userInsumos?: string[];
         descriptionInsumos?: string[];
-        label: string[];
+        labelInsumos?: string[];
+      };
+      fields?: {
+        fileInsumos?: string;
+        nameInsumos?: string;
+        dateInsumos?: string;
+        userInsumos?: string;
+        descriptionInsumos?: string;
+        labelInsumos?: string;
       };
       message?: string;
     }
