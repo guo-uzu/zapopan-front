@@ -9,7 +9,8 @@ export const sendResponse = async (formData: FormData) => {
     const {
         data: { user },
     } = await supabase.auth.getUser();
-    if (!user) throw new Error("User not founded");
+  if (!user) throw new Error("User not founded");
+
     const payload = {
         title: formData.title,
         description_jjf: formData.jjfDescription,
@@ -17,6 +18,7 @@ export const sendResponse = async (formData: FormData) => {
         labels_areas: formData.selectedAreas,
         user_id: user.id,
     };
+
     const { error } = await supabase.from("respuestas").insert(payload);
     if (error) {
         throw new Error("DB insert failed");

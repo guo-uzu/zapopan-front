@@ -1,10 +1,12 @@
 import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase";
-const supabase = SingletonClientSupabase.instance;
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 
 export const getUserId = async () => {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log(user)
-  return { id: user?.id }
+  return { id: user?.id, name: user?.user_metadata.full_name };
 };

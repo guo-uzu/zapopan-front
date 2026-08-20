@@ -1,116 +1,18 @@
-"use client";
 import AdminLabels from "@/components/insumos/admin.labels";
 import FilterPill from "@/components/insumos/filter.pill";
 import UploadFiles from "@/components/insumos/upload.files";
-import { Button } from "@/components/ui/button";
-import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { postInsumos } from "@/lib/insumos/postInsumo";
-import { ArrowUpFromLine, Search, Tag } from "lucide-react";
-import { useActionState, useEffect, useState } from "react";
-import BgTest from "../assets/bg-test.png";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import {  Search } from "lucide-react";
+import { getUserId } from "@/lib/insumos/getUser";
+import { getLabels } from "@/lib/insumos/getLabels";
 
-const ACCEPTED_FILE_TYPES = [
-  "application/pdf",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-] as const;
-
-const ACCEPTED_FILE_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png", ".webp"];
-
-const isAcceptedFile = (file: File) => {
-  const fileName = file.name.toLowerCase();
-  const hasAcceptedExtension = ACCEPTED_FILE_EXTENSIONS.some((extension) =>
-    fileName.endsWith(extension),
-  );
-
-  return (
-    ACCEPTED_FILE_TYPES.includes(
-      file.type as (typeof ACCEPTED_FILE_TYPES)[number],
-    ) && hasAcceptedExtension
-  );
-};
-
-const InsumosPage = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [errorFile, setErrorFile] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-
-    setErrorFile(null);
-    setSuccessMessage(null);
-
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-      setPreviewUrl("");
-    }
-
-    if (!selectedFile) {
-      setFile(null);
-      return;
-    }
-
-    if (!isAcceptedFile(selectedFile)) {
-      setFile(null);
-      event.target.value = "";
-      setErrorFile("Solo se aceptan archivos PDF, JPG, JPEG, WEBP o PNG.");
-      return;
-    }
-
-    setFile(selectedFile);
-
-    if (selectedFile.type.startsWith("image/")) {
-      setPreviewUrl(URL.createObjectURL(selectedFile));
-    }
-    console.log(previewUrl);
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!file) {
-      setErrorFile("Selecciona un archivo válido antes de enviar.");
-      return;
-    }
-
-    setIsUploading(true);
-    setErrorFile(null);
-    setSuccessMessage(null);
-    // uploadInsumo(file);
-  };
-  const data = [
-    {
-      title: "Algo",
-
-      description: "Lorem ipsum lorem ",
-    },
-  ];
+const InsumosPage = async () => {
+  const userData = await getUserId()
+  const labelsArray = await getLabels()
 
   return (
     <main>
@@ -125,8 +27,8 @@ const InsumosPage = () => {
               </p>
             </div>
             <div className="flex gap-x-4">
-              <AdminLabels />
-              <UploadFiles />
+              <AdminLabels labels={ labelsArray } />
+              <UploadFiles userData={userData} />
             </div>
           </div>
           <div className="flex flex-col gap-y-2">
@@ -147,55 +49,11 @@ const InsumosPage = () => {
           </div>
         </div>
         <div>
-          {data.map((e) => (
-            <Card className="w-fit">
-              <CardHeader>
-                <CardTitle className="text-md">{e.title}</CardTitle>
-                <CardDescription>{e.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="w-60 h-80 rounded-xs overflow-hidden">
-                  {/* <img */}
-                  {/*   className="object-center object-cover w-full h-full" */}
-                  {/*   src={e.img.src} */}
-                  {/*   alt="" */}
-                  {/* /> */}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+
         </div>
       </section>
     </main>
-  );
-
-  //   return (
-  //     <div>
-  //       <h1>Insumos</h1>
-  //       <form onSubmit={handleSubmit}>
-  //         <Field>
-  //           <FieldLabel htmlFor="insumo">Insumo</FieldLabel>
-  //           <Input
-  //             id="insumo"
-  //             type="file"
-  //             accept=".pdf,.jpg,.jpeg,.webp,.png"
-  //             onChange={handleFileChange}
-  //           />
-  //           {previewUrl && (
-  //             <img src={previewUrl} alt="Preview" className="max-w-60 h-auto" />
-  //           )}
-  //           {errorFile && <p className="text-sm text-red-600">{errorFile}</p>}
-  //           {successMessage && (
-  //             <p className="text-sm text-green-600">{successMessage}</p>
-  //           )}
-  //           <FieldDescription>Selecciona un archivo para subir.</FieldDescription>
-  //         </Field>
-  //         <Button type="submit" disabled={!file || isUploading}>
-  //           {isUploading ? "Enviando..." : "Enviar"}
-  //         </Button>
-  //       </form>
-  //     </div>
-  //   );
-};
+  )
+}
 
 export default InsumosPage;

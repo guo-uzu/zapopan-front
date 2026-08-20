@@ -1,9 +1,9 @@
 "use server";
-import { UploadFilesState, UploadFiles } from "./definitions";
+import { UploadFiles } from "./definitions";
 import * as z from "zod";
 
 export const postInsumos = async (
-  initialState: UploadFilesState,
+  initialState: unknown,
   formData: FormData,
 ) => {
   const fileInsumos = formData.get("fileInsumos")
@@ -23,9 +23,9 @@ export const postInsumos = async (
   });
 
   if (!validateFormFiles.success) {
-    const errorsXD = z.treeifyError(validateFormFiles.error)
+    const errors = z.treeifyError(validateFormFiles.error)
     return {
-      errors: errorsXD.properties,
+      errors: errors.properties,
       fields: {
         nameInsumos,
         dateInsumos,
@@ -35,6 +35,6 @@ export const postInsumos = async (
       }
     };
   }
-  console.log("Llegue", formData);
+  sendData(formData)
   return {};
 };
