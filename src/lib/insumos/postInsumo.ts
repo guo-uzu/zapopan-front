@@ -1,6 +1,7 @@
 "use server";
 import { UploadFiles } from "./definitions";
 import * as z from "zod";
+import { sendInsumo } from "./insumosOperations";
 
 export const postInsumos = async (
   initialState: unknown,
@@ -35,6 +36,6 @@ export const postInsumos = async (
       }
     };
   }
-  sendData(formData)
+  sendInsumo(formData)
   return {};
 };

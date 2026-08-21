@@ -1,7 +1,8 @@
+"use server"
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 
-async function sendData(formData: FormData) {
+export async function sendInsumo(formData: FormData) {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
   const {
@@ -14,6 +15,7 @@ async function sendData(formData: FormData) {
   const dataToSend = new FormData();
 
   const fileInsumos = formData.get("fileInsumos");
+  dataToSend.append("file", fileInsumos)
   const nameInsumos = formData.get("nameInsumos");
   const dateInsumos = formData.get("dateInsumos");
   const userInsumos = formData.get("userInsumos");
@@ -28,15 +30,16 @@ async function sendData(formData: FormData) {
     labelInsumos,
   };
 
-  const { error } = await supabase.from("").insert(payload);
+  // const { error } = await supabase.from("").insert(payload);
 
-  dataToSend.append("file", formData.get("file"));
+  // dataToSend.append("file", formData.get("file"));
   const data = await fetch(URL, {
     method: "POST",
     headers: {
       Accept: "application/json",
     },
-    body: formData,
+    body: dataToSend,
   });
+  console.log(data)
   return { message: data };
 }

@@ -6,9 +6,9 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import {  Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { getUserId } from "@/lib/insumos/getUser";
-import { getLabels } from "@/lib/insumos/getLabels";
+import { getLabels } from "@/lib/insumos/labelsOperations";
 
 const InsumosPage = async () => {
   const userData = await getUserId()
@@ -27,8 +27,8 @@ const InsumosPage = async () => {
               </p>
             </div>
             <div className="flex gap-x-4">
-              <AdminLabels labels={ labelsArray } />
-              <UploadFiles userData={userData} />
+              <AdminLabels labels={labelsArray} />
+              <UploadFiles userData={userData} labels={labelsArray} />
             </div>
           </div>
           <div className="flex flex-col gap-y-2">

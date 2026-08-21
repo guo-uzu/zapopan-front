@@ -24,20 +24,13 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "../ui/combobox";
+import ObligatoryIcon from "../bitacora/obligatoryIcon";
 
-const labels = [
-  { name: "salud", id: "salud" },
-  { name: "educación", id: "educacion" },
-  { name: "presupuesto", id: "presupuesto" },
-  { name: "transporte", id: "transporte" },
-  { name: "Informe anual", id: "informe-anual" },
-  { name: "seguimiento", id: "seguimiento" },
-];
-
-const UploadFiles = ({ userData }: { userData: {name?: string, id?: string} }) => {
+const UploadFiles = ({ userData, labels }: { userData: { name?: string, id?: string }, labels: { data: { name: string, id_public: string }[], error: string | null } }) => {
   const [state, setAction, isPending] = useActionState(postInsumos, undefined);
-  const [selectedLabel, setSelectedLabel] = useState<string>("");
+  const [selectedLabel, setSelectedLabel] = useState<{ name: string, id_public: string } | null>(null);
   const today = new Date().toISOString().split("T")[0];
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -55,7 +48,7 @@ const UploadFiles = ({ userData }: { userData: {name?: string, id?: string} }) =
         <form action={setAction}>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="file-insumos">Archivo</FieldLabel>
+              <FieldLabel htmlFor="file-insumos">Archivo <ObligatoryIcon /> </FieldLabel>
               <Input type="file" name="fileInsumos" id="file-insumos" />
               {state?.errors?.fileInsumos?.errors[0] && (
                 <p className="text-red-500 text-xs">
@@ -64,7 +57,7 @@ const UploadFiles = ({ userData }: { userData: {name?: string, id?: string} }) =
               )}
             </Field>
             <Field>
-              <FieldLabel htmlFor="name-insumos">Evento/Reporte</FieldLabel>
+              <FieldLabel htmlFor="name-insumos">Evento/Reporte<ObligatoryIcon /></FieldLabel>
               <Input
                 type="text"
                 name="nameInsumos"
@@ -79,7 +72,7 @@ const UploadFiles = ({ userData }: { userData: {name?: string, id?: string} }) =
             </Field>
             <div className="flex gap-x-4">
               <Field>
-                <FieldLabel htmlFor="date-insumos">Fecha</FieldLabel>
+                <FieldLabel htmlFor="date-insumos">Fecha<ObligatoryIcon /></FieldLabel>
                 <Input
                   type="date"
                   name="dateInsumos"
@@ -118,18 +111,18 @@ const UploadFiles = ({ userData }: { userData: {name?: string, id?: string} }) =
               )}
             </Field>
             <Field className="w-full relative">
-              <FieldLabel htmlFor="label-insumos">Etiquetas</FieldLabel>
+              <FieldLabel htmlFor="label-insumos">Etiquetas<ObligatoryIcon /></FieldLabel>
               <Combobox
-                value={selectedLabel}
-                items={labels}
-                onValueChange={(val) => setSelectedLabel(val ?? "")}
+                value={selectedLabel?.name}
+                items={labels.data}
+                onValueChange={(val) => setSelectedLabel(val)}
               >
                 <ComboboxInput placeholder="Selecciona una opción" />
                 <ComboboxContent className="z-[100] pointer-events-auto">
                   <ComboboxEmpty>No se encontró nada.</ComboboxEmpty>
                   <ComboboxList>
-                    {(item: { name: string; id: string }) => (
-                      <ComboboxItem key={item.id} value={item.id}>
+                    {(item: { name: string; id_public: string }) => (
+                      <ComboboxItem key={item.id_public} value={item.name}>
                         {item.name}
                       </ComboboxItem>
                     )}
@@ -141,19 +134,19 @@ const UploadFiles = ({ userData }: { userData: {name?: string, id?: string} }) =
                   * {state.errors.labelInsumos.errors[0]}
                 </p>
               )}
-              <input type="hidden" name="labelInsumos" value={selectedLabel} />
+              <input type="hidden" name="labelInsumos" value={selectedLabel?.id_public} />
             </Field>
             <DialogFooter>
               <DialogClose asChild>
                 <Button
                   type="reset"
                   variant="outline"
-                  className="flex cursor-pointer"
+                  className="cursor-pointer"
                 >
                   Cerrar
                 </Button>
               </DialogClose>
-              <Button variant="default" type="submit">
+              <Button variant="default" type="submit" className="cursor-pointer">
                 Subir archivo
               </Button>
             </DialogFooter>

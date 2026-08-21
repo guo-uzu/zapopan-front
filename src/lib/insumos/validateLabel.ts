@@ -1,12 +1,13 @@
 import * as z from "zod";
 import { UploadLabel } from "./definitions"
-import { sendLabel } from "./sendLabel";
+import { sendLabel } from "./labelsOperations";
 
-function validateLabel(initialState: unknown, form: FormData) {
-  const labelName = form.get("label") as string
+async function validateLabel(initialState: unknown, formData: FormData) {
+  const label = formData.get("label") as string
   const validation = UploadLabel.safeParse({
-    labelName
+    label
   })
+
 
   if (!validation.success) {
     const errors = z.treeifyError(validation.error)
@@ -15,7 +16,8 @@ function validateLabel(initialState: unknown, form: FormData) {
     }
   }
 
-  sendLabel(labelName)
+  const { ok } = await sendLabel(label)
+  console.log(ok)
 }
 
-export {validateLabel}
+export { validateLabel }
