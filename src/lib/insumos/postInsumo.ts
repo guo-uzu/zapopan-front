@@ -7,12 +7,12 @@ export const postInsumos = async (
   initialState: unknown,
   formData: FormData,
 ) => {
-  const fileInsumos = formData.get("fileInsumos")
-  const nameInsumos = formData.get("nameInsumos")
-  const dateInsumos = formData.get("dateInsumos")
-  const userInsumos = formData.get("userInsumos")
-  const descriptionInsumos = formData.get("descriptionInsumos")
-  const labelInsumos = formData.get("labelInsumos")
+  const fileInsumos = formData.get("fileInsumos");
+  const nameInsumos = formData.get("nameInsumos");
+  const dateInsumos = formData.get("dateInsumos");
+  const userInsumos = formData.get("userInsumos");
+  const descriptionInsumos = formData.get("descriptionInsumos");
+  const labelInsumos = formData.get("labelInsumos");
 
   const validateFormFiles = UploadFiles.safeParse({
     fileInsumos,
@@ -24,7 +24,7 @@ export const postInsumos = async (
   });
 
   if (!validateFormFiles.success) {
-    const errors = z.treeifyError(validateFormFiles.error)
+    const errors = z.treeifyError(validateFormFiles.error);
     return {
       errors: errors.properties,
       fields: {
@@ -33,9 +33,9 @@ export const postInsumos = async (
         userInsumos,
         descriptionInsumos,
         labelInsumos,
-      }
+      },
     };
   }
-  sendInsumo(formData)
-  return {};
+  const { ok } = await sendInsumo(formData);
+  return { ok };
 };

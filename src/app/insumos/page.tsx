@@ -1,5 +1,4 @@
 import AdminLabels from "@/components/insumos/admin.labels";
-import FilterPill from "@/components/insumos/filter.pill";
 import UploadFiles from "@/components/insumos/upload.files";
 import {
   InputGroup,
@@ -9,10 +8,13 @@ import {
 import { Search } from "lucide-react";
 import { getUserId } from "@/lib/insumos/getUser";
 import { getLabels } from "@/lib/insumos/labelsOperations";
+import FilterLabels from "@/components/insumos/filter.labels";
+import { getInsumos } from "@/lib/insumos/insumosOperations";
 
 const InsumosPage = async () => {
-  const userData = await getUserId()
-  const labelsArray = await getLabels()
+  const userData = await getUserId();
+  const labelsArray = await getLabels();
+  const { data: insumosArray } = await getInsumos();
 
   return (
     <main>
@@ -44,16 +46,16 @@ const InsumosPage = async () => {
             </InputGroup>
             <div className="flex gap-x-2 items-center">
               <span className="text-sm text-current/70">Filter:</span>
-              <FilterPill name={"salud (2)"} />
+              <FilterLabels labels={labelsArray} />
             </div>
           </div>
         </div>
-        <div>
-
-        </div>
+      </section>
+      <section>
+        <div>{}</div>
       </section>
     </main>
-  )
-}
+  );
+};
 
 export default InsumosPage;

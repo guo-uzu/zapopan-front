@@ -1,24 +1,19 @@
 import * as z from "zod";
 
 export const UploadFiles = z.object({
-  fileInsumos: z
-    .file()
-    .min(10_000, {
-      message: "El archivo debe de pesar más de 10K, subelo de nuevo.",
-    }),
-  nameInsumos: z
-    .string()
-    .trim()
-    .min(10, {
-      message: "El nombre del evento debe de ser minimo 10 carácteres.",
-    }),
+  fileInsumos: z.file().min(10_000, {
+    message: "El archivo debe de pesar más de 10K, subelo de nuevo.",
+  }),
+  nameInsumos: z.string().trim().min(10, {
+    message: "El nombre del evento debe de ser minimo 10 carácteres.",
+  }),
   dateInsumos: z.string(),
   userInsumos: z.string().trim(),
   descriptionInsumos: z.string().trim(),
   labelInsumos: z
     .string()
     .trim()
-    .min(5, { message: "Debe de elegir una opción." }),
+    .min(1, { message: "Debe de elegir una opción." }),
 });
 
 export const UploadLabel = z.object({

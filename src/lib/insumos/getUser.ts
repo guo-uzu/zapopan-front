@@ -1,4 +1,3 @@
-import { SingletonClientSupabase } from "@/utils/supabase/singleton-client-supabase";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
