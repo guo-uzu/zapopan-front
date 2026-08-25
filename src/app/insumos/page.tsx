@@ -52,7 +52,7 @@ const InsumosPage = async () => {
         </div>
       </section>
       <section>
-        <div>{}</div>
+        <div>{insumosArray.map()}</div>
       </section>
     </main>
   );
