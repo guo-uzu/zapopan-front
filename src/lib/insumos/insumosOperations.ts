@@ -10,8 +10,8 @@ export async function sendInsumo(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) throw new Error("User not founded");
-  const URL = "http://zapopan-api.insumos.appsuzu.fun/api/insumos/upload-file";
-  // const URL = "http://localhost:8000/api/insumos/upload-file";
+  // const URL = "http://zapopan-api.insumos.appsuzu.fun/api/insumos/upload-file";
+  const URL = "http://localhost:8080/api/insumos/upload-file";
   const dataToSend = new FormData();
 
   const fileInsumos = formData.get("fileInsumos");
@@ -22,16 +22,20 @@ export async function sendInsumo(formData: FormData) {
   const descriptionInsumos = formData.get("descriptionInsumos");
   const labelInsumos = formData.get("labelInsumos");
 
-  console.log(dataToSend);
-  const data = await fetch(URL, {
+  const response = await fetch(URL, {
     method: "POST",
     headers: {
       Accept: "application/json",
     },
     body: dataToSend,
   });
-
-  const { filename } = await data.json();
+  const responseText = await response.text();
+  if (!response.ok) {
+    throw new Error(
+      `FastAPI upload failed ${response.status}: ${responseText}`,
+    );
+  }
+  const { filename } = await response.json();
   const { data: userId, error: userTestError } = await supabase
     .from("users")
     .select("id_private")
