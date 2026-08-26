@@ -10,6 +10,13 @@ import { getUserId } from "@/lib/insumos/getUser";
 import { getLabels } from "@/lib/insumos/labelsOperations";
 import FilterLabels from "@/components/insumos/filter.labels";
 import { getInsumos } from "@/lib/insumos/insumosOperations";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const InsumosPage = async () => {
   const userData = await getUserId();
@@ -51,8 +58,25 @@ const InsumosPage = async () => {
           </div>
         </div>
       </section>
-      <section>
-        <div>{insumosArray.map()}</div>
+      <section className="max-w-300 mx-auto">
+        <div className="grid grid-cols-4 gap-6 p-2">
+          {insumosArray.map((e) => (
+            <Card>
+              <CardHeader>
+                <CardTitle>{e.title}</CardTitle>
+                <CardDescription>{e.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-md relative z-10 overflow-hidden aspect-square">
+                  <img
+                    className=""
+                    src={`https://static-zapopan-api.appsuzu.fun/original/original_images.jpg`}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </section>
     </main>
   );

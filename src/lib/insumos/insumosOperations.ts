@@ -10,8 +10,8 @@ export async function sendInsumo(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) throw new Error("User not founded");
-  //const URL = "http://zapopan-api.insumos.appsuzu.fun/api/insumos/upload-file";
-  const URL = "http://localhost:8000/api/insumos/upload-file";
+  const URL = "http://zapopan-api.insumos.appsuzu.fun/api/insumos/upload-file";
+  // const URL = "http://localhost:8000/api/insumos/upload-file";
   const dataToSend = new FormData();
 
   const fileInsumos = formData.get("fileInsumos");
@@ -22,6 +22,7 @@ export async function sendInsumo(formData: FormData) {
   const descriptionInsumos = formData.get("descriptionInsumos");
   const labelInsumos = formData.get("labelInsumos");
 
+  console.log(dataToSend);
   const data = await fetch(URL, {
     method: "POST",
     headers: {
