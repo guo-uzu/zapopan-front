@@ -10,19 +10,14 @@ import { getUserId } from "@/lib/insumos/getUser";
 import { getLabels } from "@/lib/insumos/labelsOperations";
 import FilterLabels from "@/components/insumos/filter.labels";
 import { getInsumos } from "@/lib/insumos/insumosOperations";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
+import { FileFormats } from "@/lib/insumos/fileFormats";
+import { ImageCard } from "@/components/insumos/image.card";
 
 const InsumosPage = async () => {
   const userData = await getUserId();
   const labelsArray = await getLabels();
   const { data: insumosArray } = await getInsumos();
-
   return (
     <main>
       <section className="max-w-300 mx-auto">
@@ -60,22 +55,15 @@ const InsumosPage = async () => {
       </section>
       <section className="max-w-300 mx-auto">
         <div className="grid grid-cols-4 gap-6 p-2">
-          {insumosArray.map((e) => (
-            <Card>
-              <CardHeader>
-                <CardTitle>{e.title}</CardTitle>
-                <CardDescription>{e.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-md relative z-10 overflow-hidden aspect-square">
-                  <img
-                    className=""
-                    src={`https://static-zapopan-api.appsuzu.fun/original/original_images.jpg`}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {insumosArray.map((e) => {
+            const regex = new RegExp(`\\b(${FileFormats.join("|")})\\b`)
+            const result = String(e.file_name).replace(regex, "")
+            const fileNameClean = result.replace(/\s+/g, " ").trim()
+            const image = `https://static-zapopan-api.appsuzu.fun/thumbnail/thumbnail_${fileNameClean}.webp`
+            return (
+              <ImageCard imageSrc={image} element={e} />
+            )
+          })}
         </div>
       </section>
     </main>
