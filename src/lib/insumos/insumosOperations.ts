@@ -1,6 +1,7 @@
 "use server";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export async function sendInsumo(formData: FormData) {
   const cookieStore = await cookies();
@@ -31,9 +32,7 @@ export async function sendInsumo(formData: FormData) {
   });
   const { filename } = await response.json();
   if (!response.ok) {
-    throw new Error(
-      `FastAPI upload failed ${response.status}`,
-    );
+    throw new Error(`FastAPI upload failed ${response.status}`);
   }
   const { data: userId, error: userTestError } = await supabase
     .from("users")
@@ -61,6 +60,7 @@ export async function sendInsumo(formData: FormData) {
   if (error) {
     console.log(error);
   }
+  revalidatePath("/insumos");
   return { ok: "ok" };
 }
 

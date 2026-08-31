@@ -11,23 +11,32 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import FilterPill from "./filter.pill";
 
 interface ImageCardProps {
-  imageSrc: string;
+  thumbnailSrc: string;
   element: {
     title: string;
     description: string;
     file_name: string;
   };
+  downloadSrc: string;
+  previewSrc: string;
 }
 
-export function ImageCard({ imageSrc, element }: ImageCardProps) {
+export function ImageCard({
+  thumbnailSrc,
+  element,
+  downloadSrc,
+  previewSrc,
+}: ImageCardProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-
+  console.log(element);
   // Prevent SSR hydration errors by confirming client mount before using document.body
   useEffect(() => {
     setMounted(true);
@@ -38,31 +47,33 @@ export function ImageCard({ imageSrc, element }: ImageCardProps) {
       <Card>
         <CardHeader>
           <CardTitle>{element.title}</CardTitle>
-          <CardDescription>
-            {element.description} {element.file_name}
-          </CardDescription>
+          {element.description && (
+            <CardDescription>{element.description}+</CardDescription>
+          )}
         </CardHeader>
-        <CardContent className="overflow-auto">
+        <CardContent className="overflow-hidden w-auto h-full aspect-square">
           <img
-            src={imageSrc}
+            src={thumbnailSrc}
             alt={element.title}
-            className="cursor-pointer rounded-md w-full hover:opacity-90 transition-opacity"
+            className="object-cover w-full h-full inset-0 cursor-pointer rounded-md hover:scale-105 transition-transform"
             onClick={() => setOpen(true)}
           />
         </CardContent>
+        <CardFooter>
+          <FilterPill name={element.label_id.name} />{" "}
+        </CardFooter>
       </Card>
-
-      {/* Render Lightbox at root body level via Portal */}
       {mounted &&
         createPortal(
           <Lightbox
             open={open}
             close={() => setOpen(false)}
-            slides={[{ src: imageSrc }]}
+            slides={[{ src: previewSrc, download: downloadSrc }]}
             plugins={[Download, Zoom]}
             styles={{ container: { zIndex: 99999 } }}
+            animation={{ zoom: 500 }}
           />,
-          document.body
+          document.body,
         )}
     </>
   );

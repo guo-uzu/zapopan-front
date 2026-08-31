@@ -10,18 +10,6 @@ const FilterLabels = ({
       {labels.data.map((label) => (
         <FilterPill name={label.name} />
       ))}
-      {labels.data.map((label) => (
-        <FilterPill name={label.name} />
-      ))}
-      {labels.data.map((label) => (
-        <FilterPill name={label.name} />
-      ))}
-      {labels.data.map((label) => (
-        <FilterPill name={label.name} />
-      ))}
-      {labels.data.map((label) => (
-        <FilterPill name={label.name} />
-      ))}
     </div>
   );
 };
