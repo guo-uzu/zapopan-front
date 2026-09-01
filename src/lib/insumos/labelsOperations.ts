@@ -21,16 +21,18 @@ export const getLabels = async () => {
 export const sendLabel = async (label: string) => {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
-  const payload = {
-    name: label,
-  };
-  const { error } = await supabase.from("labels").insert(payload);
+
+  const { error } = await supabase
+    .from("labels")
+    .insert({
+      name: label,
+    });
+
   if (error) {
     throw new Error("DB insert failed");
   }
 
   revalidatePath("/insumos");
-  return { ok: true };
 };
 
 export const deleteLabels = async (id: string) => {

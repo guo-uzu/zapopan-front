@@ -23,6 +23,9 @@ interface ImageCardProps {
     title: string;
     description: string;
     file_name: string;
+    label_id: {
+      name: string
+    }
   };
   downloadSrc: string;
   previewSrc: string;
@@ -36,7 +39,6 @@ export function ImageCard({
 }: ImageCardProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  console.log(element);
   // Prevent SSR hydration errors by confirming client mount before using document.body
   useEffect(() => {
     setMounted(true);

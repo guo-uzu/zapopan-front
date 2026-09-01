@@ -8,7 +8,7 @@ const FilterLabels = ({
   return (
     <div className="flex gap-x-2 overflow-x-scroll py-4">
       {labels.data.map((label) => (
-        <FilterPill name={label.name} />
+        <FilterPill key={label.id_public} name={label.name} />
       ))}
     </div>
   );

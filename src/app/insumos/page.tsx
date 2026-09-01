@@ -11,30 +11,15 @@ import { getLabels } from "@/lib/insumos/labelsOperations";
 import FilterLabels from "@/components/insumos/filter.labels";
 import { getInsumos } from "@/lib/insumos/insumosOperations";
 
-import { FileFormats } from "@/lib/insumos/fileFormats";
-import { ImageCard } from "@/components/insumos/image.card";
-import { cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
+
+import { InsumosRealtime } from "@/components/insumos/realtime";
+import { GridInsumos } from "@/components/insumos/grid.insumos";
 
 const InsumosPage = async () => {
-  const cookieStore = await cookies();
-  const supabase = createClient(cookieStore);
   const BASE_URL = "https://static-zapopan-api.appsuzu.fun/";
   const userData = await getUserId();
   const labelsArray = await getLabels();
   const { data: insumosArray } = await getInsumos();
-  const channels = supabase
-    .channel("custom-all-channel")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "insumos" },
-      (payload) => {
-        console.log("Change received!", payload);
-      },
-    )
-    .subscribe();
-  console.log(channels);
-
   return (
     <main>
       <section className="max-w-300 mx-auto">
@@ -71,24 +56,8 @@ const InsumosPage = async () => {
         </div>
       </section>
       <section className="max-w-300 mx-auto">
-        <div className="grid grid-cols-4 gap-6 p-2">
-          {insumosArray.map((e) => {
-            const regex = new RegExp(`\\b(${FileFormats.join("|")})\\b`);
-            const result = String(e.file_name).replace(regex, "");
-            const fileNameClean = result.replace(/\s+/g, " ").trim();
-            const thumbnailSrc = `${BASE_URL}thumbnail/thumbnail_${fileNameClean}.webp`;
-            const previewSrc = `${BASE_URL}preview/preview_${fileNameClean}.webp`;
-            const originalSrc = `${BASE_URL}original/original_${e.file_name}`;
-            return (
-              <ImageCard
-                thumbnailSrc={thumbnailSrc}
-                element={e}
-                previewSrc={previewSrc}
-                downloadSrc={originalSrc}
-              />
-            );
-          })}
-        </div>
+        <InsumosRealtime />
+        <GridInsumos insumosArray={insumosArray} BASE_URL={ BASE_URL} />
       </section>
     </main>
   );

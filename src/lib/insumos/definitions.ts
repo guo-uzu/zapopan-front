@@ -17,7 +17,7 @@ export const UploadFiles = z.object({
 });
 
 export const UploadLabel = z.object({
-  label: z.string().trim(),
+  label: z.string().trim().min(2, {message: "La etiqueta es obligatoria"}),
 });
 
 export type UploadFilesState =
