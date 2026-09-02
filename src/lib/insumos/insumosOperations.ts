@@ -66,22 +66,21 @@ export async function sendInsumo(formData: FormData) {
 }
 
 export async function getInsumos(searchParams: { search?: string }) {
-  // get the queries from the url page
-  const search = searchParams.search ? searchParams.search : "";
+  const search = searchParams.search ?? "";
   const parsedParams = parseSearchQuery(search);
 
-  console.log(parsedParams)
-  // supabase client to fetch data
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
-  // auth
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("User not founded");
 
-  // filters
-  const filters =
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const textFilter =
     parsedParams.text.length > 0
       ? parsedParams.text
           .flatMap((term) => [
@@ -91,25 +90,46 @@ export async function getInsumos(searchParams: { search?: string }) {
           .join(",")
       : "";
 
-  const filterLabel = parsedParams.labels.length > 0 ?
-    parsedParams.labels
-        .flatMap((label) => [
-          `label_id.name.ilike.%${label}%`,
-        ])
-        .join(",")
-    : "";
-  // query
-  const query = supabase
+  const labelFilter =
+    parsedParams.labels.length > 0
+      ? parsedParams.labels.map((label) => `name.ilike.%${label}%`).join(",")
+      : "";
+
+  let query = supabase
     .from("insumos")
     .select(
-      "id_public,file_name,title,created_at,description,user_id(full_name),label_id:labels!inner(name,id_public)",
+      `
+      id_public,
+      file_name,
+      title,
+      created_at,
+      description,
+      user_id(full_name),
+      label_id:labels!inner(
+        name,
+        id_public
+      )
+    `,
     )
     .eq("available", true);
-  if (filters !== "") query.or(filters);
-  if (filterLabel !== "") query.or(filterLabel)
 
-  const { data } = await query;
-  console.log(data)
+  if (textFilter) {
+    query = query.or(textFilter);
+  }
+
+  if (labelFilter) {
+    query = query.or(labelFilter, {
+      referencedTable: "labels",
+    });
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Supabase error:", error);
+    throw error;
+  }
+
   return { data };
 }
 
