@@ -53,7 +53,18 @@ const UploadFiles = ({
   };
 
   useEffect(() => {
-    if (state?.ok) {
+    if (isPending) {
+      toast.loading("Subiendo archivo...", {
+        position: "top-center",
+      });
+      return;
+    } else {
+      toast.dismiss();
+    }
+
+    if (!state) return;
+
+    if (state.ok) {
       formRef.current?.reset();
       toast.success("Archivo subido al sistema con éxito.", {
         position: "top-center",
@@ -62,8 +73,12 @@ const UploadFiles = ({
       setSelectedLabelId("");
       setSelectedLabelName("");
       setOpen(false);
+    } else if (state.formError) {
+      toast.error(state.formError, {
+        position: "top-center",
+      });
     }
-  }, [state]);
+  }, [isPending, state]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

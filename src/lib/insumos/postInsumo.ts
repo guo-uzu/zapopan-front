@@ -36,6 +36,20 @@ export const postInsumos = async (
       },
     };
   }
-  const { ok } = await sendInsumo(formData);
-  return { ok };
+  try {
+    const { ok } = await sendInsumo(formData);
+    return { ok };
+  } catch {
+    return {
+      ok: false,
+      formError: "No se pudo subir el archivo",
+      fields: {
+        nameInsumos,
+        dateInsumos,
+        userInsumos,
+        descriptionInsumos,
+        labelInsumos,
+      },
+    };
+  }
 };

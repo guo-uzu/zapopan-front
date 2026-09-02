@@ -1,25 +1,26 @@
 import AdminLabels from "@/components/insumos/admin.labels";
 import UploadFiles from "@/components/insumos/upload.files";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import { Search } from "lucide-react";
+
 import { getUserId } from "@/lib/insumos/getUser";
 import { getLabels } from "@/lib/insumos/labelsOperations";
 import FilterLabels from "@/components/insumos/filter.labels";
 import { getInsumos } from "@/lib/insumos/insumosOperations";
 
-
-import { InsumosRealtime } from "@/components/insumos/realtime";
+import { InsumosRealtime, LabelsRealtime } from "@/components/insumos/realtime";
 import { GridInsumos } from "@/components/insumos/grid.insumos";
+import InputSearchGrid from "@/components/insumos/input.search.grid";
 
-const InsumosPage = async () => {
+interface PageProps {
+  searchParams: Promise<{ search?: string }>;
+}
+
+const InsumosPage = async ({ searchParams }: PageProps) => {
+  const resolvedSearchParams = await searchParams;
   const BASE_URL = "https://static-zapopan-api.appsuzu.fun/";
   const userData = await getUserId();
   const labelsArray = await getLabels();
-  const { data: insumosArray } = await getInsumos();
+  const { data: insumosArray } = await getInsumos(resolvedSearchParams);
+
   return (
     <main>
       <section className="max-w-300 mx-auto">
@@ -28,7 +29,7 @@ const InsumosPage = async () => {
             <div className="flex flex-col gap-y-2">
               <h1 className="text-3xl font-black">Insumos</h1>
               <p className="text-md">
-                Busca los insumos por nombre, etiqueta, año y revisa cuando se
+                Busca los insumos por nombre, etiqueta y revisa cuando se
                 subieron.
               </p>
             </div>
@@ -38,16 +39,7 @@ const InsumosPage = async () => {
             </div>
           </div>
           <div className="flex flex-col gap-y-2">
-            <InputGroup className="flex">
-              <InputGroupAddon align="inline-start">
-                <Search className="text-muted-foreground" />
-              </InputGroupAddon>
-              <InputGroupInput
-                type="text"
-                id="inline-start-input"
-                placeholder="Busca por nombre, etiqueta, reporte o año"
-              />
-            </InputGroup>
+            <InputSearchGrid />
             <div className="flex gap-x-2 items-center">
               <span className="text-sm text-current/70">Filter:</span>
               <FilterLabels labels={labelsArray} />
@@ -57,7 +49,8 @@ const InsumosPage = async () => {
       </section>
       <section className="max-w-300 mx-auto">
         <InsumosRealtime />
-        <GridInsumos insumosArray={insumosArray} BASE_URL={ BASE_URL} />
+        <LabelsRealtime />
+        <GridInsumos insumosArray={insumosArray} BASE_URL={BASE_URL} />
       </section>
     </main>
   );

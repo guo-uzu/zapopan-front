@@ -16,6 +16,7 @@ import { validateLabel } from "@/lib/insumos/validateLabel";
 import { deleteLabels } from "@/lib/insumos/labelsOperations";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { ToastLabel } from "./toast.label";
+import { toast } from "sonner";
 
 const NewLabelForm = ({ onAdded }: { onAdded: () => void }) => {
   const [state, action, isLoading] = useActionState(validateLabel, undefined);
@@ -58,7 +59,14 @@ const AdminLabels = ({
   const [isPending, startTransition] = useTransition()
   const handleDelete = (idPublic: string) => {
     startTransition(async () => {
-      await deleteLabels(idPublic)
+      try {
+        await deleteLabels(idPublic);
+        toast.success("Etiqueta eliminada", { position: "top-center" });
+      } catch {
+        toast.error("No se pudo eliminar la etiqueta", {
+          position: "top-center",
+        });
+      }
     })
   }
 

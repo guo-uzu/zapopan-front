@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import parseSearchQuery from "./parse.params.input";
 
 export async function sendInsumo(formData: FormData) {
   const cookieStore = await cookies();
@@ -64,19 +65,66 @@ export async function sendInsumo(formData: FormData) {
   return { ok: "ok" };
 }
 
-export async function getInsumos() {
+export async function getInsumos(searchParams: { search?: string }) {
+  // get the queries from the url page
+  const search = searchParams.search ? searchParams.search : "";
+  const parsedParams = parseSearchQuery(search);
+
+  console.log(parsedParams)
+  // supabase client to fetch data
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
+  // auth
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   if (!user) throw new Error("User not founded");
-  const { data } = await supabase
+
+  // filters
+  const filters =
+    parsedParams.text.length > 0
+      ? parsedParams.text
+          .flatMap((term) => [
+            `title.ilike.%${term}%`,
+            `description.ilike.%${term}%`,
+          ])
+          .join(",")
+      : "";
+
+  const filterLabel = parsedParams.labels.length > 0 ?
+    parsedParams.labels
+        .flatMap((label) => [
+          `label_id.name.ilike.%${label}%`,
+        ])
+        .join(",")
+    : "";
+  // query
+  const query = supabase
     .from("insumos")
     .select(
-      "id_public,file_name,title,created_at,description,user_id(full_name),label_id(name,id_public)",
+      "id_public,file_name,title,created_at,description,user_id(full_name),label_id:labels!inner(name,id_public)",
     )
     .eq("available", true);
+  if (filters !== "") query.or(filters);
+  if (filterLabel !== "") query.or(filterLabel)
+
+  const { data } = await query;
+  console.log(data)
   return { data };
+}
+
+export async function deleteInsumo(id: string) {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+
+  const { error } = await supabase
+    .from("insumos")
+    .update({ available: false })
+    .eq("id_public", id);
+
+  if (error) {
+    throw new Error("DB update failed");
+  }
+  revalidatePath("/insumos");
+  return { ok: true };
 }
