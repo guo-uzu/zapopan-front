@@ -12,8 +12,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ENV NEXT_PUBLIC_SUPABASE_URL=https://rpbkprzjlgbjqwgxrdqr.supabase.co
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 RUN corepack enable pnpm && pnpm run build
 
