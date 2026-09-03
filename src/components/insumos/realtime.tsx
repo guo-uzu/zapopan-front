@@ -28,7 +28,6 @@ export function InsumosRealtime() {
           () => router.refresh(),
         )
         .subscribe((status) => {
-          console.log("Realtime status:", status);
         });
     })();
 
@@ -64,7 +63,6 @@ export function LabelsRealtime() {
           () => router.refresh()
         )
         .subscribe((status) => {
-          console.log("Realtime status:", status);
         });
     })();
 

@@ -59,7 +59,7 @@ export async function sendInsumo(formData: FormData) {
   const { error } = await supabase.from("insumos").insert(payload);
 
   if (error) {
-    console.log(error);
+    throw new Error("DB fetching data");
   }
   revalidatePath("/insumos");
   return { ok: "ok" };
@@ -126,8 +126,7 @@ export async function getInsumos(searchParams: { search?: string }) {
   const { data, error } = await query;
 
   if (error) {
-    console.error("Supabase error:", error);
-    throw error;
+    throw new Error("DB fetching data");
   }
 
   return { data };

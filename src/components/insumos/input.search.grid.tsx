@@ -17,7 +17,8 @@ export default function InputSearchGrid() {
       params.delete("search");
     }
     replace(`${pathname}?${params.toString()}`, { scroll: false });
-  }, 300);
+  }, 600);
+
   return (
     <InputGroup className="flex">
       <InputGroupAddon align="inline-start">

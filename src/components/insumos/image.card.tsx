@@ -38,8 +38,8 @@ interface ImageCardProps {
     description: string;
     file_name: string;
     label_id: {
-      name: string
-    }
+      name: string;
+    };
   };
   downloadSrc: string;
   previewSrc: string;
@@ -85,30 +85,29 @@ export function ImageCard({
             )}
           </div>
         </CardHeader>
-        <CardContent className="overflow-hidden w-auto h-full aspect-square">
-          <img
-            src={thumbnailSrc}
-            alt={element.title}
-            className="object-cover w-full h-full inset-0 cursor-pointer rounded-md hover:scale-105 transition-transform"
-            onClick={() => setOpen(true)}
-          />
+        <CardContent>
+          <div className="w-full h-80 overflow-hidden rounded-md">
+            <img
+              src={thumbnailSrc}
+              alt={element.title}
+              className="object-cover w-full h-full cursor-pointer hover:scale-105 transition-transform"
+              onClick={() => setOpen(true)}
+            />
+          </div>
         </CardContent>
         <CardFooter className="flex justify-between">
           <FilterPill name={element.label_id.name} />{" "}
           <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <DialogTrigger asChild>
-              <Button
-                size="icon-sm"
-                className="cursor-pointer shrink-0"
-              >
+              <Button size="icon-sm" className="cursor-pointer shrink-0">
                 <TrashIcon />
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogTitle>¿Eliminar este insumo?</DialogTitle>
               <DialogDescription>
-                El archivo se ocultará del sistema. Avise al desarrollador o
-                a un administrador si es que se equivoca.
+                El archivo se ocultará del sistema. Avise al desarrollador o a
+                un administrador si es que se equivoca.
               </DialogDescription>
               <DialogFooter>
                 <DialogClose asChild>
