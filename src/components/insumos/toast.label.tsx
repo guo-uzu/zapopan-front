@@ -35,4 +35,5 @@ export const ToastLabel = ({
       });
     }
   }, [isLoading, state]);
+  return null
 };
