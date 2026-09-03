@@ -3,7 +3,7 @@ import { FileFormats } from "@/lib/insumos/fileFormats";
 import { ImageCard } from "@/components/insumos/image.card";
 import Image from "next/image";
 import Cat404 from "@/app/assets/cat.404.jpg"
-type Insumo = {
+export type Insumo = {
   id_public: string;
   file_name: string;
   title: string;

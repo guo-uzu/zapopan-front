@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import parseSearchQuery from "./parse.params.input";
+import type { Insumo } from "@/components/insumos/grid.insumos";
 
 export async function sendInsumo(formData: FormData) {
   const cookieStore = await cookies();
@@ -17,6 +18,9 @@ export async function sendInsumo(formData: FormData) {
   const dataToSend = new FormData();
 
   const fileInsumos = formData.get("fileInsumos");
+  if (!fileInsumos) {
+    throw new Error("File is required");
+  }
   dataToSend.append("file", fileInsumos);
   const nameInsumos = formData.get("nameInsumos");
   const dateInsumos = formData.get("dateInsumos");
@@ -123,7 +127,7 @@ export async function getInsumos(searchParams: { search?: string }) {
     });
   }
 
-  const { data, error } = await query;
+  const { data, error } = await query.returns<Insumo[]>();
 
   if (error) {
     throw new Error("DB fetching data");
