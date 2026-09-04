@@ -116,7 +116,7 @@ const UploadFiles = ({
                 type="text"
                 name="nameInsumos"
                 id="name-insumos"
-                defaultValue={String(state?.fields?.nameInsumos)}
+                defaultValue={state?.fields?.nameInsumos !== undefined ? String(state?.fields?.nameInsumos) : ""}
               />
               {state?.errors?.nameInsumos?.errors[0] && (
                 <p className="text-red-500 text-xs">
@@ -134,7 +134,7 @@ const UploadFiles = ({
                   type="date"
                   name="dateInsumos"
                   id="date-insumos"
-                  defaultValue={String(state?.fields?.dateInsumos) || today}
+                  defaultValue={state?.fields?.dateInsumos !== undefined ? String(state?.fields?.dateInsumos) : today}
                 />
                 {state?.errors?.dateInsumos?.errors[0] && (
                   <p className="text-red-500 text-xs">
