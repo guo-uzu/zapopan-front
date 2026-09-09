@@ -50,7 +50,11 @@ const InsumosPage = async ({ searchParams }: PageProps) => {
       <section className="max-w-300 mx-auto">
         <InsumosRealtime />
         <LabelsRealtime />
-        <GridInsumos insumosArray={insumosArray} BASE_URL={BASE_URL} />
+        <GridInsumos
+          insumosArray={insumosArray}
+          BASE_URL={BASE_URL}
+          labels={labelsArray}
+        />
       </section>
     </main>
   );

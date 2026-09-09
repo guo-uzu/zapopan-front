@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import { FileFormats } from "@/lib/insumos/fileFormats";
 import { ImageCard } from "@/components/insumos/image.card";
 import Image from "next/image";
-import Cat404 from "@/app/assets/cat.404.jpg"
+import Cat404 from "@/app/assets/cat.404.jpg";
 export type Insumo = {
   id_public: string;
   file_name: string;
@@ -17,13 +17,26 @@ export type Insumo = {
     id_public: string;
   };
 };
-export const GridInsumos = ({ insumosArray, BASE_URL }: { insumosArray: Insumo[], BASE_URL: string }) => {
-  if (insumosArray.length <= 0) return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col gap-y-6 items-center">
-      <p>No se han encontrado coincidencias	(｡•́︿•̀｡)</p>
-      <Image src={Cat404} alt="Cat 404"/>
-    </div>
-  )
+export type LabelsList = {
+  data: { name: string; id_public: string }[];
+  error: string | null;
+};
+export const GridInsumos = ({
+  insumosArray,
+  BASE_URL,
+  labels,
+}: {
+  insumosArray: Insumo[];
+  BASE_URL: string;
+  labels: LabelsList;
+}) => {
+  if (insumosArray.length <= 0)
+    return (
+      <div className="w-full max-w-2xl mx-auto flex flex-col gap-y-6 items-center">
+        <p>No se han encontrado coincidencias (｡•́︿•̀｡)</p>
+        <Image src={Cat404} alt="Cat 404" />
+      </div>
+    );
   return (
     <div className="grid grid-cols-4 gap-6 p-2">
       {insumosArray.map((e) => {
@@ -40,9 +53,10 @@ export const GridInsumos = ({ insumosArray, BASE_URL }: { insumosArray: Insumo[]
             element={e}
             previewSrc={previewSrc}
             downloadSrc={originalSrc}
+            labels={labels}
           />
         );
       })}
     </div>
-  )
-}
+  );
+};

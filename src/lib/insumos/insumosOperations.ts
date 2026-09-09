@@ -5,6 +5,21 @@ import { revalidatePath } from "next/cache";
 import parseSearchQuery from "./parse.params.input";
 import type { Insumo } from "@/components/insumos/grid.insumos";
 
+const API_BASE = "http://zapopan-api.insumos.appsuzu.fun/api/insumos";
+// const API_BASE = "http://localhost:8080/api/insumos";
+
+async function deleteInsumoFile(fileName: string) {
+  // FastAPI declares `file: str` without Form()/Body(), so it reads it from the query string.
+  const url = `${API_BASE}/delete-file?file=${encodeURIComponent(fileName)}`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { Accept: "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(`FastAPI delete failed ${response.status}`);
+  }
+}
+
 export async function sendInsumo(formData: FormData) {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
@@ -13,8 +28,7 @@ export async function sendInsumo(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) throw new Error("User not founded");
-  const URL = "http://zapopan-api.insumos.appsuzu.fun/api/insumos/upload-file";
-  // const URL = "http://localhost:8080/api/insumos/upload-file";
+  const URL = `${API_BASE}/upload-file`;
   const dataToSend = new FormData();
 
   const fileInsumos = formData.get("fileInsumos");
@@ -140,6 +154,15 @@ export async function deleteInsumo(id: string) {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
+  const { data: current, error: fetchError } = await supabase
+    .from("insumos")
+    .select("file_name")
+    .eq("id_public", id)
+    .single();
+  if (fetchError || !current) {
+    throw new Error("Insumo not found");
+  }
+
   const { error } = await supabase
     .from("insumos")
     .update({ available: false })
@@ -148,6 +171,100 @@ export async function deleteInsumo(id: string) {
   if (error) {
     throw new Error("DB update failed");
   }
+
+  if (current.file_name) {
+    await deleteInsumoFile(current.file_name);
+  }
+
+  revalidatePath("/insumos");
+  return { ok: true };
+}
+
+export async function updateInsumo(
+  id: string,
+  data: {
+    title: string;
+    description: string;
+    date: string;
+    labelPublicId: string;
+    file?: File;
+  },
+) {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("User not founded");
+
+  const { data: label, error: labelError } = await supabase
+    .from("labels")
+    .select("id")
+    .eq("id_public", data.labelPublicId)
+    .single();
+  if (labelError || !label) {
+    throw new Error("Label not found");
+  }
+
+  const payload: {
+    title: string;
+    description: string;
+    created_at: string;
+    label_id: number;
+    file_name?: string;
+  } = {
+    title: data.title,
+    description: data.description,
+    created_at: data.date,
+    label_id: label.id,
+  };
+
+  let previousFileName: string | null = null;
+
+  if (data.file) {
+    console.log("Entro");
+    const { data: current, error: fetchError } = await supabase
+      .from("insumos")
+      .select("file_name")
+      .eq("id_public", id)
+      .single();
+
+    if (fetchError || !current) {
+      throw new Error("Insumo not found");
+    }
+    previousFileName = current.file_name;
+
+    const url = `${API_BASE}/delete-file?file=${encodeURIComponent(previousFileName ?? "")}`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new Error(`FastAPI delete failed ${response.status}`);
+    }
+
+    const { filename } = await response.json();
+    payload.file_name = filename;
+  }
+
+  console.log(payload);
+
+  const { error } = await supabase
+    .from("insumos")
+    .update(payload)
+    .eq("id_public", id);
+
+  if (error) {
+    throw new Error("DB update failed");
+  }
+
+  // Only remove the old file once the row points at the new one.
+  if (previousFileName && previousFileName !== payload.file_name) {
+    await deleteInsumoFile(previousFileName);
+  }
+
   revalidatePath("/insumos");
   return { ok: true };
 }
