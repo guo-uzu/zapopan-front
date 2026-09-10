@@ -13,7 +13,6 @@ export const editInsumo = async (initialState: unknown, formData: FormData) => {
   const descriptionInsumo = formData.get("descriptionInsumo");
   const dateInsumo = formData.get("dateInsumo");
   const labelInsumo = formData.get("labelInsumo");
-  console.log(formData);
 
   const fields = { titleInsumo, descriptionInsumo, dateInsumo, labelInsumo };
 
